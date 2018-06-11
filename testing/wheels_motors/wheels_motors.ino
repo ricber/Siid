@@ -14,62 +14,62 @@ int BIN1 = 11; //Direction
 int BIN2 = 12; //Direction
 
 void setup(){
-pinMode(STBY, OUTPUT);
+    pinMode(STBY, OUTPUT);
 
-pinMode(PWMA, OUTPUT);
-pinMode(AIN1, OUTPUT);
-pinMode(AIN2, OUTPUT);
+    pinMode(PWMA, OUTPUT);
+    pinMode(AIN1, OUTPUT);
+    pinMode(AIN2, OUTPUT);
 
-pinMode(PWMB, OUTPUT);
-pinMode(BIN1, OUTPUT);
-pinMode(BIN2, OUTPUT);
+    pinMode(PWMB, OUTPUT);
+    pinMode(BIN1, OUTPUT);
+    pinMode(BIN2, OUTPUT);
 }
 
 void loop(){
-move(1, 100, 1); //motor 1, full speed, left
-move(2, 100, 1); //motor 2, full speed, left
+    move(1, 100, 1); //motor 1, full speed, left
+    move(2, 100, 1); //motor 2, full speed, left
 
 
-delay(1000); //go for 1 second
-stop(); //stop
-delay(250); //hold for 250ms until move again
+    delay(1000); //go for 1 second
+    stop(); //stop
+    delay(250); //hold for 250ms until move again
 
-move(1, 100, 0); //motor 1, half speed, right
-move(2, 100, 0); //motor 2, half speed, right
+    move(1, 100, 0); //motor 1, half speed, right
+    move(2, 100, 0); //motor 2, half speed, right
 
-delay(1000);
-stop();
-delay(100000);
+    delay(1000);
+    stop();
+    delay(100000);
 }
 
 void move(int motor, int speed, int direction){
-//Move specific motor at speed and direction
-//motor: 0 for B 1 for A
-//speed: 0 is off, and 255 is full speed
-//direction: 0 clockwise, 1 counter-clockwise
+    //Move specific motor at speed and direction
+    //motor: 0 for B 1 for A
+    //speed: 0 is off, and 255 is full speed
+    //direction: 0 clockwise, 1 counter-clockwise
 
-digitalWrite(STBY, HIGH); //disable standby
+    digitalWrite(STBY, HIGH); //disable standby
 
-boolean inPin1 = LOW;
-boolean inPin2 = HIGH;
+    boolean inPin1 = LOW;
+    boolean inPin2 = HIGH;
 
-if(direction == 1){
-inPin1 = HIGH;
-inPin2 = LOW;
-}
+    if(direction == 1){
+        inPin1 = HIGH;
+        inPin2 = LOW;
+    }
 
-if(motor == 1){
-digitalWrite(AIN1, inPin1);
-digitalWrite(AIN2, inPin2);
-analogWrite(PWMA, speed);
-}else{
-digitalWrite(BIN1, inPin1);
-digitalWrite(BIN2, inPin2);
-analogWrite(PWMB, speed);
-}
+    if(motor == 1){
+        digitalWrite(AIN1, inPin1);
+        digitalWrite(AIN2, inPin2);
+        analogWrite(PWMA, speed);
+    }else{
+        digitalWrite(BIN1, inPin1);
+        digitalWrite(BIN2, inPin2);
+        analogWrite(PWMB, speed);
+    }
 }
 
 void stop(){
-//enable standby
-digitalWrite(STBY, LOW);
+    //enable standby
+    digitalWrite(STBY, LOW);
 }

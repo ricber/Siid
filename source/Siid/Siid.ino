@@ -1,5 +1,5 @@
 // uncomment this for dev mode (this is a trick to save precious memory space)
-//#define DEVMODE 1
+#define DEVMODE 1
 
 
 void setup() {
@@ -17,10 +17,13 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
+  stateMachine();
+  playAnimation();
+
 }
 
 void setupAll(){
-
+    setupState();
   
 }
 
