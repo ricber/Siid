@@ -3,27 +3,26 @@
 
 
 void setup() {
-  #if defined(DEVMODE)
-    Serial.begin(9600);
-    Serial.print("Devmode ON");
-  #endif
-  
-  // setup of all components
-  setupAll();
-  
+    #if defined(DEVMODE)
+        Serial.begin(9600);
+        Serial.print("Devmode ON");
+    #endif
 
+    randomSeed(millis()); // we initialize the random generator
+
+    setupAll(); // setup of all components
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+    // put your main code here, to run repeatedly:
 
-  stateMachine();
-  playAnimation();
-
+    stateMachine();
+    playAnimation();
 }
 
-void setupAll(){
+void setupAll() {
     setupState();
-  
 }
+
+
 
