@@ -3,7 +3,7 @@
 #define TRIGGER_PIN 6
 #define ECHO_PIN 7
 #define MAX_DISTANCE 400
-#define DISTANCE_CLOSE 100
+#define DISTANCE_CLOSE 50
 
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.
 
@@ -15,7 +15,11 @@ bool front_sonar() {
        Serial.print(distance);
        Serial.println("cm");
     #endif
-    if (distance <= DISTANCE_CLOSE){
+    if (distance == 0) {
+        // OUT OF RANGE
+        return false;
+    }
+    else if (distance <= DISTANCE_CLOSE){
         return true;
     }
     else {

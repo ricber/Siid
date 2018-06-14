@@ -3,16 +3,18 @@
 
 
 // #### DEFINITIONS ####
-#define LK_TIME_OUT 10000 // LOOK_AROUND timeout
+#define LK_TIME_OUT 2000 // LOOK_AROUND timeout
 #define FW_TIME_OUT 5000  // FORWARD timeout
 #define SAD_TIME_OUT 5000 // sad animation timeout
 #define HAPPY_PROB 7 // the probability we want our robot to be happy in the random animation (value range [0, 10])
+#define ROTATION_TIME_OUT 1000 // amount of time of left and right rotation
 
 
 // #### ROBOT STATE ####
 enum State_enum {LOOK_AROUND, PERSON_DET, FORWARD, STOP_CHECK, ROTATE_SAD, RANDOM_ANIM_PERSON_CHECK, ANGRY}; // all possible states of the robot
 byte current_state  = LOOK_AROUND; // current state of the robot
 byte previous_state = LOOK_AROUND; // previous state of the robot
+bool first_time_state; // boolean variable that indicates if you are entering a state for the first time or not
                                    
                                    
 /* all possible sensors inputs
@@ -100,8 +102,7 @@ void stateMachine() {
             brake(motor1, motor2);
             setState(LOOK_AROUND);
         }
-        else if (sensors == FRONT_SONAR)
-        {
+        else if (front_sonar()){
             setState(STOP_CHECK);
         }
         break;
@@ -110,8 +111,8 @@ void stateMachine() {
          * In this state the robot first stops the wheels movement
          * and then it checks what is in front of it, a person or an obstacle
          */
-        if (sensors == THERMOSENSOR_DWN)
-        {
+        //if (sensors == THERMOSENSOR_DWN)
+        if(1){
             setState(ROTATE_SAD);
         }
         else if (sensors == THERMOSENSOR_UP)
@@ -126,12 +127,27 @@ void stateMachine() {
          * Then it starts the sad animation because it likes to interact with
          * people and so it's sad when approches an obstacle
          */
-        if (millis() - starting_time_state > SAD_TIME_OUT){
-            setState(LOOK_AROUND);
-        }
-        else if (front_sonar()){
-            setState(STOP_CHECK);
-        }
+         if (first_time_state) {
+            first_time_state = false;
+            if(random(1)) {
+                left(motor1, motor2, 100);
+            }
+            else {
+                right(motor1, motor2, 100);
+            }  
+         }
+         else if (millis() - starting_time_state > ROTATION_TIME_OUT) {
+            brake(motor1, motor2);
+            setAnimation(SADNESS);
+            
+            if (millis() - starting_time_state > SAD_TIME_OUT){
+                setState(LOOK_AROUND);
+            }
+            else if (front_sonar()){
+                setState(STOP_CHECK);
+            }
+         }               
+        
         break;
     case RANDOM_ANIM_PERSON_CHECK:
         /* RANDOM ANIMATION and PERSON PRESENCE CHECK
@@ -140,7 +156,7 @@ void stateMachine() {
          *  If the person remains there we wait for an interaction
          *  Otherwise the robot goes away
          */
-        if (random(10 <= HAPPY_PROB)){
+        if (random(10) <= HAPPY_PROB){
             setAnimation(JOY);
         }
         else{
@@ -161,6 +177,7 @@ void stateMachine() {
 void setState(byte state) {
     previous_state      = current_state;
     current_state       = state;
+    first_time_state = true;
     starting_time_state = millis();
     #if defined(DEVMODE)
         Serial.print("State: ");
@@ -170,4 +187,5 @@ void setState(byte state) {
 
 void setupState() {
     starting_time_state = millis();
+    first_time_state = true;
 }
