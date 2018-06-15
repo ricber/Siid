@@ -21,6 +21,8 @@ void loop() {
 }
 
 void setupAll() {
+    setupSpeaker();
+    setupMatrix();
     setupState();
 }
 

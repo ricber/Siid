@@ -4,12 +4,14 @@
 
 //we define the pin that our NeoPixel panel is plugged into
 #define PIN 2
+//define all the possible emotion states
+#define enum emotion_state {NEUTRAL, JOY, ANGER, SADNESS, FEAR, DISGUST}
 
 //define constants 
 int DELAY_EYE = 1; // in ms
 
 //define variables
-int emotion_prec=0; //we define it on neutral
+byte emotion_prec = NEUTRAL; //we define it on neutral
 int emot=0;
 
 //we initialize our 8×8 matrix using the NeoMatrix library
@@ -305,7 +307,11 @@ void drawEye(bool eye[8][8], RGB color) {
   }
 }
 
-void eyesInlight(int emotion)
+/**
+ * Define the sequence of eye position for each emotion
+ * and display them with a delay
+ */
+void eyesInlight(byte emotion)
 {
   /*##########
    * 0 neutral
@@ -317,7 +323,7 @@ void eyesInlight(int emotion)
    ##########*/
   if (emotion!=emotion_prec) { 
      switch(emotion_prec) {
-        case 0:
+        case NEUTRAL:
           drawEye(neutral1, vanillia);
           delay(DELAY_EYE);
           drawEye(neutral2, vanillia);
@@ -337,7 +343,7 @@ void eyesInlight(int emotion)
           drawEye(neutral1, vanillia);
           break;
           
-        case 1:
+        case JOY:
           drawEye(happy4, yellow4);
           delay(DELAY_EYE);
           drawEye(happy3, yellow3);
@@ -350,7 +356,7 @@ void eyesInlight(int emotion)
           delay(DELAY_EYE);
           break;
           
-        case 2:
+        case ANGER:
           drawEye(angry4, red4);
           delay(DELAY_EYE);
           drawEye(angry3, red3);
@@ -363,7 +369,7 @@ void eyesInlight(int emotion)
           delay(DELAY_EYE);
           break;
           
-        case 3:
+        case SADNESS:
           drawEye(sadness4, blue4);
           delay(DELAY_EYE);
           drawEye(sadness3, blue3);
@@ -376,7 +382,7 @@ void eyesInlight(int emotion)
           delay(DELAY_EYE);
           break;
           
-        case 4:
+        case FEAR:
           drawEye(fear4, purple4);
           delay(DELAY_EYE);
           drawEye(fear3, purple3);
@@ -389,7 +395,7 @@ void eyesInlight(int emotion)
           delay(DELAY_EYE);            
           break;
           
-        case 5:
+        case DISGUST:
           drawEye(disgust4,green4);
           delay(DELAY_EYE);
           drawEye(disgust3,green3);
@@ -408,7 +414,7 @@ void eyesInlight(int emotion)
      }
  
     switch(emotion) {
-        case 0:
+        case NEUTRAL:
           drawEye(neutral1, vanillia);
           delay(DELAY_EYE);
           drawEye(neutral2, vanillia);
@@ -428,7 +434,7 @@ void eyesInlight(int emotion)
           drawEye(neutral1, vanillia);
           break;
           
-        case 1:
+        case JOY:
           drawEye(neutral1, vanillia);
           delay(DELAY_EYE);
           drawEye(happy1, yellow1);
@@ -441,7 +447,7 @@ void eyesInlight(int emotion)
           delay(DELAY_EYE);
           break;
           
-        case 2:
+        case ANGER:
           drawEye(neutral1, vanillia);
           delay(DELAY_EYE);
           drawEye(sadness1, red1);
@@ -454,7 +460,7 @@ void eyesInlight(int emotion)
           delay(DELAY_EYE);
           break;
           
-        case 3:
+        case SADNESS:
           drawEye(neutral1, vanillia);
           delay(DELAY_EYE);
           drawEye(sadness1, blue1);
@@ -467,7 +473,7 @@ void eyesInlight(int emotion)
           delay(DELAY_EYE);
           break;
           
-        case 4:
+        case FEAR:
           drawEye(neutral1, vanillia);
           delay(DELAY_EYE);
           drawEye(neutral2, purple1);
@@ -480,7 +486,7 @@ void eyesInlight(int emotion)
           delay(DELAY_EYE);
           break;
           
-        case 5:
+        case DISGUST:
           drawEye(neutral1, vanillia);
           delay(DELAY_EYE); 
           drawEye(disgust1,green1);
@@ -499,13 +505,12 @@ void eyesInlight(int emotion)
        }
        emotion_prec=emotion;
        Serial.println(emotion_prec);
-  
      }
   
    else
      {
        switch(emotion) {
-        case 0:
+        case NEUTRAL:
           drawEye(neutral1, vanillia);
           delay(DELAY_EYE);
           drawEye(neutral2, vanillia);
@@ -526,27 +531,27 @@ void eyesInlight(int emotion)
           emotion_prec=emotion;  
           break;
           
-        case 1:
+        case JOY:
           drawEye(happy4, yellow4);
           emotion_prec=emotion;
           break;
           
-        case 2:
+        case ANGER:
           drawEye(angry4, red4);
           emotion_prec=emotion;
           break;
           
-        case 3:
+        case SADNESS:
           drawEye(sadness4, blue4);
           emotion_prec=emotion;
           break;
           
-        case 4:
+        case FEAR:
           drawEye(fear4, purple4);
           emotion_prec=emotion;  
           break;
           
-        case 5:
+        case DISGUST:
           drawEye(disgust4, green4);
           emotion_prec=emotion;
           break;
@@ -559,64 +564,34 @@ void eyesInlight(int emotion)
     
 }    
 
-
-void setup() {
+/**
+ * Setup the Matrix LED
+ */
+void setupMatrix() {
   //we initialize the matrix and configure its pixel brightness, text color and text wrapping options
   matrix.begin();
   matrix.setBrightness(5);
   matrix.setTextColor( matrix.Color(255, 255, 255) );
   matrix.setTextWrap(false);
-
-  /* TO TEST the consumption of the matrix with all LED turned on I used the following instructions
-   *  matrix.fillScreen(matrix.Color(red.r, red.g, red.b));
-   *  matrix.show();
-  */
-
 }
 
-void loop() {
- for (int i=0; i<5; i++)
-  {
-     eyesInlight(0);
-     delay(8*DELAY_EYE); //time to let the programm fully do the animation
-     delay(1500);//to let time before changing
-  }
- for (int i=0; i<5; i++)
-  {
-     eyesInlight(1);
-     delay(8*DELAY_EYE); //time to let the programm fully do the animation
-     delay(1500);//to let time before changing
-  }
+/**
+ * Display the eye sequence starting from the neutral one 
+ * of the emotion passed as a parameter
+ */
+void showEyeAnimation(byte emotion){
   for (int i=0; i<5; i++)
   {
-     eyesInlight(3);
+     eyesInlight(NEUTRAL);
      delay(8*DELAY_EYE); //time to let the programm fully do the animation
      delay(1500);//to let time before changing
   }
-  for (int i=0; i<5; i++)
+   for (int i=0; i<5; i++)
   {
-     eyesInlight(5);
+     eyesInlight(emotion);
      delay(8*DELAY_EYE); //time to let the programm fully do the animation
      delay(1500);//to let time before changing
   }
-  for (int i=0; i<5; i++)
-  {
-     eyesInlight(4);
-     delay(8*DELAY_EYE); //time to let the programm fully do the animation
-     delay(1500);//to let time before changing
-  }
-  for (int i=0; i<5; i++)
-  {
-     eyesInlight(0);
-     delay(8*DELAY_EYE); //time to let the programm fully do the animation
-     delay(1500);//to let time before changing
-  }
-  for (int i=0; i<5; i++)
-  {
-     eyesInlight(5);
-     delay(8*DELAY_EYE); //time to let the programm fully do the animation
-     delay(1500);//to let time before changing
-  }
-  
+} 
   
 }
