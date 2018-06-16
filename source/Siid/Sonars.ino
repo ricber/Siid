@@ -13,7 +13,7 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and
 enum sonar_state {FRONT_SONAR_NEAR, FRONT_SONAR_MEDIUM, FRONT_SONAR_FAR, FRONT_SONAR_COLLISION}; //distance states of the sonar
 
  
-enum front_sonar() {
+byte front_sonar() {
     delay(50);
     unsigned int distance = sonar.ping_cm();
     #if defined(DEVMODE)
@@ -30,7 +30,7 @@ enum front_sonar() {
     }else if(distance <= DISTANCE_NEAR && distance > 0){
        //case state FRONT_SONAR_NEAR 
        return FRONT_SONAR_NEAR;
-    }else if(distance <= VERY_CLOSE){
+    }else if(distance <= DISTANCE_VERY_CLOSE){
       //case state FRONT_SONAR_COLLISION the object detected is too close 
       return FRONT_SONAR_COLLISION;
     }

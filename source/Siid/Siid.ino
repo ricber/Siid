@@ -23,6 +23,7 @@ void loop() {
 void setupAll() {
     setupSpeaker();
     setupMatrix();
+    setupServo();
     setupState();
 }
 

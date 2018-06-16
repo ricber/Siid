@@ -4,14 +4,12 @@
 
 //we define the pin that our NeoPixel panel is plugged into
 #define PIN 2
-//define all the possible emotion states
-#define enum emotion_state {NEUTRAL, JOY, ANGER, SADNESS, FEAR, DISGUST}
 
 //define constants 
 int DELAY_EYE = 1; // in ms
 
 //define variables
-byte emotion_prec = NEUTRAL; //we define it on neutral
+byte emotion_prec = 0; //we define it on neutral
 int emot=0;
 
 //we initialize our 8×8 matrix using the NeoMatrix library
@@ -20,15 +18,11 @@ Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(8, 8, PIN,
   NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG,
   NEO_GRB + NEO_KHZ800);
 
-struct RGB {
+struct RGB{
   byte r;
   byte g;
   byte b;
 };
-
-typedef struct Eye_ { int v1; int v2; int v3; int v4; int v5; int v6; int v7; int v8;} Eye; // some struct
-
-
  
 // Define some colors we'll use frequently
 RGB vanillia = { 225, 246, 201 }; //neutral 254,254,226
@@ -291,7 +285,7 @@ bool const angry4[8][8] = {
 
 
 // Check the pixel one after another and fill them if necessary
-void drawEye(bool eye[8][8], RGB color) {
+void drawEye(bool eye[8][8], struct RGB color) {
   for(uint16_t row=0; row < 8; row++) {
     for(uint16_t column=0; column < 8; column++) {
       if (eye[row][column] == 1) { 
@@ -571,7 +565,7 @@ void setupMatrix() {
   //we initialize the matrix and configure its pixel brightness, text color and text wrapping options
   matrix.begin();
   matrix.setBrightness(5);
-  matrix.setTextColor( matrix.Color(255, 255, 255) );
+  matrix.setTextColor(matrix.Color(255, 255, 255) );
   matrix.setTextWrap(false);
 }
 
@@ -589,9 +583,9 @@ void showEyeAnimation(byte emotion){
    for (int i=0; i<5; i++)
   {
      eyesInlight(emotion);
+     playAudio(emotion);
      delay(8*DELAY_EYE); //time to let the programm fully do the animation
      delay(1500);//to let time before changing
   }
 } 
-  
-}
+

@@ -4,18 +4,21 @@
 
 // #### DEFINITIONS ####
 #define LK_TIME_OUT 2000 // LOOK_AROUND timeout
+#define BACK_TIME_OUT 500 // timeout to go BACKWARD
 #define SPOT_TIME_OUT 5000  // SPOT ROTATION timeout
 #define SAD_TIME_OUT 5000 // sad animation timeout
-#define EXC_TIME_OUT 3000 // excitement timeout
-#define RAND_ANIM_TIME_OUT 5000 //random animation timeout
+#define EXC_TIME_OUT 8000 // excitement timeout
+#define RAND_ANIM_TIME_OUT 10000 //random animation timeout
 #define HAPPY_PROB 7 // the probability we want our robot to be happy in the random animation (value range [0, 10])
-#define SAD_PROB 5 // the probability to random start the sad animation
+#define SAD_PROB 6 // the probability to random start the sad animation
 #define ROTATION_TIME_OUT 1000 // amount of time of left and right rotation
+#define MOVE_TIME_OUT 2000
+#define WAIT_TIME_OUT 2000 //time out for waiting to do another action
 
 
 // #### ROBOT STATE ####
 
-enum State_enum {LOOK_AROUND, SPOT_ROTATION, RANDOM_SAD , RANDOM_ANIMATION, ANGRY, EXCITEMENT, WAIT_INTERACTION, COLLISION}; // all possible states of the robot
+enum State_enum {LOOK_AROUND, SPOT_ROTATION, RANDOM_SAD , RANDOM_ANIMATION, ANGRY_STATE, EXCITEMENT_STATE, WAIT_INTERACTION, COLLISION}; // all possible states of the robot
 byte current_state  = LOOK_AROUND; // current state of the robot
 byte previous_state = LOOK_AROUND; // previous state of the robot
 bool first_time_state; // boolean variable that indicates if you are entering a state for the first time or not
@@ -71,17 +74,22 @@ void stateMachine() {
          *  The eye is moving left and right
          *  Internal petals are closed
          *  External petals are opened
-         */
+         */        
+        sensors = front_sonar();
         setAnimation(LOOKING);
-        if (sensors == THERMOSENSOR_UP)
-        {
-            setState(PERSON_DET); // person detected
-        }
-        else if (millis() - starting_time_state > LK_TIME_OUT)
-        {
-            setState(FORWARD); // move forward
-        }
-        break;
+        //add here movement of the eye
+        if (millis() - starting_time_state > LK_TIME_OUT){
+              setState(SPOT_ROTATION);               
+            }else if(sensors == FRONT_SONAR_COLLISION){    
+              setState(COLLISION);
+            }else if(sensors == FRONT_SONAR_NEAR){
+              setState(RANDOM_ANIMATION);              
+            }else if(sensors == FRONT_SONAR_MEDIUM){
+              setState(EXCITEMENT_STATE);
+            }else if(sensors == FRONT_SONAR_FAR){
+              setState(RANDOM_SAD);
+            }
+       break;
     case SPOT_ROTATION:
         /* SPOT ROTATION
          *  In this state the robot has detected an object 
@@ -92,51 +100,67 @@ void stateMachine() {
          *  Internal petals open and close 
          *  External petals close
          */
-
-        sensor = front_sonar();
-        if (sensors == FRONT_SONAR_NEAR)
-        {
-            setState(RANDOM_ANIM_PERSON_CHECK);
+        if(first_time_state){
+        first_time_state = false;
+        setAnimation(NEUTRAL);
+        left(motor1, motor2, 200);       
+        right(motor1, motor2, 200);
+        left(motor1, motor2, 200);
+        right(motor1,motor2,200);
+        }else if (millis() - starting_time_state > ROTATION_TIME_OUT) {
+            brake(motor1, motor2);
+        }        
+        forward(motor1, motor2, 100);
+        back(motor1,motor2,100);
+        if(millis() -  starting_time_state > MOVE_TIME_OUT){
+          brake(motor1,motor2);
         }
-
+        setState(LOOK_AROUND);                    
         break;
-    case EXCITEMENT: 
+    case EXCITEMENT_STATE: 
         /* EXCITEMENT
          * In this state the robot moves the Internal petals 
          * continuosly opening and closing them
          * it makes also excitement and joy sound
          */
-         
+        if(first_time_state){
+        first_time_state=false;   
+        left(motor1, motor2, 100);       
+        right(motor1, motor2, 100);
+        brake(motor1, motor2);
+        setAnimation(EXCITEMENT);
+        }else if(millis() - starting_time_state > EXC_TIME_OUT){
+          setState(LOOK_AROUND);
+        }         
     break;     
     case RANDOM_SAD:
         /* RANDOM SAD
          * In this state we perform randomly the animation sad 
          * with a certain probability otherwise it go back in the previous state
-         * Sad animation : In this state the robot turn right or left
-         * Then it starts the sad animation because it likes to interact with
-         * people and so it's sad when approches an obstacle
+         * Sad animation : In this state the robot turn right and left very or  
+         * moves very slowly
          */
+         if(random(10) > SAD_PROB){
          if (first_time_state) {
             first_time_state = false;  
-            if(random(1)) {
-                left(motor1, motor2, 100);
+           
+            left(motor1, motor2, 50);
+            right(motor1, motor2, 50);
+            if(random(1)){
+               back(motor1,motor2,20);         
+            }else{
+              forward (motor1,motor2,20);
             }
-            else {
-                right(motor1, motor2, 100);
-            }  
+         }else if (millis() - starting_time_state > ROTATION_TIME_OUT) {
+            brake(motor1, motor2);   
+            setAnimation(SADNESS);       
+            if (millis() - starting_time_state > SAD_TIME_OUT + ROTATION_TIME_OUT){
+             setState(LOOK_AROUND);  
+            }
          }
-         else if (millis() - starting_time_state > ROTATION_TIME_OUT) {
-            brake(motor1, motor2);
-            setAnimation(SADNESS);
-            
-            if (millis() - starting_time_state > SAD_TIME_OUT){
-                setState(LOOK_AROUND);
-            }
-            else if (front_sonar()){
-                setState(STOP_CHECK);
-            }
-         }               
-        
+         }else {
+          setState(LOOK_AROUND);               
+         }        
         break;
     case RANDOM_ANIMATION:
         /* RANDOM ANIMATION 
@@ -146,19 +170,50 @@ void stateMachine() {
          *  Otherwise the robot moves
          */
         if (random(10) <= HAPPY_PROB){
-            setAnimation(JOY);
+
+            if(first_time_state){
+              first_time_state= false;
+              left(motor1, motor2, 300);
+              right(motor1, motor2, 300);
+              left(motor1, motor2, 300);
+              right(motor1, motor2, 300);
+              sensors = front_sonar();
+              if(sensors == FRONT_SONAR_COLLISION){
+                  setState(COLLISION);
+                  break;
+               }
+              if(millis() - starting_time_state > ROTATION_TIME_OUT){
+                brake(motor1, motor2);
+              }          
+              setAnimation(JOY);
+            }
         }
         else{
-            setAnimation(DISGUST);
+           if(first_time_state){
+             first_time_state= false;             
+              back(motor1,motor2,50);
+              if(millis() - starting_time_state > ROTATION_TIME_OUT ){
+                left(motor1,motor2,25);
+                right(motor1,motor2,25);
+                sensors = front_sonar();
+                if(sensors == FRONT_SONAR_COLLISION){
+                  setState(COLLISION);
+                  break;
+                }
+                brake(motor1,motor2);
+              }
+             setAnimation(DISGUST);
+           }
         }
-
-        if (sensors == ACCELEROMETER){
-            setState(ANGRY);
-        }
+        if(millis() - starting_time_state > RAND_ANIM_TIME_OUT){
+           sensors = front_sonar();
+                if(sensors == FRONT_SONAR_COLLISION){
+                  setState(COLLISION);
+                }else{
+                  setState(WAIT_INTERACTION);
+                }
+              }
         break;
-    default:
-        break;
-    }
     case COLLISION: 
      /* COLLISION
       * In this state the object detected is too close
@@ -169,15 +224,47 @@ void stateMachine() {
       * the eye reproduce the fear animation 
       * internal petals close
       */
+       if(first_time_state){
+             first_time_state= false;
+             brake(motor1, motor2);
+              
+             if(random(1)>0){
+              left(motor1,motor2,50);
+              right(motor1,motor2,50);
+              left(motor1,motor2,50);
+              right(motor1,motor2,50);
+              if(millis() - starting_time_state > ROTATION_TIME_OUT ){
+                brake(motor1,motor2);
+              }
+             }else{
+              back(motor1,motor2,300);
+              if(millis() - starting_time_state > BACK_TIME_OUT){
+                brake(motor1,motor2);
+              }
+             }
+             setAnimation(FEAR);
+
+             sensors = front_sonar();
+
+             if(sensors == FRONT_SONAR_NEAR || FRONT_SONAR_MEDIUM || FRONT_SONAR_FAR){
+                setState(WAIT_INTERACTION);
+             }else {
+                setState(COLLISION);
+             }
+           }    
+      
     break;
     case WAIT_INTERACTION: 
      /* WAIT
       * The robot enters this state after performing 
       * an animation and wait for an event
-      */    
+      */
+      setAnimation(NEUTRAL);     
+      setState(LOOK_AROUND);
     break;
+    default: break;
+    }
 }
-
 
 // sets the current state of the robot and saves the previous one
 void setState(byte state) {

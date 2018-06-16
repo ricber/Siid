@@ -4,7 +4,6 @@
 
 SoftwareSerial mySoftwareSerial(10, 11); // RX, TX
 
-#define enum emotion_state {NEUTRAL, JOY, ANGER, SADNESS, FEAR, DISGUST} //define all the possible emotion states
 #define SOUND_PROB 5 //probability to play a sound instead of another
 
 /**
@@ -93,7 +92,7 @@ void printDetail(uint8_t type, int value){
   } 
 }
 
-void playAudio(int emotionNumber){
+void playAudio(byte emotion){
   switch(emotion){
     case JOY:
     for(int i=0; i<2; i++){
@@ -111,6 +110,7 @@ void playAudio(int emotionNumber){
         }else{
          myDFPlayer.playFolder(02,002);
         }
+     }
     break;
     case SADNESS:
      for(int i=0; i<2; i++){
@@ -119,6 +119,7 @@ void playAudio(int emotionNumber){
         }else{
          myDFPlayer.playFolder(03,002);
         }
+     }
     break;
     case FEAR:
      for(int i=0; i<2; i++){
@@ -127,6 +128,7 @@ void playAudio(int emotionNumber){
         }else{
          myDFPlayer.playFolder(04,002);
         }
+     }
     break;
     case DISGUST:
      for(int i=0; i<2; i++){
@@ -135,6 +137,7 @@ void playAudio(int emotionNumber){
         }else{
          myDFPlayer.playFolder(05,002);
         }
+     }
     break;
     default: break;
   }
