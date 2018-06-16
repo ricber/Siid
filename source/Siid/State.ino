@@ -4,14 +4,18 @@
 
 // #### DEFINITIONS ####
 #define LK_TIME_OUT 2000 // LOOK_AROUND timeout
-#define FW_TIME_OUT 5000  // FORWARD timeout
+#define SPOT_TIME_OUT 5000  // SPOT ROTATION timeout
 #define SAD_TIME_OUT 5000 // sad animation timeout
+#define EXC_TIME_OUT 3000 // excitement timeout
+#define RAND_ANIM_TIME_OUT 5000 //random animation timeout
 #define HAPPY_PROB 7 // the probability we want our robot to be happy in the random animation (value range [0, 10])
+#define SAD_PROB 5 // the probability to random start the sad animation
 #define ROTATION_TIME_OUT 1000 // amount of time of left and right rotation
 
 
 // #### ROBOT STATE ####
-enum State_enum {LOOK_AROUND, PERSON_DET, FORWARD, STOP_CHECK, ROTATE_SAD, RANDOM_ANIM_PERSON_CHECK, ANGRY}; // all possible states of the robot
+
+enum State_enum {LOOK_AROUND, SPOT_ROTATION, RANDOM_SAD , RANDOM_ANIMATION, ANGRY, EXCITEMENT, WAIT_INTERACTION, COLLISION}; // all possible states of the robot
 byte current_state  = LOOK_AROUND; // current state of the robot
 byte previous_state = LOOK_AROUND; // previous state of the robot
 bool first_time_state; // boolean variable that indicates if you are entering a state for the first time or not
@@ -22,7 +26,7 @@ bool first_time_state; // boolean variable that indicates if you are entering a 
 * THERMOSENSOR_DWN means that the obstacle is an object
 */
 enum Sensors_enum
-{NO_INPUT, THERMOSENSOR_UP, THERMOSENSOR_DWN, FRONT_SONAR, ACCELEROMETER};
+{NO_INPUT, THERMOSENSOR_UP, THERMOSENSOR_DWN, ACCELEROMETER};
 byte sensors = NO_INPUT;
 
 
@@ -78,57 +82,42 @@ void stateMachine() {
             setState(FORWARD); // move forward
         }
         break;
-    case PERSON_DET:
-        /* PERSON DETECTED
-         *  In this state the robot has detected a person
-         *  It wants to know how far is the person
-         *  and if the person is approching fast
+    case SPOT_ROTATION:
+        /* SPOT ROTATION
+         *  In this state the robot has detected an object 
+         *  that is far or has not detected anything.
+         *  The robot rotate LEFT and RIGHT and
+         *  makes little movement FORWARD and BACKWARD.
+         *  The Eye is in the neutral state 
+         *  Internal petals open and close 
+         *  External petals close
          */
-        if (sensors == FRONT_SONAR)
+
+        sensor = front_sonar();
+        if (sensors == FRONT_SONAR_NEAR)
         {
             setState(RANDOM_ANIM_PERSON_CHECK);
         }
 
         break;
-    case FORWARD:
-        /* FORWARD
-         *  In this state the robot move forward
-         *  It stops after a certain amount of time
-         *  or if the front sonar detect something close
+    case EXCITEMENT: 
+        /* EXCITEMENT
+         * In this state the robot moves the Internal petals 
+         * continuosly opening and closing them
+         * it makes also excitement and joy sound
          */
-        forward(motor1, motor2, 150); // go forward
-        if (millis() - starting_time_state > FW_TIME_OUT)
-        {
-            brake(motor1, motor2);
-            setState(LOOK_AROUND);
-        }
-        else if (front_sonar()){
-            setState(STOP_CHECK);
-        }
-        break;
-    case STOP_CHECK:
-        /* STOP_CHECK
-         * In this state the robot first stops the wheels movement
-         * and then it checks what is in front of it, a person or an obstacle
-         */
-        //if (sensors == THERMOSENSOR_DWN)
-        if(1){
-            setState(ROTATE_SAD);
-        }
-        else if (sensors == THERMOSENSOR_UP)
-        {
-            setState(PERSON_DET);
-        }
-        break;
-    case ROTATE_SAD:
-        /* ROTATE
-         * In this state the robot turn randomly right or left to avoid the
-         * obstacle
+         
+    break;     
+    case RANDOM_SAD:
+        /* RANDOM SAD
+         * In this state we perform randomly the animation sad 
+         * with a certain probability otherwise it go back in the previous state
+         * Sad animation : In this state the robot turn right or left
          * Then it starts the sad animation because it likes to interact with
          * people and so it's sad when approches an obstacle
          */
          if (first_time_state) {
-            first_time_state = false;
+            first_time_state = false;  
             if(random(1)) {
                 left(motor1, motor2, 100);
             }
@@ -149,12 +138,12 @@ void stateMachine() {
          }               
         
         break;
-    case RANDOM_ANIM_PERSON_CHECK:
-        /* RANDOM ANIMATION and PERSON PRESENCE CHECK
+    case RANDOM_ANIMATION:
+        /* RANDOM ANIMATION 
          *  In this state we perform a random animation between joy and disgust
-         *  Then we continue to check if the person is still there
-         *  If the person remains there we wait for an interaction
-         *  Otherwise the robot goes away
+         *  Then we continue to check if the object is still there
+         *  If the it remains there we wait for an interaction
+         *  Otherwise the robot moves
          */
         if (random(10) <= HAPPY_PROB){
             setAnimation(JOY);
@@ -170,6 +159,23 @@ void stateMachine() {
     default:
         break;
     }
+    case COLLISION: 
+     /* COLLISION
+      * In this state the object detected is too close
+      * the robot stop moving
+      * and it performs the FEAR animation.      * 
+      * fear animation: the robot moves BACKWARD
+      * emits scared sounds 
+      * the eye reproduce the fear animation 
+      * internal petals close
+      */
+    break;
+    case WAIT_INTERACTION: 
+     /* WAIT
+      * The robot enters this state after performing 
+      * an animation and wait for an event
+      */    
+    break;
 }
 
 
