@@ -2,6 +2,13 @@
 #define DEVMODE 1
 
 
+void setupAll() {
+    setupSpeaker();
+    setupMatrix();
+    setupServo();
+    setupState();
+}
+
 void setup() {
     #if defined(DEVMODE)
         Serial.begin(9600);
@@ -20,12 +27,6 @@ void loop() {
     playAnimation();
 }
 
-void setupAll() {
-    setupSpeaker();
-    setupMatrix();
-    setupServo();
-    setupState();
-}
 
 
 
