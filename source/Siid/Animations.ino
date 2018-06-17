@@ -1,5 +1,5 @@
 // #### ANIMATIONS ####
-enum Animation_enum {NEUTRAL, JOY, ANGER, SADNESS, FEAR, DISGUST, LOOKING, EXCITEMENT,}; // all possible animations of the robot
+enum Animation_enum {NEUTRAL, JOY, ANGER, SADNESS, FEAR, DISGUST, LOOKING, EXCITEMENT}; // all possible animations of the robot
 
 byte current_animation = LOOKING; // current state of the robot
 
