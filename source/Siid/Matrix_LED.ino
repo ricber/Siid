@@ -2,11 +2,16 @@
 #include <Adafruit_NeoMatrix.h>
 #include <Adafruit_GFX.h>
 
+#include "Arduino.h"
+#include "SoftwareSerial.h"
+#include "DFRobotDFPlayerMini.h"
+
 //we define the pin that our NeoPixel panel is plugged into
 #define PIN 2
 
 //define constants 
 int DELAY_EYE = 1; // in ms
+#define SOUND_PROB 5 //probability to play a sound instead of another
 
 //define variables
 byte emotion_prec = 0; //we define it on neutral
@@ -17,6 +22,8 @@ Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(8, 8, PIN,
   NEO_MATRIX_BOTTOM + NEO_MATRIX_LEFT +
   NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG,
   NEO_GRB + NEO_KHZ800);
+
+enum Animation_enum {NEUTRAL, JOY, ANGER, SADNESS, FEAR, DISGUST, LOOKING, EXCITEMENT}; // all possible animations of the robot
 
 struct RGB{
   byte r;
@@ -282,7 +289,8 @@ bool const angry4[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
 
-
+// Player
+DFRobotDFPlayerMini myDFPlayer;
 
 // Check the pixel one after another and fill them if necessary
 void drawEye(bool eye[8][8], struct RGB color) {
@@ -589,3 +597,53 @@ void showEyeAnimation(byte emotion){
   }
 } 
 
+void playAudio(byte emotion){
+  switch(emotion){
+    case JOY:
+    for(int i=0; i<2; i++){
+       if (random(10) <= SOUND_PROB){
+          myDFPlayer.playFolder(01,001);
+        }else{
+         myDFPlayer.playFolder(01,002);
+        }
+    }
+    break;
+    case ANGER:
+     for(int i=0; i<2; i++){
+       if (random(10) <= SOUND_PROB){
+          myDFPlayer.playFolder(02,001);
+        }else{
+         myDFPlayer.playFolder(02,002);
+        }
+     }
+    break;
+    case SADNESS:
+     for(int i=0; i<2; i++){
+       if (random(10) <= SOUND_PROB){
+          myDFPlayer.playFolder(03,001);
+        }else{
+         myDFPlayer.playFolder(03,002);
+        }
+     }
+    break;
+    case FEAR:
+     for(int i=0; i<2; i++){
+       if (random(10) <= SOUND_PROB){
+          myDFPlayer.playFolder(04,001);
+        }else{
+         myDFPlayer.playFolder(04,002);
+        }
+     }
+    break;
+    case DISGUST:
+     for(int i=0; i<2; i++){
+       if (random(10) <= SOUND_PROB){
+          myDFPlayer.playFolder(05,001);
+        }else{
+         myDFPlayer.playFolder(05,002);
+        }
+     }
+    break;
+    default: break;
+  }
+}
