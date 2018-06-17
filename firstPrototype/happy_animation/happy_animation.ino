@@ -154,8 +154,8 @@ void printDetail(uint8_t type, int value);
 // Pins for all inputs, keep in mind the PWM defines must be on PWM pins
 // the default pins listed are the ones used on the Redbot (ROB-12097) with
 // the exception of STBY which the Redbot controls with a physical switch
-  #define AIN1 9
-  #define BIN1 11
+  #define AIN1 7
+  #define BIN1 13
   #define AIN2 8
   #define BIN2 12
   #define PWMA 3
@@ -184,6 +184,23 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+ //put eyes to neutral and do 5 blink at each blink we can consider robot does something with petals. Or we choose to do an action afterwards
+  for (int i=0; i<5; i++)
+  {
+     eyesInlight(NEUTRAL);
+     delay(8*DELAY_EYE); //time to let the programm fully do the animation
+     delay(1500);//to let time before changing
+   
+   // Movement of the petals
+   
+   //Movement on the wheels
+   
+}
+ 
+ //changes eye to joy
+  eyesInlight(JOY);
+  //delay(8*DELAY_EYE); //time to let the programm fully do the animation
+ //moves petals
   myservo.write(80);
   delay(100);
   myservo.write(60);
@@ -194,13 +211,9 @@ void loop() {
   myservo.write(60);
   delay(100);
   myservo.write(90);
-   for (int i=0; i<5; i++)
-  {
-     eyesInlight(JOY);
-     delay(8*DELAY_EYE); //time to let the programm fully do the animation
-     delay(1500);//to let time before changing
-  }
+//plays sound
    myDFPlayer.playFolder(01,002);
+ //moves wheels
    left(motor1, motor2, 300);
    delay(100);
    right(motor1, motor2, 300);
@@ -212,6 +225,8 @@ void loop() {
    brake(motor1,motor2);
    myservo.write(0);
    delay(5000);
+ 
+ 
 }
 
 /**
