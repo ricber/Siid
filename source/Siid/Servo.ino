@@ -4,8 +4,7 @@ Servo myservo; // create servo object to control a servo
 
 void setupServo()
 {
-    myservo.attach(9); // attaches the servo on pin 9 to the servo object
-    Serial.begin(9600);
+    myservo.attach(50); // attaches the servo on pin 9 to the servo object
 }
 
 void moveServo(byte angle, byte waitTime)

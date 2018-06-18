@@ -25,13 +25,13 @@ Developed with ROB-9457
 // Pins for all inputs, keep in mind the PWM defines must be on PWM pins
 // the default pins listed are the ones used on the Redbot (ROB-12097) with
 // the exception of STBY which the Redbot controls with a physical switch
-#define AIN1 9
-#define BIN1 11
-#define AIN2 8
-#define BIN2 12
-#define PWMA 3
-#define PWMB 5
-#define STBY 10
+#define AIN1 25
+#define BIN1 26
+#define AIN2 27
+#define BIN2 24
+#define PWMA 6
+#define PWMB 7
+#define STBY 28
 
 // these constants are used to allow you to make your motor configuration
 // line up with function names like forward.  Value can be 1 or -1

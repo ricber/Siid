@@ -2,18 +2,12 @@
 #define DEVMODE 1
 
 
-void setupAll() {
-    setupSpeaker();
-    setupMatrix();
-    setupServo();
-    setupState();
-}
-
 void setup() {
     #if defined(DEVMODE)
-        Serial.begin(9600);
-        Serial.print("Devmode ON");
+        Serial.begin(115200);
+        Serial.println("Devmode ON");
     #endif
+        
 
     randomSeed(millis()); // we initialize the random generator
 
@@ -22,10 +16,19 @@ void setup() {
 
 void loop() {
     // put your main code here, to run repeatedly:
-
     stateMachine();
     playAnimation();
 }
+
+void setupAll() {
+    setupSpeaker();
+    setupMatrix();
+    setupServo();
+    setupState();
+    setupSonars();
+    setupAnimation();
+}
+
 
 
 
