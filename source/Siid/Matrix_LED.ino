@@ -501,7 +501,6 @@ void eyesInlight(byte emotion)
           break;
        }
        emotion_prec=emotion;
-       Serial.println(emotion_prec);
      }
   
    else

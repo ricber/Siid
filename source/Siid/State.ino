@@ -77,6 +77,10 @@ void stateMachine() {
          *  Internal petals are closed
          *  External petals are opened
          */ 
+        #if defined(DEVMODE)
+          Serial.print("State: ");
+          Serial.println("LOOK AROUND");
+        #endif
         setAnimation(LOOKING);
         sensors = front_sonar();
         if (millis() - starting_time_state > LK_TIME_OUT){
@@ -103,6 +107,10 @@ void stateMachine() {
          *  Internal petals open and close 
          *  External petals close
          */
+        #if defined(DEVMODE)
+          Serial.print("State: ");
+          Serial.println("SPOT ROTATION");
+        #endif
         if(first_time_state){
             first_time_state = false;
             setAnimation(NEUTRAL);
@@ -126,6 +134,10 @@ void stateMachine() {
          * continuosly opening and closing them
          * it makes also excitement and joy sound
          */
+        #if defined(DEVMODE)
+          Serial.print("State: ");
+          Serial.println("EXCITEMENT");
+        #endif
         if(first_time_state){
             first_time_state = false; 
             setAnimation(EXCITEMENT);  
@@ -154,6 +166,10 @@ void stateMachine() {
          * Sad animation : In this state the robot turn right and left very or  
          * moves very slowly
          */
+         #if defined(DEVMODE)
+          Serial.print("State: ");
+          Serial.println("RANDOM SAD");
+        #endif
          if (first_time_state) {
             first_time_state = false;  
             setAnimation(SADNESS);
@@ -188,6 +204,10 @@ void stateMachine() {
          *  If the it remains there we wait for an interaction
          *  Otherwise the robot moves
          */
+        #if defined(DEVMODE)
+          Serial.print("State: ");
+          Serial.println("RANDOM ANIMATION");
+        #endif
         if (random(10) <= HAPPY_PROB){
 
             if(first_time_state){
@@ -243,6 +263,10 @@ void stateMachine() {
       * the eye reproduce the fear animation 
       * internal petals close
       */
+      #if defined(DEVMODE)
+          Serial.print("State: ");
+          Serial.println("COLLISION");
+        #endif
        if(first_time_state){
              first_time_state= false;
              brake(motor1, motor2);
@@ -278,6 +302,7 @@ void stateMachine() {
       * The robot enters this state after performing 
       * an animation and wait for an event
       */
+     
       setAnimation(NEUTRAL);     
       setState(LOOK_AROUND);
     break;
@@ -291,10 +316,6 @@ void setState(byte state) {
     current_state       = state;
     first_time_state = true;
     starting_time_state = millis();
-    #if defined(DEVMODE)
-        Serial.print("State: ");
-        Serial.println(state);
-    #endif
 }
 
 void setupState() {

@@ -5,16 +5,15 @@ byte current_animation; // current aniamtion of the robot
 
 void setAnimation(byte animation) {
     current_animation = animation;
-    #if defined(DEVMODE)
-        Serial.print("Animation: ");
-        Serial.println(animation);
-    #endif
-    playAnimation();
 }
 
 void playAnimation() {
     switch (current_animation) {
         case NEUTRAL:
+            #if defined(DEVMODE)
+            Serial.print("Animation: ");
+            Serial.println("NEUTRAL");
+            #endif
             moveServo(0,0);
             break;
         case LOOKING:
@@ -23,6 +22,10 @@ void playAnimation() {
             *  Internal petals are closed
             *  External petals are open
             */
+            #if defined(DEVMODE)
+            Serial.print("Animation: ");
+            Serial.println("LOOKING");
+            #endif
             moveServo(20, 1000);
             moveServo(0, 1000);
             break;
@@ -38,6 +41,10 @@ void playAnimation() {
             *  Eye with happy patterns
             *  Sphere with bright colors
             */
+            #if defined(DEVMODE)
+            Serial.print("Animation: ");
+            Serial.println("JOY");
+            #endif
             moveServo(45, 500);
             moveServo(90, 2000);
             moveServo(0, 500);
@@ -52,6 +59,10 @@ void playAnimation() {
             /* ANGER
             * 
             */
+            #if defined(DEVMODE)
+            Serial.print("Animation: ");
+            Serial.println("ANGER");
+            #endif
             break;
         case SADNESS:
             /* SADNESS
@@ -60,6 +71,10 @@ void playAnimation() {
             * Make sound from a set of sad sounds
             * Sphere of blue colors
             */
+            #if defined(DEVMODE)
+            Serial.print("Animation: ");
+            Serial.println("SADNESS");
+            #endif
             moveServo(30, 1000);
             moveServo(0, 1000);
             playAudio(SADNESS);
@@ -78,6 +93,10 @@ void playAnimation() {
             * Make sound from a set of fear sounds
             * Sphere of violet colors
             */
+            #if defined(DEVMODE)
+            Serial.print("Animation: ");
+            Serial.println("FEAR");
+            #endif
             moveServo(0,0);
             showEyeAnimation(FEAR);
             break;
@@ -87,12 +106,15 @@ void playAnimation() {
             *  Eye with disgust patterns
             *  Make sound from a set of disgust sounds
             *  Sphere of green colors
-            */  
+            */
+            #if defined(DEVMODE)
+            Serial.print("Animation: ");
+            Serial.println("DISGUST");
+            #endif 
             moveServo(0,0);
             moveServo(45, 100);
             showEyeAnimation(DISGUST);
             moveServo(0,0);
-            delay(1000);
             showEyeAnimation(DISGUST);         
             break;
         default:
