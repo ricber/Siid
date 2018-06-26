@@ -11,11 +11,9 @@
 
 //define constants 
 int DELAY_EYE = 1; // in ms
-#define SOUND_PROB 5 //probability to play a sound instead of another
 
 //define variables
 byte emotion_prec = 0; //we define it on neutral
-int emot=0;
 
 //we initialize our 8×8 matrix using the NeoMatrix library
 Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(8, 8, PIN,
@@ -293,15 +291,14 @@ void drawEye(bool eye[8][8], struct RGB color) {
     for(uint16_t column=0; column < 8; column++) {
       if (eye[row][column] == 1) { 
           matrix.drawPixel(column, row, matrix.Color(color.r, color.g, color.b));
-          matrix.show();
-        }
+      }
       else
       {
           matrix.drawPixel(column, row, matrix.Color(0, 0, 0));
-          matrix.show();
       }
     }
   }
+  matrix.show();
 }
 
 /**
@@ -319,7 +316,7 @@ void eyesInlight(byte emotion)
    * 5 disgust
    ##########*/
 
-  if (emotion!=emotion_prec) { 
+  if (emotion != emotion_prec) { 
      switch(emotion_prec) {
         case NEUTRAL:
           drawEye(neutral1, vanillia);
@@ -409,9 +406,11 @@ void eyesInlight(byte emotion)
         default:
           drawEye(turned_off, vanillia);                
           break;
-     }
- 
-    switch(emotion) {
+        }
+   }
+   else
+   {
+     switch(emotion) {
         case NEUTRAL:
           drawEye(neutral1, vanillia);
           delay(DELAY_EYE);
@@ -501,63 +500,8 @@ void eyesInlight(byte emotion)
           drawEye(turned_off, vanillia);                
           break;
        }
-       emotion_prec=emotion;
+        emotion_prec=emotion;
      }
-  
-   else
-     {
-       switch(emotion) {
-        case NEUTRAL:
-          drawEye(neutral1, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral2, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral3, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral4, vanillia);
-          delay(DELAY_EYE);
-          drawEye(turned_off, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral4, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral3, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral2, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanillia);
-          emotion_prec=emotion;  
-          break;
-          
-        case JOY:
-          drawEye(happy4, yellow4);
-          emotion_prec=emotion;
-          break;
-          
-        case ANGER:
-          drawEye(angry4, red4);
-          emotion_prec=emotion;
-          break;
-          
-        case SADNESS:
-          drawEye(sadness4, blue4);
-          emotion_prec=emotion;
-          break;
-          
-        case FEAR:
-          drawEye(fear4, purple4);
-          emotion_prec=emotion;  
-          break;
-          
-        case DISGUST:
-          drawEye(disgust4, green4);
-          emotion_prec=emotion;
-          break;
-          
-        default:
-          drawEye(turned_off, vanillia);            
-          break;
-       }
-     }    
 }    
 
 /**
