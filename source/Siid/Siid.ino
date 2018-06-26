@@ -16,8 +16,14 @@ void setup() {
 
 void loop() {
     // put your main code here, to run repeatedly:
+    //SENSOR DETECTION
     front_sonar();
+    front_thermo();
+    
+    //STATE UPDATES
     stateMachine();
+
+    //PLAY ANIMATION
     playAnimation();
 }
 

@@ -1,10 +1,28 @@
 // #### ANIMATIONS ####
 enum Animation_enum {NEUTRAL, LOOKING, EXCITEMENT, JOY, ANGER, SADNESS, FEAR, DISGUST}; // all possible animations of the robot
 
+// ### DEFINITION ###
+#define LOOKING_TIME_OUT 800
+#define JOY_SERVO_TIME_OUT 200
+#define DISGUST_SERVO_TIME_OUT 150
+#define JOY_EYE_TIME_OUT 6500
+#define SAD_SERVO_TIME_OUT 1500
+#define SAD_ANIM_TIME_OUT 8000
+#define FEAR_SERVO_TIME_OUT 2000
+
 byte current_animation; // current aniamtion of the robot
+
+bool first_animation_state;
+
+// #### TIME ####
+unsigned long initial_animation_time;
+
+
 
 void setAnimation(byte animation) {
     current_animation = animation;
+    first_animation_state = true;
+    initial_animation_time = millis();
 }
 
 void playAnimation() {
@@ -14,7 +32,7 @@ void playAnimation() {
             Serial.print("Animation: ");
             Serial.println("NEUTRAL");
             #endif
-            moveServo(0,0);
+            moveServo(0);
             break;
         case LOOKING:
             /* LOOKING
@@ -26,8 +44,10 @@ void playAnimation() {
             Serial.print("Animation: ");
             Serial.println("LOOKING");
             #endif
-            moveServo(20, 1000);
-            moveServo(0, 1000);
+            moveServo(20);
+            if(millis() - initial_animation_time > LOOKING_TIME_OUT){
+              moveServo(0);
+            }
             break;
         case EXCITEMENT:
             /* EXCITEMENT
@@ -45,15 +65,33 @@ void playAnimation() {
             Serial.print("Animation: ");
             Serial.println("JOY");
             #endif
-            moveServo(45, 500);
-            moveServo(90, 2000);
-            moveServo(0, 500);
-            moveServo(60, 200);
-            showEyeAnimation(JOY);
-            moveServo(80, 200);
-            moveServo(60, 200);
-            moveServo(80, 200);
-            showEyeAnimation(JOY);
+
+            if( first_animation_state){
+              first_animation_state = false;
+              moveServo(45);
+              if(millis() - initial_animation_time > JOY_SERVO_TIME_OUT){
+                 moveServo(90);
+                 long newTime = millis();
+                 if(millis() - newTime > JOY_SERVO_TIME_OUT){
+                  moveServo(0);
+                  newTime = millis();
+                  if(millis() - newTime > JOY_SERVO_TIME_OUT){
+                    moveServo(60);
+                  }
+                 }
+              }             
+              showEyeAnimation(JOY);
+              if(millis() - initial_animation_time > JOY_EYE_TIME_OUT){
+               long newTime = millis();
+               if(millis() - newTime > JOY_SERVO_TIME_OUT){
+                  moveServo(80);
+                  newTime = millis();
+                  if(millis() - newTime > JOY_SERVO_TIME_OUT){
+                    moveServo(60);
+                  }
+                 }
+              }
+            }
             break;
         case ANGER:
             /* ANGER
@@ -75,14 +113,26 @@ void playAnimation() {
             Serial.print("Animation: ");
             Serial.println("SADNESS");
             #endif
-            moveServo(30, 1000);
-            moveServo(0, 1000);
-            playAudio(SADNESS);
-            moveServo(45, 1000);
-            moveServo(0, 1000);
-            moveServo(60, 500);
-            showEyeAnimation(SADNESS);
-            moveServo(0, 0);
+
+            if(first_animation_state){
+              first_animation_state = false;
+              moveServo(30);
+              colorSadness();
+              playAudio(SADNESS);
+              if(millis() - initial_animation_time > SAD_SERVO_TIME_OUT){
+                moveServo(0);
+                long newTime = millis();
+                if(millis() - newTime > SAD_SERVO_TIME_OUT){
+                  moveServo(45);
+                  showEyeAnimation(SADNESS);                  
+                }
+              }
+
+              if(millis() - initial_animation_time > SAD_ANIM_TIME_OUT){
+                moveServo(0);
+              }
+              
+            }
             break;
         case FEAR:
             /* FEAR
@@ -96,11 +146,15 @@ void playAnimation() {
             Serial.print("Animation: ");
             Serial.println("FEAR");
             #endif
-            colorFear();
-            moveServo(0,0);
-           showEyeAnimation(FEAR);
-            //turn off the sphere
-            turnOff(); 
+            if(first_animation_state){
+              first_animation_state = false;
+              colorFear();
+              moveServo(0);
+              if(millis() - initial_animation_time > FEAR_SERVO_TIME_OUT){
+                moveServo(60);
+                 showEyeAnimation(FEAR); 
+              }
+            } 
             break;
         case DISGUST:
             /* DISGUST
@@ -113,14 +167,17 @@ void playAnimation() {
             Serial.print("Animation: ");
             Serial.println("DISGUST");
             #endif 
-            moveServo(0,0);
-            moveServo(45, 100);
-            colorDisgust();
-            showEyeAnimation(DISGUST);
-            moveServo(0,0);
-            showEyeAnimation(DISGUST);
-            //turn off the sphere
-            turnOff();         
+
+            if(first_animation_state){
+              first_animation_state = false;
+              
+              moveServo(0);
+              if(millis() - initial_animation_time > DISGUST_SERVO_TIME_OUT){
+                moveServo(60);
+                 colorDisgust();
+                showEyeAnimation(DISGUST);
+              }             
+            }                 
             break;
         default:
             break;
@@ -128,6 +185,7 @@ void playAnimation() {
 }
 
 void setupAnimation(){
+    initial_animation_time = millis();
     current_animation = LOOKING;
 }
 
