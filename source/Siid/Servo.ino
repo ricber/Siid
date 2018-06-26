@@ -1,10 +1,15 @@
 #include <Servo.h>
 
 Servo myservo; // create servo object to control a servo
+#define SERVO_PIN 22
 
 void setupServo()
 {
-    myservo.attach(24); // attaches the servo on pin 9 to the servo object
+    myservo.attach(SERVO_PIN); // attaches the servo on pin 9 to the servo object
+    moveServo(90); //petals closed
+    #if defined(DEVMODE)
+        Serial.println("SERVO setup");
+    #endif
 }
 
 void moveServo(byte angle)

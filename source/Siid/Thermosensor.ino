@@ -33,11 +33,16 @@ unsigned long last_measurement_time_thermo; // state beginning execution time
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
 void setupThermoSensor() {
-  Serial.println("Thermosensor SETUP begin"); 
-  mlx.begin();  
+    /*
+    #if defined(DEVMODE)
+        Serial.println("Thermosensor SETUP begin"); 
+    #endif
+    mlx.begin();  
+    */
 }
 
 void front_thermo() {
+    /*
   if (millis() - last_measurement_time_thermo >= MSRMNT_TIME_OUT){
     //read the temperature
     float ambientTemp = mlx.readAmbientTempC();
@@ -66,4 +71,5 @@ void front_thermo() {
       }
     }
   }
+   */
 }

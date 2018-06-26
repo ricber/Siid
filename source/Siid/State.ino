@@ -7,9 +7,9 @@
 #define SPOT_TIME_OUT 5000  // SPOT ROTATION timeout
 #define RAND_SAD_TIME_OUT 5000 // random sad animation timeout
 #define EXC_TIME_OUT 8000 // excitement timeout
-#define RAND_ANIM_TIME_OUT 10000 //random animation timeout
+#define RAND_ANIM_TIME_OUT 4500 //random animation timeout
 #define HAPPY_PROB 7 // the probability we want our robot to be happy in the random animation (value range [0, 10])
-#define RAND_SAD_PROB 3 // the probability to random start the sad animation
+#define RAND_SAD_PROB 2 // the probability to random start the sad animation
 #define ROTATION_TIME_OUT 1000 // amount of time of left and right rotation
 #define MOVE_TIME_OUT 2000
 #define WAIT_TIME_OUT 2000 //time out for waiting to do another action
@@ -40,17 +40,16 @@ unsigned long timer_excitement;
 unsigned long timer_rand_sad;
 
 // #### WHEELS MOTORS ####
-
 // Pins for all inputs, keep in mind the PWM defines must be on PWM pins
 // the default pins listed are the ones used on the Redbot (ROB-12097) with
 // the exception of STBY which the Redbot controls with a physical switch
-#define AIN1 25
-#define BIN1 26
-#define AIN2 27
-#define BIN2 24
-#define PWMA 6
-#define PWMB 7
-#define STBY 28
+#define AIN1 34
+#define BIN1 38
+#define AIN2 32
+#define BIN2 40
+#define PWMA 2
+#define PWMB 3
+#define STBY 36
 
 // these constants are used to allow you to make your motor configuration
 // line up with function names like forward.  Value can be 1 or -1
@@ -76,25 +75,32 @@ void stateMachine() {
          *  Internal petals are closed
          *  External petals are opened
          */ 
-        #if defined(DEVMODE)
-          Serial.print("State: ");
-          Serial.println("LOOK AROUND");
-        #endif
-        setAnimation(LOOKING);
         sensors = front_sonar();
-        if (millis() - starting_time_state > LK_TIME_OUT){
+        if (first_time_state){
+            setAnimation(LOOKING);
+            #if defined(DEVMODE)
+                Serial.print("State: ");
+                Serial.println("LOOK AROUND");
+            #endif
+            first_time_state = false;
+        }
+        else if (millis() - starting_time_state > LK_TIME_OUT){
               setState(SPOT_ROTATION);               
-            }else if(sensors == FRONT_SONAR_COLLISION){    
-              setState(COLLISION);
-            }else if(sensors == FRONT_SONAR_NEAR){
-              setState(RANDOM_ANIMATION);              
-            }else if(sensors == FRONT_SONAR_MEDIUM){
-              setState(EXCITEMENT_STATE);
-            }else if(sensors == FRONT_SONAR_FAR){
-                if(random(10) >= (10 - RAND_SAD_PROB)){
-                    setState(RANDOM_SAD);
-                }
             }
+        else if(sensors == FRONT_SONAR_COLLISION){    
+              setState(COLLISION);
+            }
+        else if(sensors == FRONT_SONAR_NEAR){
+              setState(RANDOM_ANIMATION);              
+            }
+        else if(sensors == FRONT_SONAR_MEDIUM){
+              setState(EXCITEMENT_STATE);
+        }
+        else if(sensors == FRONT_SONAR_FAR){
+           if(random(10) >= (10 - RAND_SAD_PROB)){
+                    setState(RANDOM_SAD);
+              }
+           }
        break;
     case SPOT_ROTATION:
         /* SPOT ROTATION
@@ -106,10 +112,6 @@ void stateMachine() {
          *  Internal petals open and close 
          *  External petals close
          */
-        #if defined(DEVMODE)
-          Serial.print("State: ");
-          Serial.println("SPOT ROTATION");
-        #endif
         if(first_time_state){
             first_time_state = false;
             setAnimation(NEUTRAL);
@@ -117,6 +119,11 @@ void stateMachine() {
             right(motor1, motor2, 200);
             left(motor1, motor2, 200);
             right(motor1,motor2,200);
+
+            #if defined(DEVMODE)
+                Serial.print("State: ");
+                Serial.println("SPOT ROTATION");
+            #endif
         }else if (millis() - starting_time_state > ROTATION_TIME_OUT) {
             brake(motor1, motor2);
         }        
@@ -133,14 +140,15 @@ void stateMachine() {
          * continuosly opening and closing them
          * it makes also excitement and joy sound
          */
-        #if defined(DEVMODE)
-          Serial.print("State: ");
-          Serial.println("EXCITEMENT");
-        #endif
         if(first_time_state){
             first_time_state = false; 
             setAnimation(EXCITEMENT);  
             timer_excitement = millis();
+
+            #if defined(DEVMODE)
+                Serial.print("State: ");
+                Serial.println("EXCITEMENT");
+            #endif
         }else if(millis() - starting_time_state >= EXC_TIME_OUT){
           brake(motor1, motor2);  
           setState(LOOK_AROUND);
@@ -165,17 +173,18 @@ void stateMachine() {
          * Sad animation : In this state the robot turn right and left very or  
          * moves very slowly
          */
-         #if defined(DEVMODE)
-          Serial.print("State: ");
-          Serial.println("RANDOM SAD");
-        #endif
          if (first_time_state) {
             first_time_state = false;  
             setAnimation(SADNESS);
             timer_rand_sad = millis(); 
+
+            #if defined(DEVMODE)
+                Serial.print("State: ");
+                Serial.println("RANDOM SAD");
+            #endif
          }else if (millis() - starting_time_state >= RAND_SAD_TIME_OUT) {
             brake(motor1, motor2);   
-            setState(LOOK_AROUND);  
+            setState(LOOK_AROUND); 
          }
          else {
              switch(selection(millis() - timer_rand_sad, WHE_SAD_TIME_OUT, 4)){
@@ -203,14 +212,15 @@ void stateMachine() {
          *  If the it remains there we wait for an interaction
          *  Otherwise the robot moves
          */
-        #if defined(DEVMODE)
-          Serial.print("State: ");
-          Serial.println("RANDOM ANIMATION");
-        #endif
         if (random(10) <= HAPPY_PROB){
 
             if(first_time_state){
               first_time_state= false;
+
+               #if defined(DEVMODE)
+                    Serial.print("State: ");
+                    Serial.println("RANDOM ANIMATION JOY");
+               #endif
               left(motor1, motor2, 300);
               right(motor1, motor2, 300);
               left(motor1, motor2, 300);
@@ -228,7 +238,12 @@ void stateMachine() {
         }
         else{
            if(first_time_state){
-             first_time_state= false;             
+             first_time_state= false;  
+              #if defined(DEVMODE)
+                    Serial.print("State: ");
+                    Serial.println("RANDOM ANIMATION DISGUST");
+               #endif
+                        
               back(motor1,motor2,50);
               if(millis() - starting_time_state > ROTATION_TIME_OUT ){
                 left(motor1,motor2,25);
@@ -262,12 +277,14 @@ void stateMachine() {
       * the eye reproduce the fear animation 
       * internal petals close
       */
-      #if defined(DEVMODE)
-          Serial.print("State: ");
-          Serial.println("COLLISION");
-        #endif
        if(first_time_state){
              first_time_state= false;
+
+             #if defined(DEVMODE)
+                Serial.print("State: ");
+                Serial.println("COLLISION");
+             #endif
+             
              brake(motor1, motor2);
               
              if(random(1)>0){
@@ -295,31 +312,36 @@ void stateMachine() {
              }
            }    
       
-    break;
+        break;
     case WAIT_INTERACTION: 
-     /* WAIT
-      * The robot enters this state after performing 
-      * an animation and wait for an event
-      */
+        /* WAIT
+         * The robot enters this state after performing 
+        * an animation and wait for an event
+        */
      
-      setAnimation(NEUTRAL);     
-      setState(LOOK_AROUND);
-    break;
+        setAnimation(NEUTRAL);     
+        setState(LOOK_AROUND);
+        break;
     case FEAR_STATE:
-    /*FEAR
-     * In this state the robot trig the Fear animation
-     * the wheels go backward fast
-     */
-     if(first_time_state){
-       first_time_state= false;
-       back(motor1,motor2,255);
-       if(millis() - starting_time_state > BACK_TIME_OUT){
-          brake(motor1,motor2);
-       }
-       setAnimation(FEAR);       
-     }
-    break;
-    default: break;
+        /*FEAR
+        * In this state the robot trig the Fear animation
+        * the wheels go backward fast
+        */
+        if(first_time_state){
+        first_time_state= false;
+         #if defined(DEVMODE)
+             Serial.print("State: ");
+             Serial.println("FEAR STATE");
+        #endif
+        back(motor1,motor2,255);
+        if(millis() - starting_time_state > BACK_TIME_OUT){
+            brake(motor1,motor2);
+        }
+        setAnimation(FEAR);       
+        }
+        break;
+    default: 
+        break;
     }
 }
 

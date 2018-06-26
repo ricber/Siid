@@ -8,18 +8,12 @@ void setup() {
         Serial.println("Devmode ON");
     #endif
         
-
     randomSeed(millis()); // we initialize the random generator
 
     setupAll(); // setup of all components
 }
 
-void loop() {
-    // put your main code here, to run repeatedly:
-    //SENSOR DETECTION
-    front_sonar();
-    front_thermo();
-    
+void loop() {    
     //STATE UPDATES
     stateMachine();
 
@@ -36,7 +30,7 @@ void setupAll() {
     setupState();
     setupSonars();
     setupAnimation();
-    setupRGBLed();
+    setupSphere();
 }
 
 

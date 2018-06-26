@@ -1,7 +1,7 @@
 #include <NewPing.h>
 
-#define TRIGGER_PIN 50
-#define ECHO_PIN 48
+#define TRIGGER_PIN 46
+#define ECHO_PIN 44
 #define MAX_DISTANCE 400
 #define DISTANCE_VERY_CLOSE 4
 #define DISTANCE_NEAR 80 
@@ -30,12 +30,12 @@ byte front_sonar() {
     
         if(distance >= DISTANCE_FAR || distance == 0){
           
-            //case state FRONT_SONAR_FAR or OUT OF RANGE
-             #if defined(DEVMODE)
-        Serial.print("Sonar State: ");
-        Serial.println("FRONT SONAR FAR");
+          //case state FRONT_SONAR_FAR or OUT OF RANGE
+          #if defined(DEVMODE)
+                Serial.print("Sonar State: ");
+                Serial.println("FRONT SONAR FAR");
          #endif
-            return FRONT_SONAR_FAR;
+         return FRONT_SONAR_FAR;
             
         }else if(distance <= DISTANCE_MEDIUM && distance > DISTANCE_NEAR){
             //case state FRONT_SONAR_MEDIUM 

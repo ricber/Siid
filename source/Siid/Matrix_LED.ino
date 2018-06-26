@@ -318,6 +318,7 @@ void eyesInlight(byte emotion)
    * 4 fear
    * 5 disgust
    ##########*/
+
   if (emotion!=emotion_prec) { 
      switch(emotion_prec) {
         case NEUTRAL:
@@ -556,8 +557,7 @@ void eyesInlight(byte emotion)
           drawEye(turned_off, vanillia);            
           break;
        }
-     }
-    
+     }    
 }    
 
 /**
