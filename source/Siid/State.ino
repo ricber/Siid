@@ -1,7 +1,6 @@
 // #### LIBRARIES ####
 #include <SparkFun_TB6612.h>
 
-
 // #### DEFINITIONS ####
 #define LK_TIME_OUT 2000 // LOOK_AROUND timeout
 #define BACK_TIME_OUT 500 // timeout to go BACKWARD
@@ -21,7 +20,7 @@
 
 // #### ROBOT STATE ####
 
-enum State_enum {LOOK_AROUND, SPOT_ROTATION, RANDOM_SAD , RANDOM_ANIMATION, ANGRY, EXCITEMENT_STATE, WAIT_INTERACTION, COLLISION}; // all possible states of the robot
+enum State_enum {LOOK_AROUND, SPOT_ROTATION, RANDOM_SAD , RANDOM_ANIMATION, ANGRY, EXCITEMENT_STATE, WAIT_INTERACTION, COLLISION, FEAR_STATE}; // all possible states of the robot
 byte current_state; // current state of the robot
 byte previous_state; // previous state of the robot
 bool first_time_state; // boolean variable that indicates if you are entering a state for the first time or not
@@ -305,6 +304,20 @@ void stateMachine() {
      
       setAnimation(NEUTRAL);     
       setState(LOOK_AROUND);
+    break;
+    case FEAR_STATE:
+    /*FEAR
+     * In this state the robot trig the Fear animation
+     * the wheels go backward fast
+     */
+     if(first_time_state){
+       first_time_state= false;
+       back(motor1,motor2,255);
+       if(millis() - starting_time_state > BACK_TIME_OUT){
+          brake(motor1,motor2);
+       }
+       setAnimation(FEAR);       
+     }
     break;
     default: break;
     }

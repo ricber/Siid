@@ -2,7 +2,7 @@
 #include "SoftwareSerial.h"
 #include "DFRobotDFPlayerMini.h"
 
-SoftwareSerial mySoftwareSerial(10, 11); // RX, TX
+SoftwareSerial mySoftwareSerial(10,11); // RX, TX
 
 /**
  * folders: 
@@ -33,6 +33,7 @@ void setup() {
   Serial.println(F("DFPlayer Mini online."));
   
   myDFPlayer.volume(10);  //Set volume value. From 0 to 30
+  myDFPlayer.playFolder(01,001);
   }
 
 void printDetail(uint8_t type, int value){

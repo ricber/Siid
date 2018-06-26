@@ -229,6 +229,7 @@ bool const angry4[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
+            
 
    bool const neutral1[8][8] = {  
              {0, 0, 1, 1, 1, 1, 0, 0},
@@ -388,7 +389,7 @@ void eyesInlight(int emotion)
           drawEye(neutral1, vanillia);
           delay(DELAY_EYE);            
           break;
-          
+        
         case 5:
           drawEye(disgust4,green4);
           delay(DELAY_EYE);
@@ -479,7 +480,7 @@ void eyesInlight(int emotion)
           drawEye(fear4, purple4);
           delay(DELAY_EYE);
           break;
-          
+        
         case 5:
           drawEye(neutral1, vanillia);
           delay(DELAY_EYE); 
@@ -492,7 +493,7 @@ void eyesInlight(int emotion)
           drawEye(disgust4,green4);
           delay(DELAY_EYE);   
           break;
-          
+         
         default:
           drawEye(turned_off, vanillia);                
           break;
@@ -567,11 +568,6 @@ void setup() {
   matrix.setTextColor( matrix.Color(255, 255, 255) );
   matrix.setTextWrap(false);
 
-  /* TO TEST the consumption of the matrix with all LED turned on I used the following instructions
-   *  matrix.fillScreen(matrix.Color(red.r, red.g, red.b));
-   *  matrix.show();
-  */
-
 }
 
 void loop() {
@@ -611,12 +607,13 @@ void loop() {
      delay(8*DELAY_EYE); //time to let the programm fully do the animation
      delay(1500);//to let time before changing
   }
+  /**
   for (int i=0; i<5; i++)
   {
      eyesInlight(5);
      delay(8*DELAY_EYE); //time to let the programm fully do the animation
      delay(1500);//to let time before changing
-  }
+  }*/
   
   
 }

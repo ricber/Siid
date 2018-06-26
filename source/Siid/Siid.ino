@@ -21,13 +21,16 @@ void loop() {
     playAnimation();
 }
 
+//Setup all the single components
 void setupAll() {
     setupSpeaker();
     setupMatrix();
+    setupThermoSensor();
     setupServo();
     setupState();
     setupSonars();
     setupAnimation();
+    setupRGBLed();
 }
 
 

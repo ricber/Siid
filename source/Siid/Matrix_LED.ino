@@ -7,7 +7,7 @@
 #include "DFRobotDFPlayerMini.h"
 
 //we define the pin that our NeoPixel panel is plugged into
-#define PIN 2
+#define PIN 52
 
 //define constants 
 int DELAY_EYE = 1; // in ms

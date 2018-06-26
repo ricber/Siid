@@ -1,7 +1,7 @@
 #include <NewPing.h>
 
-#define TRIGGER_PIN 43
-#define ECHO_PIN 41
+#define TRIGGER_PIN 50
+#define ECHO_PIN 48
 #define MAX_DISTANCE 400
 #define DISTANCE_VERY_CLOSE 4
 #define DISTANCE_NEAR 80 

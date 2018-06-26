@@ -82,7 +82,6 @@ void playAnimation() {
             moveServo(0, 1000);
             moveServo(60, 500);
             showEyeAnimation(SADNESS);
-            delay(500);
             moveServo(0, 0);
             break;
         case FEAR:
@@ -97,8 +96,11 @@ void playAnimation() {
             Serial.print("Animation: ");
             Serial.println("FEAR");
             #endif
+            colorFear();
             moveServo(0,0);
-            showEyeAnimation(FEAR);
+           showEyeAnimation(FEAR);
+            //turn off the sphere
+            turnOff(); 
             break;
         case DISGUST:
             /* DISGUST
@@ -113,9 +115,12 @@ void playAnimation() {
             #endif 
             moveServo(0,0);
             moveServo(45, 100);
+            colorDisgust();
             showEyeAnimation(DISGUST);
             moveServo(0,0);
-            showEyeAnimation(DISGUST);         
+            showEyeAnimation(DISGUST);
+            //turn off the sphere
+            turnOff();         
             break;
         default:
             break;
