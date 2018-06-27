@@ -1,5 +1,5 @@
 // #### ANIMATIONS ####
-enum Animation_enum {NEUTRAL, LOOKING, EXCITEMENT, JOY, ANGER, SADNESS, FEAR, DISGUST}; // all possible animations of the robot
+enum Animation_enum {LOOKING, SADNESS, EXCITEMENT, JOY, ANGER, FEAR, DISGUST}; // all possible animations of the robot
 
 // ### DEFINITION ###
 #define LOOKING_TIME_OUT 800
@@ -10,8 +10,7 @@ enum Animation_enum {NEUTRAL, LOOKING, EXCITEMENT, JOY, ANGER, SADNESS, FEAR, DI
 #define FEAR_SERVO_TIME_OUT 2000
 
 byte current_animation; // current aniamtion of the robot
-
-bool first_animation_state;
+bool first_time_animation;
 
 // #### TIME ####
 unsigned long initial_animation_time;
@@ -19,78 +18,23 @@ unsigned long timer_anim_sad;
 
 void playAnimation() {
     switch (current_animation) {
-        case NEUTRAL:
-            #if defined(DEVMODE)
-                Serial.print("Animation: ");
-                Serial.println("NEUTRAL");
-            #endif
-            moveServo(0);
-            break;
         case LOOKING:
             /* LOOKING
             *  Here the robot is moving the eye left and right
             *  Internal petals are closed
             *  External petals are open
             */
-            if(first_animation_state){
-                first_animation_state = false;
+            if(first_time_animation){
+                first_time_animation = false;
                 #if defined(DEVMODE)
                     Serial.print("Animation: ");
                     Serial.println("LOOKING");
                 #endif
+                setEye(LOOKING);
             }
-            break;
-        case EXCITEMENT:
-            /* EXCITEMENT
-            * 
-            */
-            break;
-        case JOY:
-            /* JOY
-            *  Open and close rapidly internal
-            *  Make a random sound from a set of happy sounds
-            *  Eye with happy patterns
-            *  Sphere with bright colors
-            */
-            if( first_animation_state){
-              first_animation_state = false;
-               #if defined(DEVMODE)
-                    Serial.print("Animation: ");
-                    Serial.println("JOY");
-                #endif
-              moveServo(45);
-              if(millis() - initial_animation_time > JOY_SERVO_TIME_OUT){
-                 moveServo(90);
-                 long newTime = millis();
-                 if(millis() - newTime > JOY_SERVO_TIME_OUT){
-                  moveServo(0);
-                  newTime = millis();
-                  if(millis() - newTime > JOY_SERVO_TIME_OUT){
-                    moveServo(60);
-                  }
-                 }
-              }             
-              showEyeAnimation(JOY);
-              if(millis() - initial_animation_time > JOY_EYE_TIME_OUT){
-               long newTime = millis();
-               if(millis() - newTime > JOY_SERVO_TIME_OUT){
-                  moveServo(80);
-                  newTime = millis();
-                  if(millis() - newTime > JOY_SERVO_TIME_OUT){
-                    moveServo(60);
-                  }
-                 }
-              }
+            else {
+                showEyeAnimation();
             }
-            break;
-        case ANGER:
-            /* ANGER
-            * 
-            */
-            #if defined(DEVMODE)
-            Serial.print("Animation: ");
-            Serial.println("ANGER");
-            #endif
             break;
         case SADNESS:
             /* SADNESS
@@ -99,13 +43,13 @@ void playAnimation() {
             * Make sound from a set of sad sounds
             * Sphere of blue colors
             */
-            if(first_animation_state){
-              first_animation_state = false;
+            if(first_time_animation){
+              first_time_animation = false;
               timer_anim_sad = millis(); 
               moveServo(30);
               sphereSadness();
               playAudio(SADNESS);
-              showEyeAnimation(SADNESS); 
+              setEye(SADNESS);
 
               #if defined(DEVMODE)
                 Serial.print("Animation: ");
@@ -113,6 +57,7 @@ void playAnimation() {
               #endif
             }
             else {
+                showEyeAnimation();
                 switch(selection(millis() - timer_anim_sad, SAD_SERVO_TIME_OUT, 4)){
                     case 0:
                         moveServo(0);
@@ -131,6 +76,61 @@ void playAnimation() {
                 }
             }
             break;
+        case EXCITEMENT:
+            /* EXCITEMENT
+            * 
+            */
+            break;
+        case JOY:
+            /* JOY
+            *  Open and close rapidly internal
+            *  Make a random sound from a set of happy sounds
+            *  Eye with happy patterns
+            *  Sphere with bright colors
+            */
+            /*
+            if( first_time_animation){
+              first_time_animation = false;
+               #if defined(DEVMODE)
+                    Serial.print("Animation: ");
+                    Serial.println("JOY");
+                #endif
+              moveServo(45);
+              if(millis() - initial_animation_time > JOY_SERVO_TIME_OUT){
+                 moveServo(90);
+                 long newTime = millis();
+                 if(millis() - newTime > JOY_SERVO_TIME_OUT){
+                  moveServo(0);
+                  newTime = millis();
+                  if(millis() - newTime > JOY_SERVO_TIME_OUT){
+                    moveServo(60);
+                  }
+                 }
+              }             
+              showEyeAnimation();
+              if(millis() - initial_animation_time > JOY_EYE_TIME_OUT){
+               long newTime = millis();
+               if(millis() - newTime > JOY_SERVO_TIME_OUT){
+                  moveServo(80);
+                  newTime = millis();
+                  if(millis() - newTime > JOY_SERVO_TIME_OUT){
+                    moveServo(60);
+                  }
+                 }
+              }
+            }
+            */
+            break;
+        case ANGER:
+            /* ANGER
+            * 
+            */
+            #if defined(DEVMODE)
+                Serial.print("Animation: ");
+                Serial.println("ANGER");
+            #endif
+            break;
+        
         case FEAR:
             /* FEAR
             * Closed and semi-open petals: internal petals closed and 
@@ -139,8 +139,9 @@ void playAnimation() {
             * Make sound from a set of fear sounds
             * Sphere of violet colors
             */
-            if(first_animation_state){
-              first_animation_state = false;
+            /*
+            if(first_time_animation){
+              first_time_animation = false;
                #if defined(DEVMODE)
                     Serial.print("Animation: ");
                     Serial.println("FEAR");
@@ -149,9 +150,10 @@ void playAnimation() {
               moveServo(0);
               if(millis() - initial_animation_time > FEAR_SERVO_TIME_OUT){
                 moveServo(60);
-                 showEyeAnimation(FEAR); 
+                 showEyeAnimation(); 
               }
             } 
+            */
             break;
         case DISGUST:
             /* DISGUST
@@ -160,9 +162,9 @@ void playAnimation() {
             *  Make sound from a set of disgust sounds
             *  Sphere of green colors
             */
-
-            if(first_animation_state){
-              first_animation_state = false;
+            /*
+            if(first_time_animation){
+              first_time_animation = false;
               #if defined(DEVMODE)
                 Serial.print("Animation: ");
                 Serial.println("DISGUST");
@@ -172,9 +174,10 @@ void playAnimation() {
               if(millis() - initial_animation_time > DISGUST_SERVO_TIME_OUT){
                 moveServo(60);
                 sphereDisgust();
-                showEyeAnimation(DISGUST);
+                showEyeAnimation();
               }             
-            }                 
+            }  
+            */               
             break;
         default:
             break;
@@ -184,12 +187,12 @@ void playAnimation() {
 void setupAnimation(){
     initial_animation_time = millis();
     current_animation = LOOKING;
-    first_animation_state = true;
+    first_time_animation = true;
 }
 
 void setAnimation(byte animation) {
     current_animation = animation;
-    first_animation_state = true;
+    first_time_animation = true;
     initial_animation_time = millis();
 }
 
