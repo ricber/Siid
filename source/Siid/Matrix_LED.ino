@@ -2,22 +2,36 @@
 #include <Adafruit_NeoMatrix.h>
 #include <Adafruit_GFX.h>
 
-#include "Arduino.h"
-#include "SoftwareSerial.h"
-#include "DFRobotDFPlayerMini.h"
 
 //we define the pin that our NeoPixel panel is plugged into
 #define PIN 52
+#define BRIGHTNESS 5
+#define LK_EYE_TIME_OUT 500 // the amount of time the eye stays left and right
+
 
 //define constants 
-int DELAY_EYE = 1; // in ms
+int DELAY_EYE = 30; // in ms
 
 //define variables
-byte emotion_prec = 0; //we define it on neutral
+byte current_emotion; // current emotion of the robot
+byte previous_emotion;
+
+// #### TIME ####
+unsigned long timer_looking;
+bool  case0;
+bool  case1;
+bool  case2;
+bool  case3;
+bool  case4;
+bool  case5;
+bool  case6;
+bool  case7;
+
+
 
 //we initialize our 8×8 matrix using the NeoMatrix library
 Adafruit_NeoMatrix matrix = Adafruit_NeoMatrix(8, 8, PIN,
-  NEO_MATRIX_BOTTOM + NEO_MATRIX_LEFT +
+  NEO_MATRIX_TOP + NEO_MATRIX_LEFT +
   NEO_MATRIX_ROWS + NEO_MATRIX_ZIGZAG,
   NEO_GRB + NEO_KHZ800);
 
@@ -28,7 +42,7 @@ struct RGB{
 };
  
 // Define some colors we'll use frequently
-RGB vanillia = { 225, 246, 201 }; //neutral 254,254,226
+RGB vanilla = { 225, 246, 201 }; //neutral 254,254,226
 
 RGB red1 = { 255, 201, 177 };
 RGB red2 = { 255, 145, 133 };
@@ -80,7 +94,7 @@ bool const angry4[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
 
-  bool const happy1[8][8] = {  
+bool const happy1[8][8] = {  
              {0, 0, 1, 1, 1, 1, 0, 0},
              {0, 1, 1, 1, 1, 1, 1, 0},
              {1, 1, 1, 1, 1, 1, 1, 1},
@@ -90,7 +104,8 @@ bool const angry4[8][8] = {
              {0, 1, 1, 1, 1, 1, 1, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
             };
-  bool const happy2 [8][8] = {  
+            
+bool const happy2 [8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 1, 1, 1, 1, 0, 0},
              {0, 1, 1, 1, 1, 1, 1, 0},
@@ -99,8 +114,9 @@ bool const angry4[8][8] = {
              {1, 1, 1, 1, 1, 1, 1, 1},
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
-            };        
-  bool const happy3 [8][8] = {  
+            };
+                    
+bool const happy3 [8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 1, 1, 1, 1, 0, 0},
              {0, 1, 1, 1, 1, 1, 1, 0},
@@ -109,8 +125,9 @@ bool const angry4[8][8] = {
              {1, 0, 0, 0, 0, 0, 0, 1},
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
-            };         
-  bool const happy4[8][8] = {  
+            };   
+                  
+bool const happy4[8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 1, 1, 1, 1, 0, 0},
              {0, 1, 1, 1, 1, 1, 1, 0},
@@ -121,7 +138,7 @@ bool const angry4[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
 
-  bool const sadness1[8][8] = {  
+bool const sadness1[8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 1, 1, 1, 1, 1, 1, 0},
              {1, 1, 1, 1, 1, 1, 1, 1},
@@ -132,7 +149,7 @@ bool const angry4[8][8] = {
              {0, 0, 1, 1, 1, 1, 0, 0}
             };
 
-  bool const sadness2[8][8] = {  
+bool const sadness2[8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
              {1, 1, 1, 1, 1, 1, 1, 1},
@@ -142,7 +159,7 @@ bool const angry4[8][8] = {
              {0, 0, 1, 1, 1, 1, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
-  bool const sadness3[8][8] = {  
+bool const sadness3[8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
              {1, 0, 0, 0, 0, 0, 0, 1},
@@ -153,7 +170,7 @@ bool const angry4[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
             
-  bool const sadness4[8][8] = {  
+bool const sadness4[8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
@@ -164,7 +181,7 @@ bool const angry4[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0},
             };
 
-  bool const fear3[8][8] = {  // the first and second matric correspond to neutral2 and neutral3
+bool const fear3[8][8] = {  // the first and second matric correspond to neutral2 and neutral3
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
              {1, 1, 0, 0, 0, 0, 1, 1},
@@ -175,7 +192,7 @@ bool const angry4[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
 
-  bool const fear4[8][8] = {  
+bool const fear4[8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 1, 0, 0, 0, 0, 1, 0},
              {1, 1, 1, 0, 0, 1, 1, 1},
@@ -187,7 +204,7 @@ bool const angry4[8][8] = {
             };
 
 
-  bool const disgust4[8][8] = {        // TO DEFINE
+bool const disgust4[8][8] = {        // TO DEFINE
              {0, 1, 0, 0, 0, 0, 1, 0},
              {1, 1, 1, 0, 0, 1, 1, 1},
              {0, 1, 1, 1, 1, 1, 1, 0},
@@ -198,7 +215,7 @@ bool const angry4[8][8] = {
              {0, 1, 0, 0, 0, 0, 1, 0}
             };
             
-  bool const disgust3[8][8] = {        // TO DEFINE
+bool const disgust3[8][8] = {        // TO DEFINE
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 1, 0, 0, 1, 0, 0},
              {0, 1, 1, 1, 1, 1, 1, 0},
@@ -208,7 +225,8 @@ bool const angry4[8][8] = {
              {0, 0, 1, 0, 0, 1, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
-  bool const disgust2[8][8] = {        // TO DEFINE
+            
+bool const disgust2[8][8] = {        // TO DEFINE
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 1, 1, 0, 0, 0},
@@ -218,7 +236,8 @@ bool const angry4[8][8] = {
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0}
             };
-   bool const disgust1[8][8] = {  
+            
+bool const disgust1[8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
@@ -229,7 +248,7 @@ bool const angry4[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
 
-   bool const neutral1[8][8] = {  
+bool const neutral1[8][8] = {  
              {0, 0, 1, 1, 1, 1, 0, 0},
              {0, 1, 1, 1, 1, 1, 1, 0},
              {1, 1, 1, 1, 1, 1, 1, 1},
@@ -240,7 +259,7 @@ bool const angry4[8][8] = {
              {0, 0, 1, 1, 1, 1, 0, 0}
             };
 
-   bool const neutral2[8][8] = {  
+bool const neutral2[8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 1, 1, 1, 1, 1, 1, 0},
              {1, 1, 1, 1, 1, 1, 1, 1},
@@ -251,7 +270,7 @@ bool const angry4[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
 
-   bool const neutral3[8][8] = {  
+bool const neutral3[8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
              {1, 1, 1, 1, 1, 1, 1, 1},
@@ -262,7 +281,7 @@ bool const angry4[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
 
-    bool const neutral4[8][8] = {  
+bool const neutral4[8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
@@ -271,10 +290,55 @@ bool const angry4[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0}
-            };   
+            };  
+
+    
+bool const left1[8][8] = {  
+             {0, 0, 1, 1, 1, 1, 0, 0},
+             {0, 1, 1, 1, 1, 1, 1, 0},
+             {1, 1, 1, 1, 1, 1, 1, 1},
+             {1, 1, 0, 0, 1, 1, 1, 1},
+             {1, 1, 0, 0, 1, 1, 1, 1},
+             {1, 1, 1, 1, 1, 1, 1, 1},
+             {0, 1, 1, 1, 1, 1, 1, 0},
+             {0, 0, 1, 1, 1, 1, 0, 0}
+            };
+
+bool const left2[8][8] = {  
+             {0, 0, 1, 1, 1, 1, 0, 0},
+             {0, 1, 1, 1, 1, 1, 1, 0},
+             {1, 1, 1, 1, 1, 1, 1, 1},
+             {1, 0, 0, 1, 1, 1, 1, 1},
+             {1, 0, 0, 1, 1, 1, 1, 1},
+             {1, 1, 1, 1, 1, 1, 1, 1},
+             {0, 1, 1, 1, 1, 1, 1, 0},
+             {0, 0, 1, 1, 1, 1, 0, 0}
+            };
+
+bool const right1[8][8] = {  
+             {0, 0, 1, 1, 1, 1, 0, 0},
+             {0, 1, 1, 1, 1, 1, 1, 0},
+             {1, 1, 1, 1, 1, 1, 1, 1},
+             {1, 1, 1, 1, 0, 0, 1, 1},
+             {1, 1, 1, 1, 0, 0, 1, 1},
+             {1, 1, 1, 1, 1, 1, 1, 1},
+             {0, 1, 1, 1, 1, 1, 1, 0},
+             {0, 0, 1, 1, 1, 1, 0, 0}
+            };
+
+bool const right2[8][8] = {  
+             {0, 0, 1, 1, 1, 1, 0, 0},
+             {0, 1, 1, 1, 1, 1, 1, 0},
+             {1, 1, 1, 1, 1, 1, 1, 1},
+             {1, 1, 1, 1, 1, 0, 0, 1},
+             {1, 1, 1, 1, 1, 0, 0, 1},
+             {1, 1, 1, 1, 1, 1, 1, 1},
+             {0, 1, 1, 1, 1, 1, 1, 0},
+             {0, 0, 1, 1, 1, 1, 0, 0}
+            };       
 
             
-   bool const turned_off[8][8] = {  
+bool const turned_off[8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
@@ -284,6 +348,381 @@ bool const angry4[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
+
+enum Eye_enum {LEFT_EYE, NEUTRAL_FROM_LEFT, RIGHT_EYE, NEUTRAL_FROM_RIGHT, LOOKING_FROM_SADNESS, EXCITEMENT_EYE , JOY_EYE, ANGER_EYE, SADNESS_EYE, FEAR_EYE, DISGUST_EYE};
+bool first_time_eye; // boolean variable that indicates if you are entering an eye animation for the first time or not
+
+/**
+ * Define the sequence of eye position for each emotion
+ * and display them with a delay
+ */
+void eyesInlight(byte eye)
+{  
+   switch(eye) {
+        case LEFT_EYE:
+            drawEye(left1, vanilla); 
+            delay(DELAY_EYE);
+            drawEye(left2, vanilla);
+            break;
+        case NEUTRAL_FROM_LEFT:
+            drawEye(left1, vanilla);
+            delay(DELAY_EYE);
+            drawEye(neutral1, vanilla);
+            break;
+        case RIGHT_EYE:
+            drawEye(right1, vanilla);
+            delay(DELAY_EYE);
+            drawEye(right2, vanilla);
+            break;
+        case NEUTRAL_FROM_RIGHT:
+            drawEye(right1, vanilla);
+            delay(DELAY_EYE);
+            drawEye(neutral1, vanilla);
+            break;
+        case SADNESS_EYE:
+            drawEye(sadness1, blue1);
+            delay(DELAY_EYE);
+            drawEye(sadness2, blue2);
+            delay(DELAY_EYE);
+            drawEye(sadness3, blue3);
+            delay(DELAY_EYE);
+            drawEye(sadness4, blue4);
+            break;
+        case LOOKING_FROM_SADNESS:
+            drawEye(sadness3, blue3);
+            delay(DELAY_EYE);
+            drawEye(sadness2, blue2);
+            delay(DELAY_EYE);
+            drawEye(sadness1, blue1);
+            delay(DELAY_EYE);
+            drawEye(neutral1, vanilla);
+            break;  
+        default:
+            break;
+     /*
+        case NEUTRAL:
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(neutral2, vanilla);
+          delay(DELAY_EYE);
+          drawEye(neutral3, vanilla);
+          delay(DELAY_EYE);
+          drawEye(neutral4, vanilla);
+          delay(DELAY_EYE);
+          drawEye(turned_off, vanilla);
+          delay(DELAY_EYE);
+          drawEye(neutral4, vanilla);
+          delay(DELAY_EYE);
+          drawEye(neutral3, vanilla);
+          delay(DELAY_EYE);
+          drawEye(neutral2, vanilla);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanilla);
+          break;
+
+        case LOOKING:
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(left1, vanilla); 
+          delay(DELAY_EYE);
+          drawEye(left2, vanilla);
+          delay(DELAY_EYE);
+          drawEye(left1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(right1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(right2, vanilla);
+          delay(DELAY_EYE);
+          drawEye(right1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          break;
+          
+       
+        case JOY:
+          drawEye(happy4, yellow4);
+          delay(DELAY_EYE);
+          drawEye(happy3, yellow3);
+          delay(DELAY_EYE);
+          drawEye(happy2, yellow2);
+          delay(DELAY_EYE);
+          drawEye(happy1, yellow1);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          break;
+          
+        case ANGER:
+          drawEye(angry4, red4);
+          delay(DELAY_EYE);
+          drawEye(angry3, red3);
+          delay(DELAY_EYE);
+          drawEye(sadness2, red2);
+          delay(DELAY_EYE);
+          drawEye(sadness1, red1);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          break;
+          
+        case SADNESS:
+          drawEye(sadness4, blue4);
+          delay(DELAY_EYE);
+          drawEye(sadness3, blue3);
+          delay(DELAY_EYE);
+          drawEye(sadness2, blue2);
+          delay(DELAY_EYE);
+          drawEye(sadness1, blue1);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          break;
+          
+        case FEAR:
+          drawEye(fear4, purple4);
+          delay(DELAY_EYE);
+          drawEye(fear3, purple3);
+          delay(DELAY_EYE);
+          drawEye(neutral3, purple2);
+          delay(DELAY_EYE);
+          drawEye(neutral2, purple1);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);            
+          break;
+          
+        case DISGUST:
+          drawEye(disgust4,green4);
+          delay(DELAY_EYE);
+          drawEye(disgust3,green3);
+          delay(DELAY_EYE);
+          drawEye(disgust2,green2);
+          delay(DELAY_EYE);
+          drawEye(disgust1,green1);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);                 
+          break;
+          
+        default:
+          drawEye(turned_off, vanilla);                
+          break;
+        }
+   }
+   else
+   {
+     switch(emotion) {
+        case LOOKING:
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(left1, vanilla); 
+          delay(DELAY_EYE);
+          drawEye(left2, vanilla);
+          delay(DELAY_EYE);
+          drawEye(left1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(right1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(right2, vanilla);
+          delay(DELAY_EYE);
+          drawEye(right1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          break;
+          
+        case JOY:
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(happy1, yellow1);
+          delay(DELAY_EYE);
+          drawEye(happy2, yellow2);
+          delay(DELAY_EYE);
+          drawEye(happy3, yellow3);
+          delay(DELAY_EYE);
+          drawEye(happy4, yellow4);
+          delay(DELAY_EYE);
+          break;
+          
+        case ANGER:
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(sadness1, red1);
+          delay(DELAY_EYE);
+          drawEye(sadness2, red2);
+          delay(DELAY_EYE);
+          drawEye(angry3, red3);
+          delay(DELAY_EYE);
+          drawEye(angry4, red4);
+          delay(DELAY_EYE);
+          break;
+          
+        case SADNESS:
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(sadness1, blue1);
+          delay(DELAY_EYE);
+          drawEye(sadness2, blue2);
+          delay(DELAY_EYE);
+          drawEye(sadness3, blue3);
+          delay(DELAY_EYE);
+          drawEye(sadness4, blue4);
+          delay(DELAY_EYE);
+          break;
+          
+        case FEAR:
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(neutral2, purple1);
+          delay(DELAY_EYE);
+          drawEye(neutral3, purple2);
+          delay(DELAY_EYE);
+          drawEye(fear3, purple3);
+          delay(DELAY_EYE);
+          drawEye(fear4, purple4);
+          delay(DELAY_EYE);
+          break;
+          
+        case DISGUST:
+          drawEye(neutral1, vanilla);
+          delay(DELAY_EYE); 
+          drawEye(disgust1,green1);
+          delay(DELAY_EYE);
+          drawEye(disgust2,green2);
+          delay(DELAY_EYE);
+          drawEye(disgust3,green3);
+          delay(DELAY_EYE);
+          drawEye(disgust4,green4);
+          delay(DELAY_EYE);   
+          break;
+          
+        default:
+          drawEye(turned_off, vanilla);                
+          break;
+       }
+        previous_emotion=emotion;
+     }*/
+    }
+}    
+
+/**
+ * Setup the Matrix LED
+ */
+void setupMatrix() {
+  //we initialize the matrix and configure its pixel brightness, text color and text wrapping options
+  matrix.begin();
+  matrix.setBrightness(BRIGHTNESS);
+  current_emotion = LOOKING;
+  previous_emotion = LOOKING;
+  first_time_eye = true;
+  case0 = true;
+  case1 = true;
+  case2 = true;
+  case3 = true;
+  case4 = true;
+  case5 = true;
+  case6 = true;
+  case7 = true;
+}
+
+void setEye(byte emotion) {
+    current_emotion = emotion;
+    first_time_eye = true;
+    case0 = true;
+    case1 = true;
+    case2 = true;
+    case3 = true;
+    case4 = true;
+    case5 = true;
+    case6 = true;
+    case7 = true;
+}
+
+/**
+ * Display the eye sequence starting from the neutral one 
+ * of the emotion passed as a parameter
+ */
+void showEyeAnimation(){
+    switch (current_emotion){
+        case LOOKING:
+            if(first_time_eye){
+                // this switch is to manage the change of eye animation due to a change of state
+                switch(previous_emotion){
+                    case SADNESS:
+                        eyesInlight(LOOKING_FROM_SADNESS);
+                        break;
+                    default:
+                        break;
+                }
+                previous_emotion = LOOKING;
+                first_time_eye = false;  
+                timer_looking = millis();
+            }
+            else {
+                 switch(selection(millis() - timer_looking, LK_EYE_TIME_OUT, 8)){
+                    case 0:
+                        if (case0){
+                            eyesInlight(LEFT_EYE);
+                            case0 = false;
+                        }
+                        break;
+                    case 1:
+                        //the eye stays left
+                        break;
+                    case 2:
+                        if (case2){
+                            eyesInlight(NEUTRAL_FROM_LEFT);
+                            case2 = false;
+                        }
+                        break;
+                    case 3:
+                         //the eye stays neutral
+                        break;
+                    case 4:
+                        if (case4){
+                            eyesInlight(RIGHT_EYE);
+                            case4 = false;
+                        }
+                        break;
+                    case 5:
+                        //the eye stays right
+                        break;
+                    case 6:
+                        if (case6){
+                            eyesInlight(NEUTRAL_FROM_RIGHT);
+                            case6 = false;
+                        }                        
+                        break;
+                    case 7:
+                        case0 = true;
+                        case1 = true;
+                        case2 = true;
+                        case3 = true;
+                        case4 = true;
+                        case5 = true;
+                        case6 = true;
+                        break;
+                    default:
+                        break;
+                 }
+            }
+            break;
+         case SADNESS:
+            if(first_time_eye){
+                eyesInlight(SADNESS_EYE);
+                previous_emotion = SADNESS;
+                first_time_eye = false;  
+            }         
+            break;  
+        default:
+            break;
+    }
+} 
 
 // Check the pixel one after another and fill them if necessary
 void drawEye(bool eye[8][8], struct RGB color) {
@@ -300,237 +739,3 @@ void drawEye(bool eye[8][8], struct RGB color) {
   }
   matrix.show();
 }
-
-/**
- * Define the sequence of eye position for each emotion
- * and display them with a delay
- */
-void eyesInlight(byte emotion)
-{
-  /*##########
-   * 0 neutral
-   * 1 happy
-   * 2 angry
-   * 3 sadness
-   * 4 fear
-   * 5 disgust
-   ##########*/
-
-  if (emotion != emotion_prec) { 
-     switch(emotion_prec) {
-        case NEUTRAL:
-          drawEye(neutral1, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral2, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral3, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral4, vanillia);
-          delay(DELAY_EYE);
-          drawEye(turned_off, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral4, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral3, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral2, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanillia);
-          break;
-          
-        case JOY:
-          drawEye(happy4, yellow4);
-          delay(DELAY_EYE);
-          drawEye(happy3, yellow3);
-          delay(DELAY_EYE);
-          drawEye(happy2, yellow2);
-          delay(DELAY_EYE);
-          drawEye(happy1, yellow1);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanillia);
-          delay(DELAY_EYE);
-          break;
-          
-        case ANGER:
-          drawEye(angry4, red4);
-          delay(DELAY_EYE);
-          drawEye(angry3, red3);
-          delay(DELAY_EYE);
-          drawEye(sadness2, red2);
-          delay(DELAY_EYE);
-          drawEye(sadness1, red1);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanillia);
-          delay(DELAY_EYE);
-          break;
-          
-        case SADNESS:
-          drawEye(sadness4, blue4);
-          delay(DELAY_EYE);
-          drawEye(sadness3, blue3);
-          delay(DELAY_EYE);
-          drawEye(sadness2, blue2);
-          delay(DELAY_EYE);
-          drawEye(sadness1, blue1);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanillia);
-          delay(DELAY_EYE);
-          break;
-          
-        case FEAR:
-          drawEye(fear4, purple4);
-          delay(DELAY_EYE);
-          drawEye(fear3, purple3);
-          delay(DELAY_EYE);
-          drawEye(neutral3, purple2);
-          delay(DELAY_EYE);
-          drawEye(neutral2, purple1);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanillia);
-          delay(DELAY_EYE);            
-          break;
-          
-        case DISGUST:
-          drawEye(disgust4,green4);
-          delay(DELAY_EYE);
-          drawEye(disgust3,green3);
-          delay(DELAY_EYE);
-          drawEye(disgust2,green2);
-          delay(DELAY_EYE);
-          drawEye(disgust1,green1);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanillia);
-          delay(DELAY_EYE);                 
-          break;
-          
-        default:
-          drawEye(turned_off, vanillia);                
-          break;
-        }
-   }
-   else
-   {
-     switch(emotion) {
-        case NEUTRAL:
-          drawEye(neutral1, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral2, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral3, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral4, vanillia);
-          delay(DELAY_EYE);
-          drawEye(turned_off, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral4, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral3, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral2, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanillia);
-          break;
-          
-        case JOY:
-          drawEye(neutral1, vanillia);
-          delay(DELAY_EYE);
-          drawEye(happy1, yellow1);
-          delay(DELAY_EYE);
-          drawEye(happy2, yellow2);
-          delay(DELAY_EYE);
-          drawEye(happy3, yellow3);
-          delay(DELAY_EYE);
-          drawEye(happy4, yellow4);
-          delay(DELAY_EYE);
-          break;
-          
-        case ANGER:
-          drawEye(neutral1, vanillia);
-          delay(DELAY_EYE);
-          drawEye(sadness1, red1);
-          delay(DELAY_EYE);
-          drawEye(sadness2, red2);
-          delay(DELAY_EYE);
-          drawEye(angry3, red3);
-          delay(DELAY_EYE);
-          drawEye(angry4, red4);
-          delay(DELAY_EYE);
-          break;
-          
-        case SADNESS:
-          drawEye(neutral1, vanillia);
-          delay(DELAY_EYE);
-          drawEye(sadness1, blue1);
-          delay(DELAY_EYE);
-          drawEye(sadness2, blue2);
-          delay(DELAY_EYE);
-          drawEye(sadness3, blue3);
-          delay(DELAY_EYE);
-          drawEye(sadness4, blue4);
-          delay(DELAY_EYE);
-          break;
-          
-        case FEAR:
-          drawEye(neutral1, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral2, purple1);
-          delay(DELAY_EYE);
-          drawEye(neutral3, purple2);
-          delay(DELAY_EYE);
-          drawEye(fear3, purple3);
-          delay(DELAY_EYE);
-          drawEye(fear4, purple4);
-          delay(DELAY_EYE);
-          break;
-          
-        case DISGUST:
-          drawEye(neutral1, vanillia);
-          delay(DELAY_EYE); 
-          drawEye(disgust1,green1);
-          delay(DELAY_EYE);
-          drawEye(disgust2,green2);
-          delay(DELAY_EYE);
-          drawEye(disgust3,green3);
-          delay(DELAY_EYE);
-          drawEye(disgust4,green4);
-          delay(DELAY_EYE);   
-          break;
-          
-        default:
-          drawEye(turned_off, vanillia);                
-          break;
-       }
-        emotion_prec=emotion;
-     }
-}    
-
-/**
- * Setup the Matrix LED
- */
-void setupMatrix() {
-  //we initialize the matrix and configure its pixel brightness, text color and text wrapping options
-  matrix.begin();
-  matrix.setBrightness(5);
-  matrix.setTextColor(matrix.Color(255, 255, 255) );
-  matrix.setTextWrap(false);
-}
-
-/**
- * Display the eye sequence starting from the neutral one 
- * of the emotion passed as a parameter
- */
-void showEyeAnimation(byte emotion){
-  for (int i=0; i<5; i++)
-  {
-     eyesInlight(NEUTRAL);
-     delay(8*DELAY_EYE); //time to let the programm fully do the animation
-     delay(1500);//to let time before changing
-  }
-   for (int i=0; i<5; i++)
-  {
-     eyesInlight(emotion);
-     playAudio(emotion);
-     delay(8*DELAY_EYE); //time to let the programm fully do the animation
-     delay(1500);//to let time before changing
-  }
-} 
