@@ -30,6 +30,7 @@ void playAnimation() {
                     Serial.print("Animation: ");
                     Serial.println("LOOKING");
                 #endif
+                sphereLooking();
                 setEye(LOOKING);
             }
             else {

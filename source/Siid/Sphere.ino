@@ -34,6 +34,20 @@ void turnOff(){
 }
 
 
+void sphereLooking(){
+  //Dark Blue
+  #if defined(DEVMODE)
+    Serial.println("LED LOOKING");
+  #endif 
+  setColor(0, 255, 50);
+  /*
+  for(int i= 1; i<100; i++){
+     setColor(0, 0, 150 + i); 
+     //TODO: Add Timer
+  }
+  */
+}
+
 /**
  * The sphere changes colors 
  * within the range of ORANGE and YELLOW

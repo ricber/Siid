@@ -4,12 +4,12 @@
 // #### DEFINITIONS ####
 #define LK_TIME_OUT 5000 // LOOK_AROUND timeout
 #define BACK_TIME_OUT 500 // timeout to go BACKWARD
-#define SPOT_TIME_OUT 5000  // SPOT ROTATION timeout
+#define SPOT_TIME_OUT 10000  // SPOT ROTATION timeout
 #define RAND_SAD_TIME_OUT 5000 // random sad animation timeout
 #define EXC_TIME_OUT 8000 // excitement timeout
 #define RAND_ANIM_TIME_OUT 4500 //random animation timeout
 #define HAPPY_PROB 7 // the probability we want our robot to be happy in the random animation (value range [0, 10])
-#define RAND_SAD_PROB 10 // the probability (from 0 to 10000) to random start the sad animation
+#define RAND_SAD_PROB 5 // the probability (from 0 to 10000) to random start the sad animation
 #define ROTATION_TIME_OUT 1000 // amount of time of left and right rotation
 #define MOVE_TIME_OUT 2000
 #define WAIT_TIME_OUT 2000 //time out for waiting to do another action
