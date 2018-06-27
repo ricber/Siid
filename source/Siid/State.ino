@@ -2,14 +2,14 @@
 #include <SparkFun_TB6612.h>
 
 // #### DEFINITIONS ####
-#define LK_TIME_OUT 2000 // LOOK_AROUND timeout
+#define LK_TIME_OUT 5000 // LOOK_AROUND timeout
 #define BACK_TIME_OUT 500 // timeout to go BACKWARD
 #define SPOT_TIME_OUT 5000  // SPOT ROTATION timeout
 #define RAND_SAD_TIME_OUT 5000 // random sad animation timeout
 #define EXC_TIME_OUT 8000 // excitement timeout
 #define RAND_ANIM_TIME_OUT 4500 //random animation timeout
 #define HAPPY_PROB 7 // the probability we want our robot to be happy in the random animation (value range [0, 10])
-#define RAND_SAD_PROB 2 // the probability to random start the sad animation
+#define RAND_SAD_PROB 10 // the probability (from 0 to 10000) to random start the sad animation
 #define ROTATION_TIME_OUT 1000 // amount of time of left and right rotation
 #define MOVE_TIME_OUT 2000
 #define WAIT_TIME_OUT 2000 //time out for waiting to do another action
@@ -30,7 +30,6 @@ bool first_time_state; // boolean variable that indicates if you are entering a 
 * THERMOSENSOR_UP means that it has detected a person
 * THERMOSENSOR_DWN means that the obstacle is an object
 */
-enum Sensors_enum{NO_INPUT, THERMOSENSOR_UP, THERMOSENSOR_DWN, ACCELEROMETER};
 byte sensors;
 
 
@@ -87,20 +86,38 @@ void stateMachine() {
         else if (millis() - starting_time_state > LK_TIME_OUT){
               setState(SPOT_ROTATION);               
             }
-        else if(sensors == FRONT_SONAR_COLLISION){    
+        else if(sensors == FRONT_SONAR_COLLISION){ 
+              #if defined(DEVMODE)
+                  Serial.print("Sonar State: ");
+                  Serial.println("FRONT SONAR COLLISION");
+              #endif   
               setState(COLLISION);
             }
         else if(sensors == FRONT_SONAR_NEAR){
+              #if defined(DEVMODE)
+                  Serial.print("Sonar State: ");
+                  Serial.println("FRONT SONAR NEAR");
+              #endif
               setState(RANDOM_ANIMATION);              
             }
         else if(sensors == FRONT_SONAR_MEDIUM){
+              #if defined(DEVMODE)
+                  Serial.print("Sonar State: ");
+                  Serial.println("FRONT SONAR MEDIUM");
+              #endif
               setState(EXCITEMENT_STATE);
         }
         else if(sensors == FRONT_SONAR_FAR){
-           if(random(10) >= (10 - RAND_SAD_PROB)){
+            /*
+            #if defined(DEVMODE)
+                Serial.print("Sonar State: ");
+                Serial.println("FRONT SONAR FAR");
+            #endif
+            */
+           if(random(10000) >= (10000 - RAND_SAD_PROB)){
                     setState(RANDOM_SAD);
               }
-           }
+        }
        break;
     case SPOT_ROTATION:
         /* SPOT ROTATION
@@ -114,7 +131,6 @@ void stateMachine() {
          */
         if(first_time_state){
             first_time_state = false;
-            setAnimation(NEUTRAL);
             left(motor1, motor2, 200);       
             right(motor1, motor2, 200);
             left(motor1, motor2, 200);
@@ -182,7 +198,8 @@ void stateMachine() {
                 Serial.print("State: ");
                 Serial.println("RANDOM SAD");
             #endif
-         }else if (millis() - starting_time_state >= RAND_SAD_TIME_OUT) {
+         } 
+         else if (millis() - starting_time_state >= RAND_SAD_TIME_OUT) {
             brake(motor1, motor2);   
             setState(LOOK_AROUND); 
          }
@@ -318,8 +335,7 @@ void stateMachine() {
          * The robot enters this state after performing 
         * an animation and wait for an event
         */
-     
-        setAnimation(NEUTRAL);     
+       
         setState(LOOK_AROUND);
         break;
     case FEAR_STATE:
