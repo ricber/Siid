@@ -6,12 +6,14 @@
 #define BACK_TIME_OUT 500 // timeout to go BACKWARD
 #define SPOT_TIME_OUT 10000  // SPOT ROTATION timeout
 #define RAND_SAD_TIME_OUT 5000 // random sad animation timeout
+#define ANGER_TIME_OUT 9000 // anger animation timeout 
 #define EXC_TIME_OUT 3000 // excitement timeout
 #define JOY_TIME_OUT 4500 //joy animation timeout
 #define HAPPY_PROB 7 // the probability we want our robot to be happy in the random animation (value range [0, 10])
 #define RAND_SAD_PROB 5 // the probability (from 0 to 10000) to random start the sad animation
 #define WAIT_TIME_OUT 2000 //time out for waiting to do another action
 #define EXCITEMENT_SPEED 200
+#define WHE_ANGER_TIME_OUT 1000 // the amount of time the wheels go back and forward
 #define WHE_EXC_TIME_OUT 1000 // the amount of time the wheels go left or right
 #define WHE_SAD_TIME_OUT 1000 // the amount of time each motor action in rand_sad_state lasts
 #define RAND_SAD_SPEED 100  // the speed when the robot is sad (should be low)
@@ -309,7 +311,12 @@ void stateMachine() {
             }
             else if (millis() - starting_time_state >= JOY_TIME_OUT){
                 brake(motor1, motor2);
-                setState(WAIT_INTERACTION);     
+                if(front_thermo()){
+                  //### HERE WE WILL ADD A RANDOM DECISION BETWEEN ANGRY AND FEAR STATE ###
+                  setState(ANGRY);  
+                }else {
+                   setState(WAIT_INTERACTION); 
+                }  
             }
             else if (front_sonar() == FRONT_SONAR_COLLISION){
                 brake(motor1, motor2);
@@ -429,6 +436,51 @@ void stateMachine() {
        
         setState(LOOK_AROUND); // to debug
         break;
+
+    case ANGRY:
+      if(first_time_state){
+                first_time_state = false;
+                setAnimation(ANGER);
+                timer_state1 = millis() - WHE_ANGER_TIME_OUT;
+                case_state1=true;
+                                
+                #if defined(DEVMODE)
+                    Serial.print("State: ");
+                    Serial.println("ANGER ANIMATION");
+                #endif       
+            }
+            else if (millis() - starting_time_state >= ANGER_TIME_OUT){
+                brake(motor1, motor2);
+                setState(WAIT_INTERACTION);   
+            } 
+             else {
+              
+                if(millis() - timer_state1 >= WHE_ANGER_TIME_OUT && case_state1) {
+                    back(motor1, motor2, 100); 
+                    case_state1 = false;
+                    case_state2 = true;
+                    timer_state2 = millis();
+                }
+                else if (millis() - timer_state2 >= WHE_SAD_TIME_OUT && case_state2){
+                    forward(motor1, motor2, 200);
+                    case_state2 = false;
+                    case_state3 = true;
+                    timer_state3 = millis();
+                }
+                else if (millis() - timer_state3 >= WHE_SAD_TIME_OUT && case_state3){
+                    back(motor1, motor2, 100);
+                    case_state3 = false;
+                    case_state4 = true;
+                    timer_state4 = millis();
+                }
+                else if (millis() - timer_state4 >= WHE_SAD_TIME_OUT && case_state4){
+                    forward(motor1, motor2, 200);
+                    case_state4 = false;
+                    case_state1 = true;
+                    timer_state1 = millis();
+                }
+             }      
+      break;
         
     case FEAR_STATE:
         /*FEAR

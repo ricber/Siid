@@ -15,6 +15,7 @@
   BSD license, all text above must be included in any redistribution
  ****************************************************/
 
+
 #include <Wire.h>
 #include <Adafruit_MLX90614.h>
 
@@ -25,7 +26,7 @@
  * Body presence (not so near): >=27°C and <29.5°C
  */
 #define MAX_TEMP 45
-#define ERR_TEMP 1
+#define ERR_TEMP 2
 
 // #### TIME ####
 
@@ -39,7 +40,7 @@ void setupThermoSensor() {
     mlx.begin(); 
 }
 
-void front_thermo() {
+boolean front_thermo() {
     float ambientTemp = mlx.readAmbientTempC();
     float objectTemp = mlx.readObjectTempC();
 
@@ -48,13 +49,13 @@ void front_thermo() {
     Serial.print("*C\tObject = "); Serial.print(mlx.readObjectTempC()); Serial.println("*C");
      #endif
 
-   if((objectTemp >= ambientTemp + ERR_TEMP) && objectTemp < MAX_TEMP){
+   if(objectTemp >= ambientTemp + ERR_TEMP){
       //There is a hand that is really near the sphere of the robot
        #if defined(DEVMODE)
            Serial.print("Thermo State: ");
            Serial.println("VERY_NEAR_TEMPERATURE");
       #endif 
-           
-     setState(FEAR);
+      return true;
     }
+    return false;    
   }

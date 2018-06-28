@@ -8,6 +8,7 @@ enum Animation_enum {LOOKING, SADNESS, EXCITEMENT, JOY, ANGER, FEAR, DISGUST}; /
 #define JOY_EYE_TIME_OUT 6500
 #define SAD_SERVO_TIME_OUT 1500
 #define FEAR_SERVO_TIME_OUT 2000
+#define SPHERE_ANGER_TIME_OUT 50
 
 byte current_animation; // current aniamtion of the robot
 bool first_time_animation;
@@ -175,11 +176,36 @@ void playAnimation() {
             /* ANGER
             * 
             */
-            
-            #if defined(DEVMODE)
+           if(first_time_animation){
+                first_time_animation = false;
+                timer_anim1 = millis() - SPHERE_ANGER_TIME_OUT;
+                case_anim1 = true; 
+                
+                sphereAnger();
+                setEye(ANGER);
+                playAudio(ANGER);
+              
+                #if defined(DEVMODE)
                 Serial.print("Animation: ");
                 Serial.println("ANGER");
-            #endif
+            #endif  
+            }
+            else {
+                showEyeAnimation();
+            
+                 if(millis() - timer_anim1 >= SPHERE_ANGER_TIME_OUT && case_anim1) {
+                    turnOff(); 
+                    case_anim1 = false;
+                    case_anim2 = true;
+                    timer_anim2 = millis();
+                }
+                else if (millis() - timer_anim2 >= SAD_SERVO_TIME_OUT && case_anim2){
+                    sphereAnger();
+                    case_anim2 = false;
+                    case_anim1 = true;
+                    timer_anim1 = millis();
+                }
+             }
             break;
         
         case FEAR:
@@ -246,7 +272,7 @@ void playAnimation() {
                 moveServo(60);
                 for( int i=4; i>=0;i--)
                 {
-                  moveServo(60-(i*3);
+                  moveServo(60-(i*3));
                   moveServo(60);
                   moveServo(60+i*3);
                   moveServo(60);
