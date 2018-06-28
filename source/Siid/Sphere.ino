@@ -48,6 +48,10 @@ void sphereLooking(){
   */
 }
 
+void shpereExcitement(){
+    // TODO
+}
+
 /**
  * The sphere changes colors 
  * within the range of ORANGE and YELLOW

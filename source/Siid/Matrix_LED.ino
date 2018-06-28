@@ -7,7 +7,7 @@
 #define PIN 52
 #define BRIGHTNESS 5
 #define LK_EYE_TIME_OUT 500 // the amount of time the eye stays left and right
-
+#define EXC_EYE_TIME_OUT 250  // the amount of time from a blink and another
 
 //define constants 
 int DELAY_EYE = 30; // in ms
@@ -17,28 +17,20 @@ byte current_emotion; // current emotion of the robot
 byte previous_emotion;
 
 // #### TIME ####
-unsigned long timer_looking;
-unsigned long timer1;
-unsigned long timer2;
-unsigned long timer3;
-unsigned long timer4;
-unsigned long timer5;
-unsigned long timer6;
-unsigned long timer7;
-bool  case1;
-bool  case2;
-bool  case3;
-bool  case4;
-bool  case5;
-bool  case6;
-bool  case7;
-bool  todo1;
-bool  todo2;
-bool  todo3;
-bool  todo4;
-bool  todo5;
-bool  todo6;
-bool  todo7;
+unsigned long timer_eye1;
+unsigned long timer_eye2;
+unsigned long timer_eye3;
+unsigned long timer_eye4;
+unsigned long timer_eye5;
+unsigned long timer_eye6;
+unsigned long timer_eye7;
+bool  case_eye1;
+bool  case_eye2;
+bool  case_eye3;
+bool  case_eye4;
+bool  case_eye5;
+bool  case_eye6;
+bool  case_eye7;
 
 
 
@@ -362,7 +354,7 @@ bool const turned_off[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
 
-enum Eye_enum {LEFT_EYE, NEUTRAL_FROM_LEFT, RIGHT_EYE, NEUTRAL_FROM_RIGHT, LOOKING_FROM_SADNESS, EXCITEMENT_EYE , JOY_EYE, ANGER_EYE, SADNESS_EYE, FEAR_EYE, DISGUST_EYE};
+enum Eye_enum {LEFT_EYE, NEUTRAL_FROM_LEFT, RIGHT_EYE, NEUTRAL_FROM_RIGHT, LOOKING_FROM_SADNESS, EXCITEMENT_EYE, JOY_EYE, ANGER_EYE, SADNESS_EYE, FEAR_EYE, DISGUST_EYE};
 bool first_time_eye; // boolean variable that indicates if you are entering an eye animation for the first time or not
 
 /**
@@ -409,32 +401,31 @@ void eyesInlight(byte eye)
             drawEye(sadness1, blue1);
             delay(DELAY_EYE);
             drawEye(neutral1, vanilla);
-            break;  
+            break; 
+        case EXCITEMENT_EYE:
+            drawEye(neutral1, vanilla);
+            delay(DELAY_EYE);
+            drawEye(neutral2, vanilla);
+            delay(DELAY_EYE);
+            drawEye(neutral3, vanilla);
+            delay(DELAY_EYE);
+            drawEye(neutral4, vanilla);
+            delay(DELAY_EYE);
+            drawEye(turned_off, vanilla);
+            delay(DELAY_EYE);
+            drawEye(neutral4, vanilla);
+            delay(DELAY_EYE);
+            drawEye(neutral3, vanilla);
+            delay(DELAY_EYE);
+            drawEye(neutral2, vanilla);
+            delay(DELAY_EYE);
+            drawEye(neutral1, vanilla);
+            break;
         default:
             break;
             
-     /*
-        case NEUTRAL:
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE);
-          drawEye(neutral2, vanilla);
-          delay(DELAY_EYE);
-          drawEye(neutral3, vanilla);
-          delay(DELAY_EYE);
-          drawEye(neutral4, vanilla);
-          delay(DELAY_EYE);
-          drawEye(turned_off, vanilla);
-          delay(DELAY_EYE);
-          drawEye(neutral4, vanilla);
-          delay(DELAY_EYE);
-          drawEye(neutral3, vanilla);
-          delay(DELAY_EYE);
-          drawEye(neutral2, vanilla);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanilla);
-          break;          
-       
-        case JOY:
+     /*       
+        case_eye JOY:
           drawEye(happy4, yellow4);
           delay(DELAY_EYE);
           drawEye(happy3, yellow3);
@@ -447,7 +438,7 @@ void eyesInlight(byte eye)
           delay(DELAY_EYE);
           break;
           
-        case ANGER:
+        case_eye ANGER:
           drawEye(angry4, red4);
           delay(DELAY_EYE);
           drawEye(angry3, red3);
@@ -460,7 +451,7 @@ void eyesInlight(byte eye)
           delay(DELAY_EYE);
           break;
          
-        case FEAR:
+        case_eye FEAR:
           drawEye(fear4, purple4);
           delay(DELAY_EYE);
           drawEye(fear3, purple3);
@@ -473,7 +464,7 @@ void eyesInlight(byte eye)
           delay(DELAY_EYE);            
           break;
           
-        case DISGUST:
+        case_eye DISGUST:
           drawEye(disgust4,green4);
           delay(DELAY_EYE);
           drawEye(disgust3,green3);
@@ -492,7 +483,7 @@ void eyesInlight(byte eye)
           
        
           
-        case JOY:
+        case_eye JOY:
           drawEye(neutral1, vanilla);
           delay(DELAY_EYE);
           drawEye(happy1, yellow1);
@@ -505,7 +496,7 @@ void eyesInlight(byte eye)
           delay(DELAY_EYE);
           break;
           
-        case ANGER:
+        case_eye ANGER:
           drawEye(neutral1, vanilla);
           delay(DELAY_EYE);
           drawEye(sadness1, red1);
@@ -518,7 +509,7 @@ void eyesInlight(byte eye)
           delay(DELAY_EYE);
           break;
           
-        case FEAR:
+        case_eye FEAR:
           drawEye(neutral1, vanilla);
           delay(DELAY_EYE);
           drawEye(neutral2, purple1);
@@ -531,7 +522,7 @@ void eyesInlight(byte eye)
           delay(DELAY_EYE);
           break;
           
-        case DISGUST:
+        case_eye DISGUST:
           drawEye(neutral1, vanilla);
           delay(DELAY_EYE); 
           drawEye(disgust1,green1);
@@ -566,13 +557,13 @@ void setupMatrix() {
 void setEye(byte emotion) {
     current_emotion = emotion;
     first_time_eye = true;
-    case1 = false;
-    case2 = false;
-    case3 = false;
-    case4 = false;
-    case5 = false;
-    case6 = false;
-    case7 = false;
+    case_eye1 = false;
+    case_eye2 = false;
+    case_eye3 = false;
+    case_eye4 = false;
+    case_eye5 = false;
+    case_eye6 = false;
+    case_eye7 = false;
 }
 
 /**
@@ -593,62 +584,74 @@ void showEyeAnimation(){
                 }
                 previous_emotion = LOOKING;
                 first_time_eye = false; 
-                case1 = true; 
-                timer_looking = millis();
-                timer1 = millis() - LK_EYE_TIME_OUT;
+                case_eye1 = true; 
+                timer_eye1 = millis() - LK_EYE_TIME_OUT;
             }
             else {
-                if(millis() - timer1 >= LK_EYE_TIME_OUT && case1) {
+                if(millis() - timer_eye1 >= LK_EYE_TIME_OUT && case_eye1) {
                     eyesInlight(LEFT_EYE);
-                    case1 = false;
-                    case2 = true;
-                    timer2 = millis();
+                    case_eye1 = false;
+                    case_eye2 = true;
+                    timer_eye2 = millis();
                 }
-                else if (millis() - timer2 >= LK_EYE_TIME_OUT && case2){
+                else if (millis() - timer_eye2 >= LK_EYE_TIME_OUT && case_eye2){
                     //the eye stays left
-                    case2 = false;
-                    case3 = true;
-                    timer3 = millis();
+                    case_eye2 = false;
+                    case_eye3 = true;
+                    timer_eye3 = millis();
                 }
-                else if (millis() - timer3 >= LK_EYE_TIME_OUT && case3){
+                else if (millis() - timer_eye3 >= LK_EYE_TIME_OUT && case_eye3){
                      eyesInlight(NEUTRAL_FROM_LEFT);
-                    case3 = false;
-                    case4 = true;
-                    timer4 = millis();
+                    case_eye3 = false;
+                    case_eye4 = true;
+                    timer_eye4 = millis();
                 }
-                else if (millis() - timer4 >= LK_EYE_TIME_OUT && case4){
+                else if (millis() - timer_eye4 >= LK_EYE_TIME_OUT && case_eye4){
                     //the eye stays neutral
-                    case4 = false;
-                    case5 = true;
-                    timer5 = millis();
+                    case_eye4 = false;
+                    case_eye5 = true;
+                    timer_eye5 = millis();
                 }
-                else if (millis() - timer5 >= LK_EYE_TIME_OUT && case5){
+                else if (millis() - timer_eye5 >= LK_EYE_TIME_OUT && case_eye5){
                     eyesInlight(RIGHT_EYE);
-                    case5 = false;
-                    case6 = true;
-                    timer6 = millis();
+                    case_eye5 = false;
+                    case_eye6 = true;
+                    timer_eye6 = millis();
                 }
-                else if (millis() - timer6 >= LK_EYE_TIME_OUT && case6){
+                else if (millis() - timer_eye6 >= LK_EYE_TIME_OUT && case_eye6){
                     //the eye stays right
-                    case6 = false;
-                    case7 = true;
-                    timer7 = millis();
+                    case_eye6 = false;
+                    case_eye7 = true;
+                    timer_eye7 = millis();
                 }
-                else if (millis() - timer7 >= LK_EYE_TIME_OUT && case7){
+                else if (millis() - timer_eye7 >= LK_EYE_TIME_OUT && case_eye7){
                     eyesInlight(NEUTRAL_FROM_RIGHT);
-                    case7 = false;
-                    case1 = true;
-                    timer1 = millis();
+                    case_eye7 = false;
+                    case_eye1 = true;
+                    timer_eye1 = millis();
                 } 
             }
             break;
-         case SADNESS:
+        case SADNESS:
             if(first_time_eye){
                 eyesInlight(SADNESS_EYE);
                 previous_emotion = SADNESS;
                 first_time_eye = false;  
             }         
-            break;  
+            break; 
+        case EXCITEMENT:
+            if(first_time_eye){
+                previous_emotion = EXCITEMENT;
+                first_time_eye = false;  
+                timer_eye1 = millis() - EXC_EYE_TIME_OUT;
+            }
+            else {
+                if(millis() - timer_eye1 >= EXC_EYE_TIME_OUT) {
+                    eyesInlight(EXCITEMENT_EYE);
+                    timer_eye1 = millis();
+                }
+            }
+            break;
         default:
             break;
     }

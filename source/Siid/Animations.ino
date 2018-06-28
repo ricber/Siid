@@ -15,6 +15,20 @@ bool first_time_animation;
 // #### TIME ####
 unsigned long initial_animation_time;
 unsigned long timer_anim_sad;
+unsigned long timer_anim1;
+unsigned long timer_anim2;
+unsigned long timer_anim3;
+unsigned long timer_anim4;
+unsigned long timer_anim5;
+unsigned long timer_anim6;
+unsigned long timer_anim7;
+bool  case_anim1;
+bool  case_anim2;
+bool  case_anim3;
+bool  case_anim4;
+bool  case_anim5;
+bool  case_anim6;
+bool  case_anim7;
 
 void playAnimation() {
     switch (current_animation) {
@@ -44,10 +58,12 @@ void playAnimation() {
             * Make sound from a set of sad sounds
             * Sphere of blue colors
             */
+
             if(first_time_animation){
               first_time_animation = false;
-              timer_anim_sad = millis(); 
-              moveServo(30);
+              timer_anim1 = millis() - SAD_SERVO_TIME_OUT;
+              case_anim1 = true; 
+ 
               sphereSadness();
               playAudio(SADNESS);
               setEye(SADNESS);
@@ -59,21 +75,30 @@ void playAnimation() {
             }
             else {
                 showEyeAnimation();
-                switch(selection(millis() - timer_anim_sad, SAD_SERVO_TIME_OUT, 4)){
-                    case 0:
-                        moveServo(0);
-                        break;
-                     case 1:
-                        moveServo(45);
-                        break;
-                     case 2:
-                        moveServo(0);
-                        break;
-                    case 3:
-                        moveServo(30);
-                        break;
-                    default:
-                        break;
+
+                if(millis() - timer_anim1 >= SAD_SERVO_TIME_OUT && case_anim1) {
+                    moveServo(0); 
+                    case_anim1 = false;
+                    case_anim2 = true;
+                    timer_anim2 = millis();
+                }
+                else if (millis() - timer_anim2 >= SAD_SERVO_TIME_OUT && case_anim2){
+                    moveServo(45);
+                    case_anim2 = false;
+                    case_anim3 = true;
+                    timer_anim3 = millis();
+                }
+                else if (millis() - timer_anim3 >= SAD_SERVO_TIME_OUT && case_anim3){
+                    moveServo(0);
+                    case_anim3 = false;
+                    case_anim4 = true;
+                    timer_anim4 = millis();
+                }
+                else if (millis() - timer_anim4 >= SAD_SERVO_TIME_OUT && case_anim4){
+                    moveServo(30);
+                    case_anim4 = false;
+                    case_anim1 = true;
+                    timer_anim1 = millis();
                 }
             }
             break;
@@ -81,6 +106,18 @@ void playAnimation() {
             /* EXCITEMENT
             * 
             */
+             if(first_time_animation){
+                first_time_animation = false;
+                #if defined(DEVMODE)
+                    Serial.print("Animation: ");
+                    Serial.println("EXCITEMENT");
+                #endif
+                shpereExcitement();
+                setEye(EXCITEMENT);
+            }
+            else {
+                showEyeAnimation();
+            }
             break;
         case JOY:
             /* JOY
@@ -126,6 +163,7 @@ void playAnimation() {
             /* ANGER
             * 
             */
+            
             #if defined(DEVMODE)
                 Serial.print("Animation: ");
                 Serial.println("ANGER");
@@ -195,5 +233,12 @@ void setAnimation(byte animation) {
     current_animation = animation;
     first_time_animation = true;
     initial_animation_time = millis();
+    case_anim1 = false;
+    case_anim2 = false;
+    case_anim3 = false;
+    case_anim4 = false;
+    case_anim5 = false;
+    case_anim6 = false;
+    case_anim7 = false;
 }
 
