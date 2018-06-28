@@ -56,7 +56,7 @@ void shpereExcitement(){
 void sphereJoy(){
     //ORANGE
 
-    setColor(250, 155, 0);
+    setColor(100, 155, 0);
     
     #if defined(DEVMODE)
         Serial.print("LED JOY");

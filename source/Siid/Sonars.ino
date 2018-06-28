@@ -4,9 +4,9 @@
 #define ECHO_PIN 44
 #define MAX_DISTANCE 400
 #define DISTANCE_VERY_CLOSE 4
-#define DISTANCE_NEAR 40 
-#define DISTANCE_MEDIUM 80
-#define DISTANCE_FAR 200
+#define DISTANCE_NEAR 50 
+#define DISTANCE_MEDIUM 160
+#define DISTANCE_FAR 250
 #define MSRMNT_TIME_OUT 50 // measurement timeout
 
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE); // NewPing setup of pins and maximum distance.

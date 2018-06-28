@@ -6,7 +6,7 @@
 #define BACK_TIME_OUT 500 // timeout to go BACKWARD
 #define SPOT_TIME_OUT 10000  // SPOT ROTATION timeout
 #define RAND_SAD_TIME_OUT 5000 // random sad animation timeout
-#define EXC_TIME_OUT 8000 // excitement timeout
+#define EXC_TIME_OUT 3000 // excitement timeout
 #define JOY_TIME_OUT 4500 //joy animation timeout
 #define HAPPY_PROB 7 // the probability we want our robot to be happy in the random animation (value range [0, 10])
 #define RAND_SAD_PROB 5 // the probability (from 0 to 10000) to random start the sad animation
@@ -20,6 +20,7 @@
 #define JOY_PROB 7
 #define WHE_JOY_TIME_OUT 500
 #define JOY_SPEED 200
+#define BETWEEN_EXC_TIME_OUT 30000 // the amount of time in between two excitements 
 
 // #### ROBOT STATE ####
 
@@ -38,6 +39,7 @@ byte sensors;
 
 // #### TIME ####
 unsigned long starting_time_state; // state beginning execution time
+unsigned long last_excitement;
 unsigned long timer_state1;
 unsigned long timer_state2;
 unsigned long timer_state3;
@@ -111,19 +113,21 @@ void stateMachine() {
                     else {
                         setState(DISGUST);
                     }
-                    
                     #if defined(DEVMODE)
                         Serial.print("Sonar State: ");
                         Serial.println("FRONT SONAR NEAR");
                     #endif             
                 }
                 else if(sensors == FRONT_SONAR_MEDIUM){
-                    setState(EXCITEMENT_STATE);
+                    if (millis() - last_excitement >= BETWEEN_EXC_TIME_OUT) {
+                        last_excitement = millis();
+                        setState(EXCITEMENT_STATE);
 
-                    #if defined(DEVMODE)
-                        Serial.print("Sonar State: ");
-                        Serial.println("FRONT SONAR MEDIUM");
-                    #endif
+                        #if defined(DEVMODE)
+                            Serial.print("Sonar State: ");
+                            Serial.println("FRONT SONAR MEDIUM");
+                        #endif
+                    } 
                 }
                 else if(sensors == FRONT_SONAR_FAR){
                     /*
@@ -472,6 +476,7 @@ void setupState() {
     current_state  = LOOK_AROUND;
     previous_state = LOOK_AROUND;
     sensors = NO_INPUT;
+    last_excitement = millis();
 }
 
 /*
