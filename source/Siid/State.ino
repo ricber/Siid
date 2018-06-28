@@ -344,7 +344,7 @@ void stateMachine() {
         break;
     case DISGUST_STATE:
     
-        setState(LOOK_AROUND);
+        setAnimation(DISGUST);
         
         /*
         if(first_time_state){
@@ -435,7 +435,7 @@ void stateMachine() {
         * In this state the robot trig the Fear animation
         * the wheels go backward fast
         */
-        /*
+        
         if(first_time_state){
         first_time_state= false;
          #if defined(DEVMODE)
@@ -448,7 +448,7 @@ void stateMachine() {
         }
         setAnimation(FEAR);       
         }
-        */
+        
         break;        
     default: 
         break;
