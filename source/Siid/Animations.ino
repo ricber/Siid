@@ -126,38 +126,50 @@ void playAnimation() {
             *  Eye with happy patterns
             *  Sphere with bright colors
             */
-            /*
-            if( first_time_animation){
-              first_time_animation = false;
-               #if defined(DEVMODE)
+            
+            if(first_time_animation){
+                first_time_animation = false;
+                timer_anim1 = millis() - JOY_SERVO_TIME_OUT;
+                case_anim1 = true; 
+
+                sphereJoy();
+                playAudio(JOY);
+                setEye(JOY);
+ 
+              
+                #if defined(DEVMODE)
                     Serial.print("Animation: ");
                     Serial.println("JOY");
-                #endif
-              moveServo(45);
-              if(millis() - initial_animation_time > JOY_SERVO_TIME_OUT){
-                 moveServo(90);
-                 long newTime = millis();
-                 if(millis() - newTime > JOY_SERVO_TIME_OUT){
-                  moveServo(0);
-                  newTime = millis();
-                  if(millis() - newTime > JOY_SERVO_TIME_OUT){
-                    moveServo(60);
-                  }
-                 }
-              }             
-              showEyeAnimation();
-              if(millis() - initial_animation_time > JOY_EYE_TIME_OUT){
-               long newTime = millis();
-               if(millis() - newTime > JOY_SERVO_TIME_OUT){
-                  moveServo(80);
-                  newTime = millis();
-                  if(millis() - newTime > JOY_SERVO_TIME_OUT){
-                    moveServo(60);
-                  }
-                 }
-              }
+                #endif           
             }
-            */
+            else {
+                showEyeAnimation();
+
+                if(millis() - timer_anim1 >= JOY_SERVO_TIME_OUT && case_anim1) {
+                    moveServo(45); 
+                    case_anim1 = false;
+                    case_anim2 = true;
+                    timer_anim2 = millis();
+                }
+                else if (millis() - timer_anim2 >= JOY_SERVO_TIME_OUT && case_anim2){
+                    moveServo(15);
+                    case_anim2 = false;
+                    case_anim3 = true;
+                    timer_anim3 = millis();
+                }
+                else if (millis() - timer_anim3 >= JOY_SERVO_TIME_OUT && case_anim3){
+                    moveServo(85);
+                    case_anim3 = false;
+                    case_anim4 = true;
+                    timer_anim4 = millis();
+                }
+                else if (millis() - timer_anim4 >= JOY_SERVO_TIME_OUT && case_anim4){
+                    moveServo(5);
+                    case_anim4 = false;
+                    case_anim1 = true;
+                    timer_anim1 = millis();
+                }  
+            }
             break;
         case ANGER:
             /* ANGER

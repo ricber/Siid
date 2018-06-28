@@ -7,7 +7,7 @@
 #define SPOT_TIME_OUT 10000  // SPOT ROTATION timeout
 #define RAND_SAD_TIME_OUT 5000 // random sad animation timeout
 #define EXC_TIME_OUT 8000 // excitement timeout
-#define RAND_ANIM_TIME_OUT 4500 //random animation timeout
+#define JOY_TIME_OUT 4500 //joy animation timeout
 #define HAPPY_PROB 7 // the probability we want our robot to be happy in the random animation (value range [0, 10])
 #define RAND_SAD_PROB 5 // the probability (from 0 to 10000) to random start the sad animation
 #define WAIT_TIME_OUT 2000 //time out for waiting to do another action
@@ -17,10 +17,13 @@
 #define RAND_SAD_SPEED 100  // the speed when the robot is sad (should be low)
 #define WHE_SPOT_ROT_TIME_OUT 1000 // the amount of time the robot moves left, right, forward and backward
 #define SPOT_ROT_SPEED 200
+#define JOY_PROB 7
+#define WHE_JOY_TIME_OUT 500
+#define JOY_SPEED 200
 
 // #### ROBOT STATE ####
 
-enum State_enum {LOOK_AROUND, SPOT_ROTATION, RANDOM_SAD , RANDOM_ANIMATION, ANGRY, EXCITEMENT_STATE, WAIT_INTERACTION, COLLISION, FEAR_STATE}; // all possible states of the robot
+enum State_enum {LOOK_AROUND, SPOT_ROTATION, RANDOM_SAD , JOY_STATE, DISGUST_STATE, ANGRY, EXCITEMENT_STATE, WAIT_INTERACTION, COLLISION, FEAR_STATE}; // all possible states of the robot
 byte current_state; // current state of the robot
 byte previous_state; // previous state of the robot
 bool first_time_state; // boolean variable that indicates if you are entering a state for the first time or not
@@ -102,7 +105,12 @@ void stateMachine() {
                 sensors = front_sonar(); //read sonars distance
 
                 if(sensors == FRONT_SONAR_NEAR){
-                    setState(RANDOM_ANIMATION); 
+                    if(random(10) >= (10 - JOY_PROB)){
+                        setState(JOY);
+                    }
+                    else {
+                        setState(DISGUST);
+                    }
                     
                     #if defined(DEVMODE)
                         Serial.print("Sonar State: ");
@@ -278,40 +286,64 @@ void stateMachine() {
                 }
             }  
             break;
-        case RANDOM_ANIMATION:
-            /* RANDOM ANIMATION 
-             *  In this state we perform a random animation between joy and disgust
+        case JOY_STATE:
+            /* JOY_STATE
+             * In this state we perform a joy animation
             *  Then we continue to check if the object is still there
-            *  If the it remains there we wait for an interaction
-            *  Otherwise the robot moves
+            *  If it remains there we wait for an interaction
             */
-            setState(LOOK_AROUND);  // to debug
-            /*
-            if (random(10) <= HAPPY_PROB){
-                if(first_time_state){
-                    first_time_state= false;
-
-                     #if defined(DEVMODE)
-                        Serial.print("State: ");
-                        Serial.println("RANDOM ANIMATION JOY");
-                     #endif
-                    left(motor1, motor2, 300);
-                    right(motor1, motor2, 300);
-                    left(motor1, motor2, 300);
-                    right(motor1, motor2, 300);
-                    sensors = front_sonar();
-                    if(sensors == FRONT_SONAR_COLLISION){
-                        setState(COLLISION);
-                        break;
-                     }
-                if(millis() - starting_time_state > ROTATION_TIME_OUT){
-                    brake(motor1, motor2);
-                }          
+            if(first_time_state){
+                first_time_state = false;
                 setAnimation(JOY);
-                }
+                timer_state1 = millis() - WHE_JOY_TIME_OUT;
+                case_state1 = true;
+                
+                #if defined(DEVMODE)
+                    Serial.print("State: ");
+                    Serial.println("RANDOM ANIMATION JOY");
+                #endif       
+            }
+            else if (millis() - starting_time_state >= JOY_TIME_OUT){
+                brake(motor1, motor2);
+                setState(WAIT_INTERACTION);     
+            }
+            else if (front_sonar() == FRONT_SONAR_COLLISION){
+                brake(motor1, motor2);
+                setState(COLLISION);
             }
             else{
-                if(first_time_state){
+                if(millis() - timer_state1 >= WHE_JOY_TIME_OUT && case_state1) {
+                    left(motor1, motor2, JOY_SPEED); 
+                    case_state1 = false;
+                    case_state2 = true;
+                    timer_state2 = millis();
+                }
+                else if (millis() - timer_state2 >= WHE_JOY_TIME_OUT && case_state2){
+                    right(motor1, motor2, JOY_SPEED);
+                    case_state2 = false;
+                    case_state3 = true;
+                    timer_state3 = millis();
+                }
+                else if (millis() - timer_state3 >= WHE_JOY_TIME_OUT && case_state3){
+                    left(motor1, motor2, JOY_SPEED);
+                    case_state3 = false;
+                    case_state4 = true;
+                    timer_state4 = millis();
+                }
+                else if (millis() - timer_state4 >= WHE_JOY_TIME_OUT && case_state4){
+                    right(motor1, motor2, JOY_SPEED);
+                    case_state4 = false;
+                    case_state1 = true;
+                    timer_state1 = millis();
+                }
+            }
+        break;
+    case DISGUST_STATE:
+    
+        setState(LOOK_AROUND);
+        
+        /*
+        if(first_time_state){
                     first_time_state= false; 
                      
                     #if defined(DEVMODE)
@@ -332,28 +364,23 @@ void stateMachine() {
                     }
                     setAnimation(DISGUST);
                 }
-            }
-            if(millis() - starting_time_state > RAND_ANIM_TIME_OUT){
-                sensors = front_sonar();
-                if(sensors == FRONT_SONAR_COLLISION){
-                  setState(COLLISION);
-                }
-                else{
-                  setState(WAIT_INTERACTION);
-                }
-              }
-        */
+            */
+            
         break;
     case COLLISION: 
-     /* COLLISION
-      * In this state the object detected is too close
-      * the robot stop moving
-      * and it performs the FEAR animation.      * 
-      * fear animation: the robot moves BACKWARD
-      * emits scared sounds 
-      * the eye reproduce the fear animation 
-      * internal petals close
-      */
+        /* COLLISION
+        * In this state the object detected is too close
+        * the robot stop moving
+        * and it performs the FEAR animation.      * 
+        * fear animation: the robot moves BACKWARD
+        * emits scared sounds 
+        * the eye reproduce the fear animation 
+        * internal petals close
+        */
+        
+        setState(LOOK_AROUND);
+
+        /*
        if(first_time_state){
              first_time_state= false;
 
@@ -388,7 +415,7 @@ void stateMachine() {
                 setState(COLLISION);
              }
            }    
-      
+        */
         break;
     case WAIT_INTERACTION: 
         /* WAIT
@@ -396,13 +423,15 @@ void stateMachine() {
         * an animation and wait for an event
         */
        
-        setState(LOOK_AROUND);
+        setState(LOOK_AROUND); // to debug
         break;
+        
     case FEAR_STATE:
         /*FEAR
         * In this state the robot trig the Fear animation
         * the wheels go backward fast
         */
+        /*
         if(first_time_state){
         first_time_state= false;
          #if defined(DEVMODE)
@@ -415,7 +444,8 @@ void stateMachine() {
         }
         setAnimation(FEAR);       
         }
-        break;
+        */
+        break;        
     default: 
         break;
     }

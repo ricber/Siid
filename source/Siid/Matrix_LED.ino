@@ -354,7 +354,7 @@ bool const turned_off[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
 
-enum Eye_enum {LEFT_EYE, NEUTRAL_FROM_LEFT, RIGHT_EYE, NEUTRAL_FROM_RIGHT, LOOKING_FROM_SADNESS, EXCITEMENT_EYE, JOY_EYE, ANGER_EYE, SADNESS_EYE, FEAR_EYE, DISGUST_EYE};
+enum Eye_enum {LEFT_EYE, NEUTRAL_FROM_LEFT, RIGHT_EYE, NEUTRAL_FROM_RIGHT, LOOKING_FROM_SADNESS, LOOKING_FROM_JOY, EXCITEMENT_EYE, JOY_EYE, ANGER_EYE, SADNESS_EYE, FEAR_EYE, DISGUST_EYE};
 bool first_time_eye; // boolean variable that indicates if you are entering an eye animation for the first time or not
 
 /**
@@ -421,22 +421,31 @@ void eyesInlight(byte eye)
             delay(DELAY_EYE);
             drawEye(neutral1, vanilla);
             break;
+        case JOY_EYE:
+            drawEye(happy1, yellow1);
+            delay(DELAY_EYE);
+            drawEye(happy2, yellow2);
+            delay(DELAY_EYE);
+            drawEye(happy3, yellow3);
+            delay(DELAY_EYE);
+            drawEye(happy4, yellow4);
+            break;
+        case LOOKING_FROM_JOY:
+            drawEye(happy3, yellow3);
+            delay(DELAY_EYE);
+            drawEye(happy2, yellow2);
+            delay(DELAY_EYE);
+            drawEye(happy1, yellow1);
+            delay(DELAY_EYE);
+            drawEye(neutral1, vanilla);
+            delay(DELAY_EYE);
+            break;
         default:
             break;
             
      /*       
         case_eye JOY:
-          drawEye(happy4, yellow4);
-          delay(DELAY_EYE);
-          drawEye(happy3, yellow3);
-          delay(DELAY_EYE);
-          drawEye(happy2, yellow2);
-          delay(DELAY_EYE);
-          drawEye(happy1, yellow1);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE);
-          break;
+          
           
         case_eye ANGER:
           drawEye(angry4, red4);
@@ -479,22 +488,7 @@ void eyesInlight(byte eye)
           
         default:
           drawEye(turned_off, vanilla);                
-          break;
-          
-       
-          
-        case_eye JOY:
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE);
-          drawEye(happy1, yellow1);
-          delay(DELAY_EYE);
-          drawEye(happy2, yellow2);
-          delay(DELAY_EYE);
-          drawEye(happy3, yellow3);
-          delay(DELAY_EYE);
-          drawEye(happy4, yellow4);
-          delay(DELAY_EYE);
-          break;
+          break;         
           
         case_eye ANGER:
           drawEye(neutral1, vanilla);
@@ -579,6 +573,9 @@ void showEyeAnimation(){
                     case SADNESS:
                         eyesInlight(LOOKING_FROM_SADNESS);
                         break;
+                    case JOY:
+                        eyesInlight(LOOKING_FROM_JOY);
+                        break;
                     default:
                         break;
                 }
@@ -651,6 +648,13 @@ void showEyeAnimation(){
                     timer_eye1 = millis();
                 }
             }
+            break;
+        case JOY:
+            if(first_time_eye){
+                eyesInlight(JOY_EYE);
+                previous_emotion = JOY;
+                first_time_eye = false;  
+            }         
             break;
         default:
             break;

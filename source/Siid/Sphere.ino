@@ -35,17 +35,13 @@ void turnOff(){
 
 
 void sphereLooking(){
-  //Dark Blue
-  #if defined(DEVMODE)
-    Serial.println("LED LOOKING");
-  #endif 
-  setColor(0, 255, 50);
-  /*
-  for(int i= 1; i<100; i++){
-     setColor(0, 0, 150 + i); 
-     //TODO: Add Timer
-  }
-  */
+    //Dark Blue
+  
+    setColor(0, 255, 50);
+
+    #if defined(DEVMODE)
+        Serial.println("LED LOOKING");
+    #endif 
 }
 
 void shpereExcitement(){
@@ -58,21 +54,13 @@ void shpereExcitement(){
  * continuosly
  */
 void sphereJoy(){
-    /*
-  //ORANGE
-   #if defined(DEVMODE)
-        Serial.print("LED JOY");
-   #endif 
-   analogWrite( RED, 250);  
-   analogWrite(BLU,0);
-   analogWrite(GREEN,155);
+    //ORANGE
 
-   //TRANSITION TO YELLOW
-   for(int i=1; i< 90; i++){
-     analogWrite(GREEN,155 + i);
-     //TODO: Add Delay 
-   }
-   */
+    setColor(250, 155, 0);
+    
+    #if defined(DEVMODE)
+        Serial.print("LED JOY");
+    #endif 
 }
 
 /**
