@@ -201,9 +201,11 @@ void playAnimation() {
               moveServo(0);
               playAudio(FEAR);
               if(millis() - initial_animation_time > FEAR_SERVO_TIME_OUT){
+                setEye(LOOKING);
+                showEyeAnimation();
                 moveServo(60); 
               }
-            } 
+           }
             break;
             
         case DISGUST:
@@ -228,7 +230,29 @@ void playAnimation() {
                 showEyeAnimation();
               }             
             }  
-            */               
+            */    
+            if(first_time_animation){
+              first_time_animation = false;
+              #if defined(DEVMODE)
+                Serial.print("Animation: ");
+                Serial.println("DISGUST");
+                #endif 
+              
+              moveServo(0);
+              sphereDisgust();
+              showEyeAnimation();
+              playAudio(DISGUST);
+              if(millis() - initial_animation_time > DISGUST_SERVO_TIME_OUT){
+                moveServo(60);
+                for( int i=4; i>=0;i--)
+                {
+                  moveServo(60-(i*3);
+                  moveServo(60);
+                  moveServo(60+i*3);
+                  moveServo(60);
+                }
+              }             
+            } 
             break;
         default:
             break;
