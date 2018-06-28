@@ -18,8 +18,6 @@ SoftwareSerial mySoftwareSerial(10, 11); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 
 void setupSpeaker() {
-    // ##### ATTENTION: THE FOLLOWING CODE WILL BE UNCOMMENTED WHEN ELECTRONICS PROBLEMS (unstable voltage on serial dfplayer tx pin) WILL BE SOLVED ######
-    /*
   mySoftwareSerial.begin(9600);
   
   Serial.println();
@@ -34,31 +32,17 @@ void setupSpeaker() {
   }
   Serial.println(F("DFPlayer Mini online."));
 
-  myDFPlayer.volume(10);  //Set volume value. From 0 to 30
-  */
+  myDFPlayer.volume(30);  //Set volume value. From 0 to 30
 }
 
 void playAudio(byte emotion){
-        // ##### ATTENTION: THE FOLLOWING CODE WILL BE UNCOMMENTED WHEN ELECTRONICS PROBLEMS (unstable voltage on serial dfplayer tx pin) WILL BE SOLVED ######
-    /*
   switch(emotion){
     case JOY:
-    for(int i=0; i<2; i++){
-       if (random(10) <= SOUND_PROB){
-          myDFPlayer.playFolder(01,001);
-        }else{
-         myDFPlayer.playFolder(01,002);
-        }
-    }
+    myDFPlayer.playFolder(01,001); 
+    delay(400);
     break;
     case ANGER:
-     for(int i=0; i<2; i++){
-       if (random(10) <= SOUND_PROB){
-          myDFPlayer.playFolder(02,001);
-        }else{
-         myDFPlayer.playFolder(02,002);
-        }
-     }
+     myDFPlayer.playFolder(02,001);      
     break;
     case SADNESS:
      for(int i=0; i<2; i++){
@@ -89,6 +73,5 @@ void playAudio(byte emotion){
     break;
     default: break;
   }
-  */
 }
 

@@ -25,51 +25,36 @@
  * Body presence (not so near): >=27°C and <29.5°C
  */
 #define MAX_TEMP 45
-#define VERY_NEAR_TEMP 29.5
+#define ERR_TEMP 1
 
 // #### TIME ####
-unsigned long last_measurement_time_thermo; // state beginning execution time
+
 
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
 void setupThermoSensor() {
-    /*
     #if defined(DEVMODE)
         Serial.println("Thermosensor SETUP begin"); 
     #endif
-    mlx.begin();  
-    */
+    mlx.begin(); 
 }
 
 void front_thermo() {
-    /*
-  if (millis() - last_measurement_time_thermo >= MSRMNT_TIME_OUT){
-    //read the temperature
     float ambientTemp = mlx.readAmbientTempC();
     float objectTemp = mlx.readObjectTempC();
-    last_measurement_time_thermo = millis();
-    
+
     #if defined(DEVMODE)
     Serial.print("Ambient = "); Serial.print(mlx.readAmbientTempC()); 
     Serial.print("*C\tObject = "); Serial.print(mlx.readObjectTempC()); Serial.println("*C");
      #endif
 
-   if(objectTemp >= VERY_NEAR_TEMP && objectTemp < MAX_TEMP){
+   if((objectTemp >= ambientTemp + ERR_TEMP) && objectTemp < MAX_TEMP){
       //There is a hand that is really near the sphere of the robot
        #if defined(DEVMODE)
            Serial.print("Thermo State: ");
            Serial.println("VERY_NEAR_TEMPERATURE");
-      #endif      
-      float actualObjTemp = mlx.readObjectTempC(); 
+      #endif 
            
-      if (mlx.readObjectTempC() - objectTemp >= 1.5){
-        //the changement of temperature was SLOW -> HAPPY REACTION
-        setState(RANDOM_ANIMATION);
-      }else{
-        //the changement of temperature was FAST -> FEAR REACTION
-         setState(FEAR_STATE);
-      }
+     setState(FEAR);
     }
   }
-   */
-}
