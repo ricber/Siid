@@ -190,22 +190,22 @@ void playAnimation() {
             * Make sound from a set of fear sounds
             * Sphere of violet colors
             */
-            /*
-            if(first_time_animation){
+           if(first_time_animation){
               first_time_animation = false;
                #if defined(DEVMODE)
                     Serial.print("Animation: ");
                     Serial.println("FEAR");
                 #endif
               sphereFear();
+              showEyeAnimation();
               moveServo(0);
+              playAudio(FEAR);
               if(millis() - initial_animation_time > FEAR_SERVO_TIME_OUT){
-                moveServo(60);
-                 showEyeAnimation(); 
+                moveServo(60); 
               }
             } 
-            */
             break;
+            
         case DISGUST:
             /* DISGUST
             *  Open and semi-closed petals
