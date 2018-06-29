@@ -44,7 +44,7 @@ void sphereLooking(){
     #endif 
 }
 
-void shpereExcitement(){
+void sphereExcitement(){
     // TODO
 }
 

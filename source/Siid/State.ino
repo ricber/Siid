@@ -2,15 +2,15 @@
 #include <SparkFun_TB6612.h>
 
 // #### DEFINITIONS ####
-#define LK_TIME_OUT 20000 // LOOK_AROUND timeout
+#define LK_TIME_OUT 10000 // LOOK_AROUND timeout
 #define BACK_TIME_OUT 500 // timeout to go BACKWARD
-#define SPOT_TIME_OUT 10000  // SPOT ROTATION timeout
+#define SPOT_TIME_OUT 10000  ìììì// SPOT ROTATION timeout
 #define RAND_SAD_TIME_OUT 5000 // random sad animation timeout
 #define ANGER_TIME_OUT 9000 // anger animation timeout 
 #define FEAR_TIME_OUT 5000 //fear animation time out
 #define DISGUST_TIME_OUT 5000 //fear animation time out
-#define EXC_TIME_OUT 3000 // excitement timeout
-#define JOY_TIME_OUT 4500 //joy animation timeout
+#define EXC_TIME_OUT 4500 // excitement timeout
+#define JOY_TIME_OUT 5000 //joy animation timeout
 #define HAPPY_PROB 7 // the probability we want our robot to be happy in the random animation (value range [0, 10])
 #define RAND_SAD_PROB 5 // the probability (from 0 to 10000) to random start the sad animation
 #define WAIT_TIME_OUT 2000 //time out for waiting to do another action
@@ -315,7 +315,7 @@ void stateMachine() {
             else if (millis() - starting_time_state >= JOY_TIME_OUT){
                 brake(motor1, motor2);
                 moveServo(85);
-                delay(1000);
+                delay(5000);
                 if(front_thermo()){
                   if(random(10)> FEAR_PROB){ 
                      setState(ANGRY);

@@ -45,6 +45,7 @@ void playAnimation() {
                     Serial.print("Animation: ");
                     Serial.println("LOOKING");
                 #endif
+                moveServo(7);
                 sphereLooking();
                 setEye(LOOKING);
             }
@@ -115,7 +116,7 @@ void playAnimation() {
                     Serial.print("Animation: ");
                     Serial.println("EXCITEMENT");
                 #endif
-                shpereExcitement();
+                sphereExcitement();
                 setEye(EXCITEMENT);
             }
             else {

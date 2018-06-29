@@ -440,6 +440,40 @@ void eyesInlight(byte eye)
             drawEye(neutral1, vanilla);
             delay(DELAY_EYE);
             break;
+            
+           case  ANGER_EYE:
+           drawEye(sadness1, red1);
+          delay(DELAY_EYE);
+          drawEye(sadness2, red2);
+          delay(DELAY_EYE);
+          drawEye(angry3, red3);
+          delay(DELAY_EYE);
+          drawEye(angry4, red1);
+          delay(DELAY_EYE);
+          break;
+           case FEAR_EYE:
+           drawEye(neutral1, vanilla);
+          delay(DELAY_EYE);
+          drawEye(neutral2, purple1);
+          delay(DELAY_EYE);
+          drawEye(neutral3, purple2);
+          delay(DELAY_EYE);
+          drawEye(fear3, purple3);
+          delay(DELAY_EYE);
+          drawEye(fear4, purple4);
+          delay(DELAY_EYE);
+          break; 
+           case DISGUST_EYE:
+           drawEye(neutral1, vanilla);
+          delay(DELAY_EYE); 
+          drawEye(disgust1,green1);
+          delay(DELAY_EYE);
+          drawEye(disgust2,green2);
+          delay(DELAY_EYE);
+          drawEye(disgust3,green3);
+          delay(DELAY_EYE);
+          drawEye(disgust4,green4);
+          delay(DELAY_EYE); 
         default:
             break;
             
