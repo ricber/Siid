@@ -55,7 +55,8 @@ void sphereExcitement(){
  */
 void sphereJoy(){
     //ORANGE YELLOW
-    setColor(255, 180, 0);    
+    setColor(255, 180, 0);
+        
     #if defined(DEVMODE)
         Serial.print("LED JOY");
     #endif 
@@ -66,10 +67,11 @@ void sphereJoy(){
  * with a RED color (RED -> OFF)
  */
 void sphereAnger(){
+    setColor(215,0,0);  
+    
     #if defined(DEVMODE)
         Serial.print("LED ANGER");
     #endif 
-    setColor(215,0,0);  
 }
 
 /**
@@ -79,18 +81,20 @@ void sphereAnger(){
  */
 void sphereSadness1(){
   //Dark Blue
+  setColor(0, 0, 190);
+    
   #if defined(DEVMODE)
     Serial.println("LED SADNESS");
-  #endif 
-  setColor(0, 0, 190);
+  #endif
 }
 
 void sphereSadness2(){
   //Dark Blue
+  setColor( 0, 100, 255);
+  
   #if defined(DEVMODE)
     Serial.println("LED SADNESS");
   #endif 
-  setColor( 0, 100, 255);
 }
 
 /**
@@ -98,10 +102,11 @@ void sphereSadness2(){
  */
 void sphereDisgust(){
     //GREEN
+    setColor(0, 140, 40);
+    
     #if defined(DEVMODE)
         Serial.print("LED DISGUST");
     #endif
-    setColor(0, 140, 40);
 }
 
 /**
@@ -109,10 +114,11 @@ void sphereDisgust(){
  */
 void sphereFear(){
     //PURPLE
+     setColor(150,0,200);
+     
     #if defined(DEVMODE)
         Serial.print("LED FEAR");
     #endif
-    setColor(150,0,200);
 }  
 
 void setColor(int red, int green, int blue)

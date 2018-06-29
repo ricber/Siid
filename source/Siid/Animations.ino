@@ -8,7 +8,8 @@ enum Animation_enum {LOOKING, SADNESS, EXCITEMENT, JOY, ANGER, FEAR, DISGUST}; /
 #define JOY_EYE_TIME_OUT 6500
 #define SAD_SERVO_TIME_OUT 1500
 #define FEAR_SERVO_TIME_OUT 2000
-#define SPHERE_ANGER_TIME_OUT 50
+#define SPHERE_ANGER_TIME_OUT 20
+#define SERVO_CLOSED_DEGREE 7
 
 byte current_animation; // current aniamtion of the robot
 bool first_time_animation;
@@ -241,17 +242,17 @@ void playAnimation() {
             *  Sphere of green colors
             */
             if(first_time_animation){
-              first_time_animation = false;
-              timer_anim1 = millis() - DISGUST_SERVO_TIME_OUT;
-              case_anim1 = true;
-              #if defined(DEVMODE)
-                Serial.print("Animation: ");
-                Serial.println("DISGUST");
-                #endif 
-              setEye(DISGUST);
-              moveServo(0);
-              sphereDisgust();
-              playAudio(DISGUST);             
+                first_time_animation = false;
+                timer_anim1 = millis() - DISGUST_SERVO_TIME_OUT;
+                case_anim1 = true;
+                #if defined(DEVMODE)
+                    Serial.print("Animation: ");
+                    Serial.println("DISGUST");
+                    #endif 
+                setEye(DISGUST);
+                moveServo(SERVO_CLOSED_DEGREE);
+                sphereDisgust();
+                playAudio(DISGUST);             
             }else {
               showEyeAnimation();
               if(millis() - timer_anim1 >= DISGUST_SERVO_TIME_OUT && case_anim1) {

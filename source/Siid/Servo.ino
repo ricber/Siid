@@ -7,7 +7,6 @@ void setupServo()
 {
     myservo.attach(SERVO_PIN); // attaches the servo on pin 9 to the servo object
     moveServo(7); //petals closed
-    delay(100);
     #if defined(DEVMODE)
         Serial.println("SERVO setup");
     #endif

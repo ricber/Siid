@@ -25,7 +25,6 @@
  * Relevant Temperature (near): >= 29.5°C and <45°C
  * Body presence (not so near): >=27°C and <29.5°C
  */
-#define MAX_TEMP 45
 #define ERR_TEMP 2
 
 // #### TIME ####
@@ -40,22 +39,25 @@ void setupThermoSensor() {
     mlx.begin(); 
 }
 
-boolean front_thermo() {
+boolean thermosensor() {
     float ambientTemp = mlx.readAmbientTempC();
     float objectTemp = mlx.readObjectTempC();
 
     #if defined(DEVMODE)
-    Serial.print("Ambient = "); Serial.print(mlx.readAmbientTempC()); 
-    Serial.print("*C\tObject = "); Serial.print(mlx.readObjectTempC()); Serial.println("*C");
-     #endif
+        Serial.print("Ambient = "); 
+        Serial.print(mlx.readAmbientTempC()); 
+        Serial.print("*C\tObject = "); 
+        Serial.print(mlx.readObjectTempC()); 
+        Serial.println("*C");
+    #endif
 
    if(objectTemp >= ambientTemp + ERR_TEMP){
-      //There is a hand that is really near the sphere of the robot
-       #if defined(DEVMODE)
-           Serial.print("Thermo State: ");
-           Serial.println("VERY_NEAR_TEMPERATURE");
-      #endif 
-      return true;
+        //There is a hand that is really near the sphere of the robot
+        #if defined(DEVMODE)
+            Serial.print("Thermo State: ");
+            Serial.println("VERY_NEAR_TEMPERATURE");
+        #endif 
+        return true;
     }
     return false;    
   }
