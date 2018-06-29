@@ -440,9 +440,42 @@ void eyesInlight(byte eye)
             drawEye(neutral1, vanilla);
             delay(DELAY_EYE);
             break;
-            
-           case  ANGER_EYE:
-           drawEye(sadness1, red1);
+     case ANGER_FROM_JOY:
+          drawEye(happy4, yellow4);
+          delay(DELAY_EYE);
+          drawEye(happy3, yellow3);
+          delay(DELAY_EYE);
+          drawEye(happy2, yellow2);
+          delay(DELAY_EYE);
+          drawEye(happy1, yellow1);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanillia);
+          delay(DELAY_EYE);
+          drawEye(sadness1, red1);
+          delay(DELAY_EYE);
+          drawEye(sadness2, red2);
+          delay(DELAY_EYE);
+          drawEye(angry3, red3);
+          delay(DELAY_EYE);
+          drawEye(angry4, red4);
+          delay(DELAY_EYE);
+       break;
+       
+     case LOOKING_FROM_ANGER:
+          drawEye(angry4, red4);
+          delay(DELAY_EYE);
+          drawEye(angry3, red3);
+          delay(DELAY_EYE);
+          drawEye(sadness2, red2);
+          delay(DELAY_EYE);
+          drawEye(sadness1, red1);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanillia);
+          delay(DELAY_EYE);
+       break;
+       
+     case ANGER_EYE:
+          drawEye(sadness1, red1);
           delay(DELAY_EYE);
           drawEye(sadness2, red2);
           delay(DELAY_EYE);
@@ -451,7 +484,34 @@ void eyesInlight(byte eye)
           drawEye(angry4, red1);
           delay(DELAY_EYE);
           break;
-           case FEAR_EYE:
+       
+     case FEAR_FROM_LOOKING:
+          drawEye(neutral1, vanillia);
+          delay(DELAY_EYE);
+          drawEye(neutral2, purple1);
+          delay(DELAY_EYE);
+          drawEye(neutral3, purple2);
+          delay(DELAY_EYE);
+          drawEye(fear3, purple3);
+          delay(DELAY_EYE);
+          drawEye(fear4, purple4);
+          delay(DELAY_EYE);
+       break;
+       
+     case LOOKING_FROM_FEAR:
+          drawEye(fear4, purple4);
+          delay(DELAY_EYE);
+          drawEye(fear3, purple3);
+          delay(DELAY_EYE);
+          drawEye(neutral3, purple2);
+          delay(DELAY_EYE);
+          drawEye(neutral2, purple1);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanillia);
+          delay(DELAY_EYE);
+       break;
+       
+      case FEAR_EYE:
            drawEye(neutral1, vanilla);
           delay(DELAY_EYE);
           drawEye(neutral2, purple1);
@@ -463,8 +523,44 @@ void eyesInlight(byte eye)
           drawEye(fear4, purple4);
           delay(DELAY_EYE);
           break; 
-           case DISGUST_EYE:
-           drawEye(neutral1, vanilla);
+       
+     case DISGUST_FROM_ANGER:
+          drawEye(sadness4, blue4);
+          delay(DELAY_EYE);
+          drawEye(sadness3, blue3);
+          delay(DELAY_EYE);
+          drawEye(sadness2, blue2);
+          delay(DELAY_EYE);
+          drawEye(sadness1, blue1);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanillia);
+          delay(DELAY_EYE); 
+          drawEye(disgust1,green1);
+          delay(DELAY_EYE);
+          drawEye(disgust2,green2);
+          delay(DELAY_EYE);
+          drawEye(disgust3,green3);
+          delay(DELAY_EYE);
+          drawEye(disgust4,green4);
+          delay(DELAY_EYE);
+       break;
+       
+     case LOOKING_FROM_DISGUST:
+          drawEye(sadness4, blue4);
+          delay(DELAY_EYE);
+          drawEye(sadness3, blue3);
+          delay(DELAY_EYE);
+          drawEye(sadness2, blue2);
+          delay(DELAY_EYE);
+          drawEye(sadness1, blue1);
+          delay(DELAY_EYE);
+          drawEye(neutral1, vanillia);
+          delay(DELAY_EYE);
+       
+       break;
+       
+     case DISGUST_EYE:
+          drawEye(neutral1, vanilla);
           delay(DELAY_EYE); 
           drawEye(disgust1,green1);
           delay(DELAY_EYE);
@@ -523,49 +619,6 @@ void eyesInlight(byte eye)
         default:
           drawEye(turned_off, vanilla);                
           break;         
-          
-        case_eye ANGER:
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE);
-          drawEye(sadness1, red1);
-          delay(DELAY_EYE);
-          drawEye(sadness2, red2);
-          delay(DELAY_EYE);
-          drawEye(angry3, red3);
-          delay(DELAY_EYE);
-          drawEye(angry4, red4);
-          delay(DELAY_EYE);
-          break;
-          
-        case_eye FEAR:
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE);
-          drawEye(neutral2, purple1);
-          delay(DELAY_EYE);
-          drawEye(neutral3, purple2);
-          delay(DELAY_EYE);
-          drawEye(fear3, purple3);
-          delay(DELAY_EYE);
-          drawEye(fear4, purple4);
-          delay(DELAY_EYE);
-          break;
-          
-        case_eye DISGUST:
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE); 
-          drawEye(disgust1,green1);
-          delay(DELAY_EYE);
-          drawEye(disgust2,green2);
-          delay(DELAY_EYE);
-          drawEye(disgust3,green3);
-          delay(DELAY_EYE);
-          drawEye(disgust4,green4);
-          delay(DELAY_EYE);   
-          break;
-          
-        default:
-          drawEye(turned_off, vanilla);                
-          break;
         */
     }
 }    
@@ -609,6 +662,15 @@ void showEyeAnimation(){
                         break;
                     case JOY:
                         eyesInlight(LOOKING_FROM_JOY);
+                        break;
+                    case ANGER:
+                        eyesInlight(LOOKING_FROM_ANGER);
+                        break;
+                    case DISGUST:
+                        eyesInlight(LOOKING_FROM_DISGUST);
+                        break;
+                    case FEAR:
+                        eyesInlight(LOOKING_FROM_FEAR);
                         break;
                     default:
                         break;
@@ -689,6 +751,46 @@ void showEyeAnimation(){
                 previous_emotion = JOY;
                 first_time_eye = false;  
             }         
+            break;
+        case FEAR:
+            if(first_time_eye){
+                eyesInlight(FEAR_EYE);
+                previous_emotion = FEAR;
+                first_time_eye = false;  
+            }         
+            break;
+        case ANGER:
+            if(first_time_eye){
+              switch(previous_emotion){
+                    case LOOKING:
+                        eyesInlight(JOY_EYE);
+                        break;
+                    case JOY:
+                        eyesInlight(ANGER_FROM_JOY);
+                        break;
+                default:
+                  break;
+              }
+                previous_emotion = ANGER;
+                first_time_eye = false;  
+            } 
+        break;
+        
+      case DISGUST:
+        if(first_time_eye){
+              switch(previous_emotion){
+                    case LOOKING:
+                        eyesInlight(DISGUST_EYE);
+                        break;
+                    case ANGER:
+                        eyesInlight(DISGUST_FROM_ANGER);
+                        break;
+                default:
+                  break;
+              }
+                previous_emotion = DISGUST;
+                first_time_eye = false;  
+            } 
             break;
         default:
             break;
