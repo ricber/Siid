@@ -354,7 +354,7 @@ bool const turned_off[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
 
-enum Eye_enum {LEFT_EYE, NEUTRAL_FROM_LEFT, RIGHT_EYE, NEUTRAL_FROM_RIGHT, LOOKING_FROM_SADNESS, LOOKING_FROM_JOY, EXCITEMENT_EYE, JOY_EYE, ANGER_EYE, SADNESS_EYE, FEAR_EYE, DISGUST_EYE};
+enum Eye_enum {LEFT_EYE, NEUTRAL_FROM_LEFT, RIGHT_EYE, NEUTRAL_FROM_RIGHT, LOOKING_FROM_JOY, EXCITEMENT_EYE, ANGER_FROM_JOY, JOY_EYE, ANGER_EYE, LOOKING_FROM_ANGER, SADNESS_EYE, LOOKING_FROM_SADNESS, FEAR_EYE, LOOKING_FROM_FEAR,DISGUST_FROM_ANGER,LOOKING_FROM_DISGUST, DISGUST_EYE};
 bool first_time_eye; // boolean variable that indicates if you are entering an eye animation for the first time or not
 
 /**
@@ -449,7 +449,7 @@ void eyesInlight(byte eye)
           delay(DELAY_EYE);
           drawEye(happy1, yellow1);
           delay(DELAY_EYE);
-          drawEye(neutral1, vanillia);
+          drawEye(neutral1, vanilla);
           delay(DELAY_EYE);
           drawEye(sadness1, red1);
           delay(DELAY_EYE);
@@ -470,7 +470,7 @@ void eyesInlight(byte eye)
           delay(DELAY_EYE);
           drawEye(sadness1, red1);
           delay(DELAY_EYE);
-          drawEye(neutral1, vanillia);
+          drawEye(neutral1, vanilla);
           delay(DELAY_EYE);
        break;
        
@@ -485,19 +485,6 @@ void eyesInlight(byte eye)
           delay(DELAY_EYE);
           break;
        
-     case FEAR_FROM_LOOKING:
-          drawEye(neutral1, vanillia);
-          delay(DELAY_EYE);
-          drawEye(neutral2, purple1);
-          delay(DELAY_EYE);
-          drawEye(neutral3, purple2);
-          delay(DELAY_EYE);
-          drawEye(fear3, purple3);
-          delay(DELAY_EYE);
-          drawEye(fear4, purple4);
-          delay(DELAY_EYE);
-       break;
-       
      case LOOKING_FROM_FEAR:
           drawEye(fear4, purple4);
           delay(DELAY_EYE);
@@ -507,7 +494,7 @@ void eyesInlight(byte eye)
           delay(DELAY_EYE);
           drawEye(neutral2, purple1);
           delay(DELAY_EYE);
-          drawEye(neutral1, vanillia);
+          drawEye(neutral1, vanilla);
           delay(DELAY_EYE);
        break;
        
@@ -533,7 +520,7 @@ void eyesInlight(byte eye)
           delay(DELAY_EYE);
           drawEye(sadness1, blue1);
           delay(DELAY_EYE);
-          drawEye(neutral1, vanillia);
+          drawEye(neutral1, vanilla);
           delay(DELAY_EYE); 
           drawEye(disgust1,green1);
           delay(DELAY_EYE);
@@ -554,7 +541,7 @@ void eyesInlight(byte eye)
           delay(DELAY_EYE);
           drawEye(sadness1, blue1);
           delay(DELAY_EYE);
-          drawEye(neutral1, vanillia);
+          drawEye(neutral1, vanilla);
           delay(DELAY_EYE);
        
        break;
