@@ -40,10 +40,17 @@ void setupSpeaker() {
 void playAudio(byte emotion){
   switch(emotion){
     case JOY:
-    myDFPlayer.playFolder(1,1);
+     #if defined(DEVMODE)
+        Serial.print("SPEAKER JOY");
+    #endif 
+    myDFPlayer.playFolder(01,1);
+    delay(50);
     break;
     case ANGER:
-     myDFPlayer.playFolder(2,1);      
+     #if defined(DEVMODE)
+        Serial.print("SPEAKER ANGER");
+    #endif
+     myDFPlayer.playFolder(02,1);      
     break;
     case SADNESS:
      for(int i=0; i<2; i++){

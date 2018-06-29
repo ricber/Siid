@@ -4,8 +4,8 @@
 // #### DEFINITIONS ####
 #define LK_TIME_OUT 10000 // LOOK_AROUND timeout
 #define BACK_TIME_OUT 500 // timeout to go BACKWARD
-#define SPOT_TIME_OUT 10000  ìììì// SPOT ROTATION timeout
-#define RAND_SAD_TIME_OUT 5000 // random sad animation timeout
+#define SPOT_TIME_OUT 5000 // SPOT ROTATION timeout
+#define RAND_SAD_TIME_OUT 10000 // random sad animation timeout
 #define ANGER_TIME_OUT 9000 // anger animation timeout 
 #define FEAR_TIME_OUT 5000 //fear animation time out
 #define DISGUST_TIME_OUT 5000 //fear animation time out
