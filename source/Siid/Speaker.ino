@@ -43,23 +43,34 @@ void playAudio(byte emotion){
      #if defined(DEVMODE)
         Serial.print("SPEAKER JOY");
     #endif 
-    myDFPlayer.playFolder(01,1);
-    delay(50);
+    if(random(10) > SOUND_PROB){
+      myDFPlayer.playFolder(01,1);
+      delay(50);
+    }else{
+      myDFPlayer.playFolder(01,2);
+      delay(50);
+    }    
     break;
     case ANGER:
      #if defined(DEVMODE)
         Serial.print("SPEAKER ANGER");
     #endif
      myDFPlayer.playFolder(02,1);  
-      delay(200);    
+      delay(100);    
     break;
     case SADNESS:
+     #if defined(DEVMODE)
+        Serial.print("SPEAKER SADNESS");
+    #endif
      myDFPlayer.playFolder(03,001);
-      delay(50);   
+      delay(100);   
     break;
     case FEAR:
-          myDFPlayer.playFolder(04,001);
-           delay(50);  
+     #if defined(DEVMODE)
+        Serial.print("SPEAKER FEAR");
+    #endif
+        myDFPlayer.playFolder(04,001);
+        delay(100);  
     break;
     case DISGUST:    
        if (random(10) <= SOUND_PROB){
@@ -68,8 +79,7 @@ void playAudio(byte emotion){
         }else{
          myDFPlayer.playFolder(05,002);
           delay(50);
-        }
- 
+        } 
     break;
     default: break;
   }
