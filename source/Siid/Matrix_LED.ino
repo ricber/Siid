@@ -440,15 +440,7 @@ void eyesInlight(byte eye)
             drawEye(neutral1, vanilla);
             delay(DELAY_EYE);
             break;
-     case ANGER_FROM_JOY:
-          drawEye(happy4, yellow4);
-          delay(DELAY_EYE);
-          drawEye(happy3, yellow3);
-          delay(DELAY_EYE);
-          drawEye(happy2, yellow2);
-          delay(DELAY_EYE);
-          drawEye(happy1, yellow1);
-          delay(DELAY_EYE);
+     case ANGER_EYE:
           drawEye(neutral1, vanilla);
           delay(DELAY_EYE);
           drawEye(sadness1, red1);
@@ -459,8 +451,7 @@ void eyesInlight(byte eye)
           delay(DELAY_EYE);
           drawEye(angry4, red4);
           delay(DELAY_EYE);
-       break;
-       
+        break;
      case LOOKING_FROM_ANGER:
           drawEye(angry4, red4);
           delay(DELAY_EYE);
@@ -472,8 +463,8 @@ void eyesInlight(byte eye)
           delay(DELAY_EYE);
           drawEye(neutral1, vanilla);
           delay(DELAY_EYE);
-       break;
-       
+        break;
+        /*
      case ANGER_EYE:
           drawEye(sadness1, red1);
           delay(DELAY_EYE);
@@ -484,7 +475,7 @@ void eyesInlight(byte eye)
           drawEye(angry4, red1);
           delay(DELAY_EYE);
           break;
-       
+       */
      case LOOKING_FROM_FEAR:
           drawEye(fear4, purple4);
           delay(DELAY_EYE);
@@ -614,11 +605,11 @@ void eyesInlight(byte eye)
  * Setup the Matrix LED
  */
 void setupMatrix() {
-  //we initialize the matrix and configure its pixel brightness, text color and text wrapping options
-  matrix.begin();
-  matrix.setBrightness(BRIGHTNESS);
-  current_emotion = LOOKING;
-  previous_emotion = LOOKING;
+    //we initialize the matrix and configure its pixel brightness, text color and text wrapping options
+    matrix.begin();
+    matrix.setBrightness(BRIGHTNESS);
+    current_emotion = LOOKING;
+    previous_emotion = LOOKING;
 }
 
 
@@ -748,33 +739,14 @@ void showEyeAnimation(){
             break;
         case ANGER:
             if(first_time_eye){
-              switch(previous_emotion){
-                    case LOOKING:
-                        eyesInlight(JOY_EYE);
-                        break;
-                    case JOY:
-                        eyesInlight(ANGER_FROM_JOY);
-                        break;
-                default:
-                  break;
-              }
                 previous_emotion = ANGER;
-                first_time_eye = false;  
-            } 
-        break;
-        
-      case DISGUST:
-        if(first_time_eye){
-              switch(previous_emotion){
-                    case LOOKING:
-                        eyesInlight(DISGUST_EYE);
-                        break;
-                    case ANGER:
-                        eyesInlight(DISGUST_FROM_ANGER);
-                        break;
-                default:
-                  break;
-              }
+                eyesInlight(ANGER_EYE);
+                first_time_eye = false;
+            }
+            break;        
+        case DISGUST:
+            if(first_time_eye){
+                eyesInlight(DISGUST_EYE);
                 previous_emotion = DISGUST;
                 first_time_eye = false;  
             } 

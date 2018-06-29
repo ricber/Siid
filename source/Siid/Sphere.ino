@@ -55,7 +55,7 @@ void sphereExcitement(){
  */
 void sphereJoy(){
     //ORANGE YELLOW
-    setColor(255, 180, 0);
+    setColor(150, 180, 0);
         
     #if defined(DEVMODE)
         Serial.print("LED JOY");

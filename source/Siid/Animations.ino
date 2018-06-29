@@ -141,7 +141,6 @@ void playAnimation() {
                 playAudio(JOY);
                 setEye(JOY);
  
-              
                 #if defined(DEVMODE)
                     Serial.print("Animation: ");
                     Serial.println("JOY");
@@ -190,9 +189,9 @@ void playAnimation() {
                 playAudio(ANGER);
               
                 #if defined(DEVMODE)
-                Serial.print("Animation: ");
-                Serial.println("ANGER");
-            #endif  
+                    Serial.print("Animation: ");
+                    Serial.println("ANGER");
+                #endif  
             }
             else {
                 showEyeAnimation();
@@ -203,7 +202,7 @@ void playAnimation() {
                     case_anim2 = true;
                     timer_anim2 = millis();
                 }
-                else if (millis() - timer_anim2 >= SAD_SERVO_TIME_OUT && case_anim2){
+                else if (millis() - timer_anim2 >= SPHERE_ANGER_TIME_OUT && case_anim2){
                     sphereAnger();
                     case_anim2 = false;
                     case_anim1 = true;
@@ -211,7 +210,6 @@ void playAnimation() {
                 }
              }
             break;
-        
         case FEAR:
             /* FEAR
             * Closed and semi-open petals: internal petals closed and 
@@ -222,18 +220,18 @@ void playAnimation() {
             */
            if(first_time_animation){
               first_time_animation = false;
+              
                #if defined(DEVMODE)
-                    Serial.print("Animation: ");
-                    Serial.println("FEAR");
-                #endif
-              sphereFear();
-              setEye(FEAR);
-              playAudio(FEAR);
+                    Serial.println("Animation: FEAR");
+               #endif
+                
+                sphereFear();
+                setEye(FEAR);
+                playAudio(FEAR);
            }else {
               showEyeAnimation();
            }
             break;
-            
         case DISGUST:
             /* DISGUST
             *  Open and semi-closed petals
@@ -245,16 +243,17 @@ void playAnimation() {
                 first_time_animation = false;
                 timer_anim1 = millis() - DISGUST_SERVO_TIME_OUT;
                 case_anim1 = true;
+                
                 #if defined(DEVMODE)
-                    Serial.print("Animation: ");
-                    Serial.println("DISGUST");
-                    #endif 
+                    Serial.println("Animation: DISGUST");                 
+                #endif 
                 setEye(DISGUST);
                 moveServo(SERVO_CLOSED_DEGREE);
                 sphereDisgust();
                 playAudio(DISGUST);             
             }else {
               showEyeAnimation();
+              
               if(millis() - timer_anim1 >= DISGUST_SERVO_TIME_OUT && case_anim1) {
                     moveServo(50); 
                     case_anim1 = false;
