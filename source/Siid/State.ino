@@ -7,6 +7,8 @@
 #define SPOT_TIME_OUT 10000  // SPOT ROTATION timeout
 #define RAND_SAD_TIME_OUT 5000 // random sad animation timeout
 #define ANGER_TIME_OUT 9000 // anger animation timeout 
+#define FEAR_TIME_OUT 5000 //fear animation time out
+#define DISGUST_TIME_OUT 5000 //fear animation time out
 #define EXC_TIME_OUT 3000 // excitement timeout
 #define JOY_TIME_OUT 4500 //joy animation timeout
 #define HAPPY_PROB 7 // the probability we want our robot to be happy in the random animation (value range [0, 10])
@@ -16,10 +18,13 @@
 #define WHE_ANGER_TIME_OUT 1000 // the amount of time the wheels go back and forward
 #define WHE_EXC_TIME_OUT 1000 // the amount of time the wheels go left or right
 #define WHE_SAD_TIME_OUT 1000 // the amount of time each motor action in rand_sad_state lasts
+#define WHE_FEAR_TIME_OUT 500 // the amount of time each motor action go back
+#define WHE_DISGUST_TIME_OUT 500 // the amount of time each motor action go back
 #define RAND_SAD_SPEED 100  // the speed when the robot is sad (should be low)
 #define WHE_SPOT_ROT_TIME_OUT 1000 // the amount of time the robot moves left, right, forward and backward
 #define SPOT_ROT_SPEED 200
 #define JOY_PROB 7
+#define FEAR_PROB 6
 #define WHE_JOY_TIME_OUT 500
 #define JOY_SPEED 200
 #define BETWEEN_EXC_TIME_OUT 30000 // the amount of time in between two excitements 
@@ -132,12 +137,10 @@ void stateMachine() {
                     } 
                 }
                 else if(sensors == FRONT_SONAR_FAR){
-                    /*
                     #if defined(DEVMODE)
-                        Serial.print("Sonar State: ");
+                        Serial.print("State: ");
                         Serial.println("FRONT SONAR FAR");
                     #endif
-                    */
                     if(random(10000) >= (10000 - RAND_SAD_PROB)){
                         setState(RANDOM_SAD);
                     }
@@ -311,12 +314,18 @@ void stateMachine() {
             }
             else if (millis() - starting_time_state >= JOY_TIME_OUT){
                 brake(motor1, motor2);
+                moveServo(85);
+                delay(1000);
                 if(front_thermo()){
-                  //### HERE WE WILL ADD A RANDOM DECISION BETWEEN ANGRY AND FEAR STATE ###
-                  setState(ANGRY);  
-                }else {
+                  if(random(10)> FEAR_PROB){ 
+                     setState(ANGRY);
+                  }else{
+                    setState(FEAR);
+                  }
+                }else{
                    setState(WAIT_INTERACTION); 
                 }  
+                  
             }
             else if (front_sonar() == FRONT_SONAR_COLLISION){
                 brake(motor1, motor2);
@@ -350,33 +359,33 @@ void stateMachine() {
             }
         break;
     case DISGUST_STATE:
-    
-        setAnimation(DISGUST);
-        
-        /*
         if(first_time_state){
                     first_time_state= false; 
-                     
+                    setAnimation(DISGUST);
                     #if defined(DEVMODE)
                         Serial.print("State: ");
                         Serial.println("RANDOM ANIMATION DISGUST");
                     #endif
-                        
-                    back(motor1,motor2,50);
-                    if(millis() - starting_time_state > ROTATION_TIME_OUT ){
-                        left(motor1,motor2,25);
-                        right(motor1,motor2,25);
-                        sensors = front_sonar();
-                        if(sensors == FRONT_SONAR_COLLISION){
-                            setState(COLLISION);
-                            break;
-                        }
-                    brake(motor1,motor2);
-                    }
-                    setAnimation(DISGUST);
+                timer_state1 = millis() - WHE_DISGUST_TIME_OUT;
+                case_state1 = true;
+                } else if (millis() - starting_time_state >= DISGUST_TIME_OUT){
+                brake(motor1, motor2);
+                delay(500);
+                setState(LOOK_AROUND);
+              }else{
+                 if(millis() - timer_state1 >= WHE_DISGUST_TIME_OUT && case_state1) {
+                    left(motor1, motor2, 100); 
+                    case_state1 = false;
+                    case_state2 = true;
+                    timer_state2 = millis();
                 }
-            */
-            
+                else if (millis() - timer_state2 >= WHE_DISGUST_TIME_OUT && case_state2){
+                    right(motor1, motor2, 100);
+                    case_state2 = false;
+                    case_state1 = true;
+                    timer_state1 = millis();
+                }
+              }            
         break;
     case COLLISION: 
         /* COLLISION
@@ -494,13 +503,19 @@ void stateMachine() {
              Serial.print("State: ");
              Serial.println("FEAR STATE");
         #endif
-        back(motor1,motor2,255);
-        if(millis() - starting_time_state > BACK_TIME_OUT){
+        timer_state1 = millis() - WHE_FEAR_TIME_OUT;
+        case_state1=true;
+        setAnimation(FEAR); 
+             
+        }else if(millis() - starting_time_state > FEAR_TIME_OUT){
             brake(motor1,motor2);
-        }
-        setAnimation(FEAR);       
-        }
-        
+            moveServo(0);
+            delay(5000);
+            setState(LOOKING);                        
+        }else if(millis() - timer_state1 >= WHE_FEAR_TIME_OUT && case_state1) {
+                    back(motor1, motor2, 100); 
+                    case_state1 = false;
+         }
         break;        
     default: 
         break;

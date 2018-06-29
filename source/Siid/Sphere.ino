@@ -54,10 +54,8 @@ void shpereExcitement(){
  * continuosly
  */
 void sphereJoy(){
-    //ORANGE
-
-    setColor(100, 155, 0);
-    
+    //ORANGE YELLOW
+    setColor(255, 215, 0);    
     #if defined(DEVMODE)
         Serial.print("LED JOY");
     #endif 
@@ -68,14 +66,10 @@ void sphereJoy(){
  * with a RED color (RED -> OFF)
  */
 void sphereAnger(){
-    /*
     #if defined(DEVMODE)
         Serial.print("LED ANGER");
     #endif 
-   analogWrite( RED, 190);  
-   analogWrite(BLU,0);
-   analogWrite(GREEN,0); 
-   */  
+    setColor(190,0,0);  
 }
 
 /**
@@ -83,48 +77,42 @@ void sphereAnger(){
  * within the color range of DARK BLUE and
  * a MEDIUM BLU
  */
-void sphereSadness(){
+void sphereSadness1(){
   //Dark Blue
   #if defined(DEVMODE)
     Serial.println("LED SADNESS");
   #endif 
-  setColor(0, 0, 150);
-  /*
-  for(int i= 1; i<100; i++){
-     setColor(0, 0, 150 + i); 
-     //TODO: Add Timer
-  }
-  */
+  setColor(137, 224, 255);
+}
+
+void sphereSadness2(){
+  //Dark Blue
+  #if defined(DEVMODE)
+    Serial.println("LED SADNESS");
+  #endif 
+  setColor( 0, 176, 240);
 }
 
 /**
  * The sphere colors of GREEN
  */
 void sphereDisgust(){
-    /*
     //GREEN
     #if defined(DEVMODE)
         Serial.print("LED DISGUST");
     #endif
-   analogWrite(BLU, 0);  
-   analogWrite(RED,0);
-   analogWrite(GREEN,190);
-   */
+    setColor(112, 141, 35);
 }
 
 /**
  * The sphere become PURPLE
  */
 void sphereFear(){
-    /*
     //PURPLE
     #if defined(DEVMODE)
         Serial.print("LED FEAR");
     #endif
-    analogWrite( BLU, 240);  
-    analogWrite(RED,190);
-    analogWrite(GREEN,0);
-    */
+    setColor(190,0,240);
 }  
 
 void setColor(int red, int green, int blue)

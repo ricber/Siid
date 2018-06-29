@@ -4,7 +4,7 @@ enum Animation_enum {LOOKING, SADNESS, EXCITEMENT, JOY, ANGER, FEAR, DISGUST}; /
 // ### DEFINITION ###
 #define LOOKING_TIME_OUT 800
 #define JOY_SERVO_TIME_OUT 200
-#define DISGUST_SERVO_TIME_OUT 150
+#define DISGUST_SERVO_TIME_OUT 50
 #define JOY_EYE_TIME_OUT 6500
 #define SAD_SERVO_TIME_OUT 1500
 #define FEAR_SERVO_TIME_OUT 2000
@@ -65,7 +65,7 @@ void playAnimation() {
               timer_anim1 = millis() - SAD_SERVO_TIME_OUT;
               case_anim1 = true; 
  
-              sphereSadness();
+              sphereSadness1();
               playAudio(SADNESS);
               setEye(SADNESS);
 
@@ -85,6 +85,7 @@ void playAnimation() {
                 }
                 else if (millis() - timer_anim2 >= SAD_SERVO_TIME_OUT && case_anim2){
                     moveServo(45);
+                    sphereSadness2();
                     case_anim2 = false;
                     case_anim3 = true;
                     timer_anim3 = millis();
@@ -97,6 +98,7 @@ void playAnimation() {
                 }
                 else if (millis() - timer_anim4 >= SAD_SERVO_TIME_OUT && case_anim4){
                     moveServo(30);
+                    sphereSadness1();
                     case_anim4 = false;
                     case_anim1 = true;
                     timer_anim1 = millis();
@@ -223,14 +225,10 @@ void playAnimation() {
                     Serial.println("FEAR");
                 #endif
               sphereFear();
-              showEyeAnimation();
-              moveServo(0);
+              setEye(FEAR);
               playAudio(FEAR);
-              if(millis() - initial_animation_time > FEAR_SERVO_TIME_OUT){
-                setEye(LOOKING);
-                showEyeAnimation();
-                moveServo(60); 
-              }
+           }else {
+              showEyeAnimation();
            }
             break;
             
@@ -241,44 +239,45 @@ void playAnimation() {
             *  Make sound from a set of disgust sounds
             *  Sphere of green colors
             */
-            /*
             if(first_time_animation){
               first_time_animation = false;
+              timer_anim1 = millis() - DISGUST_SERVO_TIME_OUT;
+              case_anim1 = true;
               #if defined(DEVMODE)
                 Serial.print("Animation: ");
                 Serial.println("DISGUST");
                 #endif 
-              
-              moveServo(0);
-              if(millis() - initial_animation_time > DISGUST_SERVO_TIME_OUT){
-                moveServo(60);
-                sphereDisgust();
-                showEyeAnimation();
-              }             
-            }  
-            */    
-            if(first_time_animation){
-              first_time_animation = false;
-              #if defined(DEVMODE)
-                Serial.print("Animation: ");
-                Serial.println("DISGUST");
-                #endif 
-              
+              setEye(DISGUST);
               moveServo(0);
               sphereDisgust();
+              playAudio(DISGUST);             
+            }else {
               showEyeAnimation();
-              playAudio(DISGUST);
-              if(millis() - initial_animation_time > DISGUST_SERVO_TIME_OUT){
-                moveServo(60);
-                for( int i=4; i>=0;i--)
-                {
-                  moveServo(60-(i*3));
-                  moveServo(60);
-                  moveServo(60+i*3);
-                  moveServo(60);
+              if(millis() - timer_anim1 >= DISGUST_SERVO_TIME_OUT && case_anim1) {
+                    moveServo(50); 
+                    case_anim1 = false;
+                    case_anim2 = true;
+                    timer_anim2 = millis();
                 }
-              }             
-            } 
+                else if (millis() - timer_anim2 >= DISGUST_SERVO_TIME_OUT && case_anim2){
+                    moveServo(60);
+                    case_anim2 = false;
+                    case_anim3 = true;
+                    timer_anim3 = millis();
+                }
+                else if (millis() - timer_anim3 >= DISGUST_SERVO_TIME_OUT && case_anim3){
+                    moveServo(70);
+                    case_anim3 = false;
+                    case_anim4 = true;
+                    timer_anim4 = millis();
+                }
+                else if (millis() - timer_anim4 >= DISGUST_SERVO_TIME_OUT && case_anim4){
+                    moveServo(50);
+                    case_anim4 = false;
+                    case_anim1 = true;
+                    timer_anim1 = millis();
+                } 
+            }
             break;
         default:
             break;
