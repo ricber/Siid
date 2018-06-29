@@ -46,33 +46,39 @@ struct RGB{
   byte b;
 };
  
-// Define some colors we'll use frequently
-RGB vanilla = { 225, 246, 201 }; //neutral 254,254,226
+// Define some colors we will use frequently
+//neutral 254,254,226
+RGB vanilla = { 225, 246, 201 }; 
 
+// angry
 RGB red1 = { 255, 201, 177 };
 RGB red2 = { 255, 145, 133 };
 RGB red3 = { 255, 112, 97 };
-RGB red4 = { 254, 27, 0 }; // angry
+RGB red4 = { 254, 27, 0 }; 
 
+//joy
 RGB yellow1= { 255, 240, 183 };
 RGB yellow2= { 255, 236, 143 };
 RGB yellow3= { 255, 231, 113 };
-RGB yellow4= { 255, 215, 0 }; //happy
+RGB yellow4= { 255, 215, 0 }; 
 
+//sadness
 RGB blue1 = { 180, 254, 198 };
 RGB blue2 = { 137, 224, 255 };
 RGB blue3 = { 91, 212, 255 };
-RGB blue4 = { 0, 176, 240 }; //sadness
+RGB blue4 = { 0, 176, 240 }; 
 
+//disgust
 RGB green1 = {189, 224, 128};
 RGB green2 = {180, 214, 86 };
 RGB green3 = {159, 198 , 48 };
-RGB green4 = {112, 141, 35 }; //disgust
+RGB green4 = {112, 141, 35 }; 
 
+//fear
 RGB purple1 = { 221, 175, 255 };
 RGB purple2 = { 165, 45, 255 };
 RGB purple3 = { 136, 0, 238 };
-RGB purple4 = { 75, 0, 130 }; //fair
+RGB purple4 = { 75, 0, 130 }; 
 
 RGB off = { 0, 0, 0 };
 
@@ -88,6 +94,7 @@ bool const angry3[8][8] = {  // The first 2 matrix are the same as sadness1 and 
              {0, 0, 1, 1, 1, 1, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
+            
 bool const angry4[8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 1, 0, 0, 0, 0, 1, 0},
@@ -186,7 +193,7 @@ bool const sadness4[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0},
             };
 
-bool const fear3[8][8] = {  // the first and second matric correspond to neutral2 and neutral3
+bool const fear3[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
              {1, 1, 0, 0, 0, 0, 1, 1},
@@ -209,7 +216,7 @@ bool const fear4[8][8] = {
             };
 
 
-bool const disgust4[8][8] = {        // TO DEFINE
+bool const disgust4[8][8] = {        
              {0, 1, 0, 0, 0, 0, 1, 0},
              {1, 1, 1, 0, 0, 1, 1, 1},
              {0, 1, 1, 1, 1, 1, 1, 0},
@@ -220,7 +227,7 @@ bool const disgust4[8][8] = {        // TO DEFINE
              {0, 1, 0, 0, 0, 0, 1, 0}
             };
             
-bool const disgust3[8][8] = {        // TO DEFINE
+bool const disgust3[8][8] = {        
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 1, 0, 0, 1, 0, 0},
              {0, 1, 1, 1, 1, 1, 1, 0},
@@ -231,7 +238,7 @@ bool const disgust3[8][8] = {        // TO DEFINE
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
             
-bool const disgust2[8][8] = {        // TO DEFINE
+bool const disgust2[8][8] = {        
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 1, 1, 0, 0, 0},
@@ -341,8 +348,7 @@ bool const right2[8][8] = {
              {0, 1, 1, 1, 1, 1, 1, 0},
              {0, 0, 1, 1, 1, 1, 0, 0}
             };       
-
-            
+   
 bool const turned_off[8][8] = {  
              {0, 0, 0, 0, 0, 0, 0, 0},
              {0, 0, 0, 0, 0, 0, 0, 0},
@@ -354,7 +360,11 @@ bool const turned_off[8][8] = {
              {0, 0, 0, 0, 0, 0, 0, 0}
             };
 
-enum Eye_enum {LEFT_EYE, NEUTRAL_FROM_LEFT, RIGHT_EYE, NEUTRAL_FROM_RIGHT, LOOKING_FROM_JOY, EXCITEMENT_EYE, ANGER_FROM_JOY, JOY_EYE, ANGER_EYE, LOOKING_FROM_ANGER, SADNESS_EYE, LOOKING_FROM_SADNESS, FEAR_EYE, LOOKING_FROM_FEAR,DISGUST_FROM_ANGER,LOOKING_FROM_DISGUST, DISGUST_EYE};
+enum Eye_enum { LEFT_EYE, NEUTRAL_FROM_LEFT, RIGHT_EYE, NEUTRAL_FROM_RIGHT,
+                EXCITEMENT_EYE,
+                LOOKING_FROM_JOY, LOOKING_FROM_SADNESS, LOOKING_FROM_ANGER, LOOKING_FROM_FEAR, LOOKING_FROM_DISGUST, 
+                JOY_EYE, SADNESS_EYE, ANGER_EYE, FEAR_EYE, DISGUST_EYE};
+
 bool first_time_eye; // boolean variable that indicates if you are entering an eye animation for the first time or not
 
 /**
@@ -438,166 +448,69 @@ void eyesInlight(byte eye)
             drawEye(happy1, yellow1);
             delay(DELAY_EYE);
             drawEye(neutral1, vanilla);
+            break;
+        case ANGER_EYE:
+            drawEye(neutral1, vanilla);
             delay(DELAY_EYE);
+            drawEye(sadness1, red1);
+            delay(DELAY_EYE);
+            drawEye(sadness2, red2);
+            delay(DELAY_EYE);
+            drawEye(angry3, red3);
+            delay(DELAY_EYE);
+            drawEye(angry4, red4);
             break;
-     case ANGER_EYE:
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE);
-          drawEye(sadness1, red1);
-          delay(DELAY_EYE);
-          drawEye(sadness2, red2);
-          delay(DELAY_EYE);
-          drawEye(angry3, red3);
-          delay(DELAY_EYE);
-          drawEye(angry4, red4);
-          delay(DELAY_EYE);
-        break;
-     case LOOKING_FROM_ANGER:
-          drawEye(angry4, red4);
-          delay(DELAY_EYE);
-          drawEye(angry3, red3);
-          delay(DELAY_EYE);
-          drawEye(sadness2, red2);
-          delay(DELAY_EYE);
-          drawEye(sadness1, red1);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE);
-        break;
-        /*
-     case ANGER_EYE:
-          drawEye(sadness1, red1);
-          delay(DELAY_EYE);
-          drawEye(sadness2, red2);
-          delay(DELAY_EYE);
-          drawEye(angry3, red3);
-          delay(DELAY_EYE);
-          drawEye(angry4, red1);
-          delay(DELAY_EYE);
-          break;
-       */
-     case LOOKING_FROM_FEAR:
-          drawEye(fear4, purple4);
-          delay(DELAY_EYE);
-          drawEye(fear3, purple3);
-          delay(DELAY_EYE);
-          drawEye(neutral3, purple2);
-          delay(DELAY_EYE);
-          drawEye(neutral2, purple1);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE);
-       break;
-       
-      case FEAR_EYE:
+        case LOOKING_FROM_ANGER:
+            drawEye(angry3, red3);
+            delay(DELAY_EYE);
+            drawEye(sadness2, red2);
+            delay(DELAY_EYE);
+            drawEye(sadness1, red1);
+            delay(DELAY_EYE);
+            drawEye(neutral1, vanilla);
+            break;
+        case FEAR_EYE:
            drawEye(neutral1, vanilla);
-          delay(DELAY_EYE);
-          drawEye(neutral2, purple1);
-          delay(DELAY_EYE);
-          drawEye(neutral3, purple2);
-          delay(DELAY_EYE);
-          drawEye(fear3, purple3);
-          delay(DELAY_EYE);
-          drawEye(fear4, purple4);
-          delay(DELAY_EYE);
-          break; 
-       
-     case DISGUST_FROM_ANGER:
-          drawEye(sadness4, blue4);
-          delay(DELAY_EYE);
-          drawEye(sadness3, blue3);
-          delay(DELAY_EYE);
-          drawEye(sadness2, blue2);
-          delay(DELAY_EYE);
-          drawEye(sadness1, blue1);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE); 
-          drawEye(disgust1,green1);
-          delay(DELAY_EYE);
-          drawEye(disgust2,green2);
-          delay(DELAY_EYE);
-          drawEye(disgust3,green3);
-          delay(DELAY_EYE);
-          drawEye(disgust4,green4);
-          delay(DELAY_EYE);
-       break;
-       
-     case LOOKING_FROM_DISGUST:
-          drawEye(sadness4, blue4);
-          delay(DELAY_EYE);
-          drawEye(sadness3, blue3);
-          delay(DELAY_EYE);
-          drawEye(sadness2, blue2);
-          delay(DELAY_EYE);
-          drawEye(sadness1, blue1);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE);
-       
-       break;
-       
-     case DISGUST_EYE:
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE); 
-          drawEye(disgust1,green1);
-          delay(DELAY_EYE);
-          drawEye(disgust2,green2);
-          delay(DELAY_EYE);
-          drawEye(disgust3,green3);
-          delay(DELAY_EYE);
-          drawEye(disgust4,green4);
-          delay(DELAY_EYE); 
-        default:
+            delay(DELAY_EYE);
+            drawEye(neutral2, purple1);
+            delay(DELAY_EYE);
+            drawEye(neutral3, purple2);
+            delay(DELAY_EYE);
+            drawEye(fear3, purple3);
+            delay(DELAY_EYE);
+            drawEye(fear4, purple4);
+            break; 
+        case LOOKING_FROM_FEAR:
+            drawEye(fear3, purple3);
+            delay(DELAY_EYE);
+            drawEye(neutral3, purple2);
+            delay(DELAY_EYE);
+            drawEye(neutral2, purple1);
+            delay(DELAY_EYE);
+            drawEye(neutral1, vanilla);
             break;
-            
-     /*       
-        case_eye JOY:
-          
-          
-        case_eye ANGER:
-          drawEye(angry4, red4);
-          delay(DELAY_EYE);
-          drawEye(angry3, red3);
-          delay(DELAY_EYE);
-          drawEye(sadness2, red2);
-          delay(DELAY_EYE);
-          drawEye(sadness1, red1);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE);
-          break;
-         
-        case_eye FEAR:
-          drawEye(fear4, purple4);
-          delay(DELAY_EYE);
-          drawEye(fear3, purple3);
-          delay(DELAY_EYE);
-          drawEye(neutral3, purple2);
-          delay(DELAY_EYE);
-          drawEye(neutral2, purple1);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE);            
-          break;
-          
-        case_eye DISGUST:
-          drawEye(disgust4,green4);
-          delay(DELAY_EYE);
-          drawEye(disgust3,green3);
-          delay(DELAY_EYE);
-          drawEye(disgust2,green2);
-          delay(DELAY_EYE);
-          drawEye(disgust1,green1);
-          delay(DELAY_EYE);
-          drawEye(neutral1, vanilla);
-          delay(DELAY_EYE);                 
-          break;
-          
+        case DISGUST_EYE:
+            drawEye(neutral1, vanilla);
+            delay(DELAY_EYE); 
+            drawEye(disgust1,green1);
+            delay(DELAY_EYE);
+            drawEye(disgust2,green2);
+            delay(DELAY_EYE);
+            drawEye(disgust3,green3);
+            delay(DELAY_EYE);
+            drawEye(disgust4,green4);
+            break; 
+        case LOOKING_FROM_DISGUST:
+            drawEye(disgust3, green3);
+            delay(DELAY_EYE);
+            drawEye(disgust2, green2);
+            delay(DELAY_EYE);
+            drawEye(disgust1, green1);
+            delay(DELAY_EYE);
+            drawEye(neutral1, vanilla);
+            break;
         default:
-          drawEye(turned_off, vanilla);                
-          break;         
-        */
+            break;        
     }
 }    
 
@@ -672,7 +585,7 @@ void showEyeAnimation(){
                     timer_eye3 = millis();
                 }
                 else if (millis() - timer_eye3 >= LK_EYE_TIME_OUT && case_eye3){
-                     eyesInlight(NEUTRAL_FROM_LEFT);
+                    eyesInlight(NEUTRAL_FROM_LEFT);
                     case_eye3 = false;
                     case_eye4 = true;
                     timer_eye4 = millis();

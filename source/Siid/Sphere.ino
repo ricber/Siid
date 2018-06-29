@@ -98,11 +98,11 @@ void sphereSadness2(){
 }
 
 /**
- * The sphere colors of GREEN
+ * The sphere is GREEN
  */
 void sphereDisgust(){
     //GREEN
-    setColor(0, 140, 40);
+    setColor(10, 255, 50);
     
     #if defined(DEVMODE)
         Serial.print("LED DISGUST");
@@ -110,7 +110,7 @@ void sphereDisgust(){
 }
 
 /**
- * The sphere become PURPLE
+ * The sphere is PURPLE
  */
 void sphereFear(){
     //PURPLE

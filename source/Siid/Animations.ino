@@ -3,12 +3,18 @@ enum Animation_enum {LOOKING, SADNESS, EXCITEMENT, JOY, ANGER, FEAR, DISGUST}; /
 
 // ### DEFINITION ###
 #define LOOKING_TIME_OUT 800
+
 #define JOY_SERVO_TIME_OUT 200
-#define DISGUST_SERVO_TIME_OUT 50
 #define JOY_EYE_TIME_OUT 6500
+
+#define DISGUST_SERVO_TIME_OUT 50
+
 #define SAD_SERVO_TIME_OUT 1500
+
 #define FEAR_SERVO_TIME_OUT 2000
+
 #define SPHERE_ANGER_TIME_OUT 20
+
 #define SERVO_CLOSED_DEGREE 7
 
 byte current_animation; // current aniamtion of the robot

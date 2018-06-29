@@ -4,7 +4,7 @@
 
 void setup() {
     #if defined(DEVMODE)
-        Serial.begin(115200);
+        Serial.begin(115200);   // the speaker is communicating with the usual 9600 baud 
         Serial.println("Devmode ON");
     #endif
         
@@ -24,7 +24,7 @@ void loop() {
 //Setup all the single components
 void setupAll() {
     setupSpeaker();
-    delay(3000);
+    delay(3000);  // the speaker needs some seconds to connect
     setupMatrix();
     setupThermoSensor();
     setupServo();

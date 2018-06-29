@@ -2,48 +2,56 @@
 #include <SparkFun_TB6612.h>
 
 // #### DEFINITIONS ####
-#define LK_TIME_OUT 10000 // LOOK_AROUND timeout
-#define BACK_TIME_OUT 500 // timeout to go BACKWARD
-#define SPOT_TIME_OUT 5000 // SPOT ROTATION timeout
-#define RAND_SAD_TIME_OUT 10000 // random sad animation timeout
-#define ANGER_TIME_OUT 6700 // anger animation timeout 
-#define FEAR_TIME_OUT 2500 //fear animation time out
-#define DISGUST_TIME_OUT 5000 //fear animation time out
-#define EXC_TIME_OUT 4500 // excitement timeout
-#define JOY_TIME_OUT 5000 //joy animation timeout
-#define HAPPY_PROB 7 // the probability we want our robot to be happy in the random animation (value range [0, 10])
-#define RAND_SAD_PROB 5 // the probability (from 0 to 10000) to random start the sad animation
-#define WAIT_TIME_OUT 30000 // time out after which we return in the looking around state
-#define EXCITEMENT_SPEED 200
-#define WHE_ANGER_TIME_OUT 1000 // the amount of time the wheels go back and forward
-#define WHE_EXC_TIME_OUT 1000 // the amount of time the wheels go left or right
-#define WHE_SAD_TIME_OUT 1000 // the amount of time each motor action in rand_sad_state lasts
-#define WHE_FEAR_TIME_OUT 500 // the amount of time each motor action go back
-#define WHE_DISGUST_TIME_OUT 500 // the amount of time each motor action go back
-#define RAND_SAD_SPEED 100  // the speed when the robot is sad (should be low)
+
+//---- LOOK AROUND ----
+#define LK_TIME_OUT 10000 // look around timeout
+
+//---- SPOT ROTATION ----
 #define WHE_SPOT_ROT_TIME_OUT 1000 // the amount of time the robot moves left, right, forward and backward
 #define SPOT_ROT_SPEED 200
-#define JOY_PROB 5
+
+//---- SAD ----
+#define RAND_SAD_TIME_OUT 10000 // random sad animation timeout
+#define RAND_SAD_PROB 5 // the probability (from 0 to 10000) to random start the sad animation
+#define WHE_SAD_TIME_OUT 1000 // the amount of time each motor action in rand_sad_state lasts
+#define RAND_SAD_SPEED 150  // the speed when the robot is sad (should be low)
+
+//---- ANGER ----
+#define ANGER_TIME_OUT 6700 // anger animation timeout 
+#define WHE_ANGER_TIME_OUT 1000 // the amount of time the wheels go back and forward
+
+//---- FEAR ----
+#define FEAR_TIME_OUT 2500 // fear animation time out
+#define WHE_FEAR_TIME_OUT 500 // the amount of time each motor action go back
 #define FEAR_PROB 5
+
+//---- DISGUST ----
+#define DISGUST_TIME_OUT 5000 // disgust animation time out
+#define WHE_DISGUST_TIME_OUT 500 // the amount of time each motor action go back
+
+//---- EXCITEMENT ----
+#define EXC_TIME_OUT 4500 // excitement timeout
+#define EXCITEMENT_SPEED 200
+#define WHE_EXC_TIME_OUT 1000 // the amount of time the wheels go left or right
+#define BETWEEN_EXC_TIME_OUT 30000 // the amount of time in between two excitements 
+
+//---- JOY ----
+#define JOY_TIME_OUT 5000 //joy animation timeout
+#define JOY_PROB 5 // the probability we want our robot to be happy in the random animation (value range [0, 10)); the prob of dishust is (10 - JOY_PROB)
 #define WHE_JOY_TIME_OUT 500
 #define JOY_SPEED 200
-#define BETWEEN_EXC_TIME_OUT 30000 // the amount of time in between two excitements 
+
+//---- WAITING INTERACTION ----
+#define WAIT_TIME_OUT 30000 // time out after which we return in the looking around state
+
+//---- SERVO ----
 #define SERVO_CLOSED_DEGREE 88
 #define SERVO_OPEN_DEGREE 7
 
 // #### ROBOT STATE ####
-
-enum State_enum {LOOK_AROUND, SPOT_ROTATION, RANDOM_SAD , JOY_STATE, DISGUST_STATE, ANGRY_STATE, EXCITEMENT_STATE, WAIT_INTERACTION, COLLISION_STATE, FEAR_STATE}; // all possible states of the robot
-byte current_state; // current state of the robot
-byte previous_state; // previous state of the robot
+enum State_enum {LOOK_AROUND, SPOT_ROTATION, RANDOM_SAD, JOY_STATE, DISGUST_STATE, ANGRY_STATE, EXCITEMENT_STATE, WAIT_INTERACTION, COLLISION_STATE, FEAR_STATE}; // all possible states of the robot
+byte current_state;     // current state of the robot
 bool first_time_state; // boolean variable that indicates if you are entering a state for the first time or not
-                                   
-                                   
-/* all possible sensors inputs
-* THERMOSENSOR_UP means that it has detected a person
-* THERMOSENSOR_DWN means that the obstacle is an object
-*/
-byte sensors;
 
 
 // #### TIME ####
@@ -89,6 +97,7 @@ Motor motor1 = Motor(AIN1, AIN2, PWMA, offsetA, STBY);
 Motor motor2 = Motor(BIN1, BIN2, PWMB, offsetB, STBY);
 
 
+// #### STATE MACHINE ####
 // state machine that controls the robot. Based on the current state and on the
 // input it performs certain outputs and goes in the next state.
 void stateMachine() {
@@ -113,7 +122,7 @@ void stateMachine() {
                 setState(SPOT_ROTATION);               
             }
             else {
-                sensors = front_sonar(); //read sonars distance
+                byte sensors = front_sonar(); //read sonars distance
 
                 if(sensors == FRONT_SONAR_NEAR){
                     if(random(10) >= (10 - JOY_PROB)){
@@ -405,7 +414,7 @@ void stateMachine() {
         * the eye reproduce the fear animation 
         * internal petals close
         */
-        if(sensors == FRONT_SONAR_NEAR || FRONT_SONAR_MEDIUM || FRONT_SONAR_FAR){
+        if(front_sonar() == (FRONT_SONAR_NEAR || FRONT_SONAR_MEDIUM || FRONT_SONAR_FAR)){
             setState(WAIT_INTERACTION);
         }  
         break;
@@ -501,7 +510,6 @@ void stateMachine() {
 
 // sets the current state of the robot and saves the previous one
 void setState(byte state) {
-    previous_state      = current_state;
     current_state       = state;
     first_time_state = true;
     starting_time_state = millis();
@@ -518,8 +526,6 @@ void setupState() {
     starting_time_state = millis();
     first_time_state = true;
     current_state  = LOOK_AROUND;
-    previous_state = LOOK_AROUND;
-    sensors = NO_INPUT;
     last_excitement = millis();
 }
 
@@ -530,4 +536,3 @@ byte selection(unsigned long current_delay, unsigned long timeout, byte mod){
     return integer_division % mod;
 }
 */
-
