@@ -21,13 +21,6 @@ byte front_sonar() {
      if (millis() - last_measurement_time >= MSRMNT_TIME_OUT){
         unsigned int distance = sonar.ping_cm();
         last_measurement_time = millis();
-
-        /*
-        #if defined(DEVMODE)
-            Serial.print("Sensor distance: ");
-            Serial.println(distance);
-        #endif
-        */
         
         if(distance >= DISTANCE_FAR || distance == 0){
           

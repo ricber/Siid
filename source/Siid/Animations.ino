@@ -79,26 +79,26 @@ void playAnimation() {
                 showEyeAnimation();
 
                 if(millis() - timer_anim1 >= SAD_SERVO_TIME_OUT && case_anim1) {
-                    moveServo(0); 
+                    //moveServo(0); 
                     case_anim1 = false;
                     case_anim2 = true;
                     timer_anim2 = millis();
                 }
                 else if (millis() - timer_anim2 >= SAD_SERVO_TIME_OUT && case_anim2){
-                    moveServo(45);
+                    //moveServo(45);
                     sphereSadness2();
                     case_anim2 = false;
                     case_anim3 = true;
                     timer_anim3 = millis();
                 }
                 else if (millis() - timer_anim3 >= SAD_SERVO_TIME_OUT && case_anim3){
-                    moveServo(0);
+                   // moveServo(0);
                     case_anim3 = false;
                     case_anim4 = true;
                     timer_anim4 = millis();
                 }
                 else if (millis() - timer_anim4 >= SAD_SERVO_TIME_OUT && case_anim4){
-                    moveServo(30);
+                    //moveServo(30);
                     sphereSadness1();
                     case_anim4 = false;
                     case_anim1 = true;

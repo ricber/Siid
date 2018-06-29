@@ -265,7 +265,8 @@ void stateMachine() {
                 #endif
             } 
             else if (millis() - starting_time_state >= RAND_SAD_TIME_OUT) {
-                brake(motor1, motor2);   
+                brake(motor1, motor2);  
+                delay(1000); 
                 setState(LOOK_AROUND); 
             }
             else {
@@ -314,7 +315,7 @@ void stateMachine() {
             }
             else if (millis() - starting_time_state >= JOY_TIME_OUT){
                 brake(motor1, motor2);
-                moveServo(85);
+                moveServo(90);
                 delay(5000);
                 if(front_thermo()){
                   if(random(10)> FEAR_PROB){ 
