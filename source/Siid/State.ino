@@ -49,7 +49,8 @@
 #define SERVO_OPEN_DEGREE 30
 
 // #### ROBOT STATE ####
-enum State_enum {LOOK_AROUND, SPOT_ROTATION, RANDOM_SAD, JOY_STATE, DISGUST_STATE, ANGRY_STATE, EXCITEMENT_STATE, WAIT_INTERACTION, COLLISION_STATE, FEAR_STATE}; // all possible states of the robot
+enum State_enum {LOOK_AROUND, SPOT_ROTATION, RANDOM_SAD, JOY_STATE, DISGUST_STATE, ANGRY_STATE, EXCITEMENT_STATE, WAIT_INTERACTION, 
+                 FRONT_COLLISION_STATE, REAR_COLLISION_STATE, FEAR_STATE}; // all possible states of the robot
 byte current_state;     // current state of the robot
 bool first_time_state; // boolean variable that indicates if you are entering a state for the first time or not
 
@@ -124,7 +125,7 @@ void stateMachine() {
             else {
                 byte sensors = front_sonar(); //read sonars distance
 
-                if(sensors == FRONT_SONAR_NEAR){
+                if(sensors == SONAR_NEAR){
                     if(random(10) >= (10 - JOY_PROB)){
                         setState(JOY_STATE);
                     }
@@ -136,7 +137,7 @@ void stateMachine() {
                         Serial.println("FRONT SONAR NEAR");
                     #endif             
                 }
-                else if(sensors == FRONT_SONAR_MEDIUM){
+                else if(sensors == SONAR_MEDIUM){
                     if (millis() - last_excitement >= BETWEEN_EXC_TIME_OUT) {
                         last_excitement = millis();
                         setState(EXCITEMENT_STATE);
@@ -147,7 +148,7 @@ void stateMachine() {
                         #endif
                     } 
                 }
-                else if(sensors == FRONT_SONAR_FAR){
+                else if(sensors == SONAR_FAR){
                     #if defined(DEVMODE)
                         Serial.print("State: ");
                         Serial.println("FRONT SONAR FAR");
@@ -329,9 +330,9 @@ void stateMachine() {
                 moveServo(SERVO_OPEN_DEGREE);
                 setState(WAIT_INTERACTION);
             }
-            else if (front_sonar() == FRONT_SONAR_COLLISION){
+            else if (front_sonar() == SONAR_COLLISION){
                 brake(motor1, motor2);
-                setState(COLLISION_STATE);
+                setState(FRONT_COLLISION_STATE);
             }
             else{
                 if(millis() - timer_state1 >= WHE_JOY_TIME_OUT && case_state1) {
@@ -379,9 +380,9 @@ void stateMachine() {
                 moveServo(SERVO_OPEN_DEGREE);
                 setState(WAIT_INTERACTION);
          }
-         else if (front_sonar() == FRONT_SONAR_COLLISION){
+         else if (rear_sonar() == SONAR_COLLISION){
                 brake(motor1, motor2);
-                setState(COLLISION_STATE);
+                setState(REAR_COLLISION_STATE);
          }
          else{
             if(millis() - timer_state1 >= WHE_DISGUST_TIME_OUT && case_state1) {
@@ -404,7 +405,7 @@ void stateMachine() {
               }
           }            
         break;
-    case COLLISION_STATE: 
+    case FRONT_COLLISION_STATE: 
         {
         /* COLLISION
         * In this state the object detected is too close
@@ -415,8 +416,27 @@ void stateMachine() {
         * the eye reproduce the fear animation 
         * internal petals close
         */
-        byte sensor = front_sonar();
-        if(sensor == FRONT_SONAR_NEAR || sensor == FRONT_SONAR_MEDIUM || sensor == FRONT_SONAR_FAR){
+        byte f_sonar = front_sonar();
+        
+        if(f_sonar == SONAR_NEAR || f_sonar == SONAR_MEDIUM || f_sonar == SONAR_FAR){
+            setState(WAIT_INTERACTION);
+        }  
+        }
+        break;
+    case REAR_COLLISION_STATE: 
+        {
+        /* COLLISION
+        * In this state the object detected is too close
+        * the robot stop moving
+        * and it performs the FEAR animation.      * 
+        * fear animation: the robot moves BACKWARD
+        * emits scared sounds 
+        * the eye reproduce the fear animation 
+        * internal petals close
+        */
+        byte r_sonar = rear_sonar();
+        
+        if(r_sonar == SONAR_NEAR || r_sonar == SONAR_MEDIUM || r_sonar == SONAR_FAR){
             setState(WAIT_INTERACTION);
         }  
         }
@@ -461,9 +481,9 @@ void stateMachine() {
             brake(motor1, motor2);
             setState(WAIT_INTERACTION);   
        }
-       else if (front_sonar() == FRONT_SONAR_COLLISION){
+       else if (front_sonar() == SONAR_COLLISION){
             brake(motor1, motor2);
-            setState(COLLISION_STATE);
+            setState(FRONT_COLLISION_STATE);
        }
        else {
             if(millis() - timer_state1 >= WHE_ANGER_TIME_OUT && case_state1) {
@@ -495,12 +515,12 @@ void stateMachine() {
         }else if(millis() - starting_time_state > FEAR_TIME_OUT){
             brake(motor1,motor2);
             moveServo(SERVO_CLOSED_DEGREE);
-            delay(1000); //TODO: put timer!!!!
+            delay(1000);
             setState(WAIT_INTERACTION);
         }
-        else if (front_sonar() == FRONT_SONAR_COLLISION){
+        else if (rear_sonar() == SONAR_COLLISION){
             brake(motor1, motor2);
-            setState(COLLISION_STATE);
+            setState(REAR_COLLISION_STATE);
         }                        
         else {
             back(motor1, motor2, 255); 
