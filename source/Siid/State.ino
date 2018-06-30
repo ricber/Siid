@@ -45,8 +45,8 @@
 #define WAIT_TIME_OUT 30000 // time out after which we return in the looking around state
 
 //---- SERVO ----
-#define SERVO_CLOSED_DEGREE 88
-#define SERVO_OPEN_DEGREE 7
+#define SERVO_CLOSED_DEGREE 85
+#define SERVO_OPEN_DEGREE 30
 
 // #### ROBOT STATE ####
 enum State_enum {LOOK_AROUND, SPOT_ROTATION, RANDOM_SAD, JOY_STATE, DISGUST_STATE, ANGRY_STATE, EXCITEMENT_STATE, WAIT_INTERACTION, COLLISION_STATE, FEAR_STATE}; // all possible states of the robot
@@ -405,6 +405,7 @@ void stateMachine() {
           }            
         break;
     case COLLISION_STATE: 
+        {
         /* COLLISION
         * In this state the object detected is too close
         * the robot stop moving
@@ -418,6 +419,7 @@ void stateMachine() {
         if(sensor == FRONT_SONAR_NEAR || sensor == FRONT_SONAR_MEDIUM || sensor == FRONT_SONAR_FAR){
             setState(WAIT_INTERACTION);
         }  
+        }
         break;
     case WAIT_INTERACTION: 
         /* WAIT

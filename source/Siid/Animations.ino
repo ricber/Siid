@@ -15,7 +15,9 @@ enum Animation_enum {LOOKING, SADNESS, EXCITEMENT, JOY, ANGER, FEAR, DISGUST}; /
 
 #define SPHERE_ANGER_TIME_OUT 20
 
-#define SERVO_CLOSED_DEGREE 7
+//---- SERVO ----
+#define SERVO_CLOSED_DEGREE 85
+#define SERVO_OPEN_DEGREE 30
 
 byte current_animation; // current aniamtion of the robot
 bool first_time_animation;
