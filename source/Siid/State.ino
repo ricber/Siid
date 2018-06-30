@@ -486,8 +486,12 @@ void stateMachine() {
             brake(motor1, motor2);
             setState(FRONT_COLLISION_STATE);
        }
+       else if (rear_sonar() == SONAR_COLLISION){
+            brake(motor1, motor2);
+            setState(REAR_COLLISION_STATE);
+       }
        else {
-            if(millis() - timer_state1 >= WHE_ANGER_TIME_OUT && case_state1) {
+            if(millis() - timer_state1 >= 400 && case_state1) {
                 back(motor1, motor2, FEAR_SPEED); 
                 case_state1 = false;
                 case_state2 = true;
@@ -526,7 +530,7 @@ void stateMachine() {
             setState(REAR_COLLISION_STATE);
         }                        
         else {
-          if(millis() - timer_state1 >= WHE_FEAR_TIME_OUT && case_state1) {
+          if(millis() - timer_state1 >= 1000 && case_state1) {
                 back(motor1, motor2, 255); 
                 case_state1 = false;
                 case_state2 = true;

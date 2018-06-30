@@ -2,8 +2,8 @@
 
 #define FRONT_TRIGGER_PIN 46
 #define FRONT_ECHO_PIN 44
-#define REAR_TRIGGER_PIN 46
-#define REAR_ECHO_PIN 44
+#define REAR_TRIGGER_PIN 48
+#define REAR_ECHO_PIN 50
 
 #define MAX_DISTANCE 400
 #define MSRMNT_TIME_OUT 50 // measurement timeout
