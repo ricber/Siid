@@ -499,14 +499,13 @@ void stateMachine() {
             setState(REAR_COLLISION_STATE);
        }
        else {
-<<<<<<< HEAD
+     
             if(millis() - timer_state1 >= WHE_ANGER_TIME_OUT && case_state1) {
                 back(motor1, motor2, ANGER_SPEED_BACK); 
                 moveServo(60);
-=======
+                
             if(millis() - timer_state1 >= 400 && case_state1) {
-                back(motor1, motor2, FEAR_SPEED); 
->>>>>>> 3f010bab578ff8d397d90b7a7a70906ac4aa3fd9
+                back(motor1, motor2, FEAR_SPEED);
                 case_state1 = false;
                 case_state2 = true;
                 timer_state2 = millis();
@@ -561,6 +560,7 @@ void stateMachine() {
         break;
     }
 }
+}
 
 // sets the current state of the robot and saves the previous one
 void setState(byte state) {
@@ -582,11 +582,3 @@ void setupState() {
     current_state  = LOOK_AROUND;
     last_excitement = millis();
 }
-
-/*
-// this function return a number between 0 and (mod-1). It tells how much times has elapsed a "timeout" amount of time modulo "mod"
-byte selection(unsigned long current_delay, unsigned long timeout, byte mod){
-    int integer_division = current_delay / timeout;
-    return integer_division % mod;
-}
-*/

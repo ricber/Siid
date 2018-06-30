@@ -25,8 +25,8 @@ void loop() {
 void setupAll() {
     setupSpeaker();
     setupMatrix();
-    setupThermoSensor();
     setupServo();
+    setupThermoSensor();    
     setupState();
     setupSonars();
     setupAnimation();
