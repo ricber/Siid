@@ -22,7 +22,8 @@
 
 //---- FEAR ----
 #define FEAR_TIME_OUT 2500 // fear animation time out
-#define WHE_FEAR_TIME_OUT 500 // the amount of time each motor action go back
+#define WHE_FEAR_TIME_OUT 400 // the amount of time each motor action go back
+#define FEAR_SPEED 255
 #define FEAR_PROB 5
 
 //---- DISGUST ----
@@ -467,13 +468,13 @@ void stateMachine() {
        }
        else {
             if(millis() - timer_state1 >= WHE_ANGER_TIME_OUT && case_state1) {
-                back(motor1, motor2, 100); 
+                back(motor1, motor2, FEAR_SPEED); 
                 case_state1 = false;
                 case_state2 = true;
                 timer_state2 = millis();
             }
             else if (millis() - timer_state2 >= WHE_ANGER_TIME_OUT && case_state2){
-                forward(motor1, motor2, 255);
+                forward(motor1, motor2, FEAR_SPEED);
                 case_state2 = false;
                 case_state1 = true;
                 timer_state1 = millis();
@@ -487,6 +488,8 @@ void stateMachine() {
         */
         if(first_time_state){
             first_time_state = false;
+             timer_state1 = millis() - WHE_FEAR_TIME_OUT;
+            case_state1 = true;
             setAnimation(FEAR); 
 
             #if defined(DEVMODE)
@@ -494,7 +497,6 @@ void stateMachine() {
             #endif
         }else if(millis() - starting_time_state > FEAR_TIME_OUT){
             brake(motor1,motor2);
-            moveServo(SERVO_CLOSED_DEGREE);
             delay(1000); //TODO: put timer!!!!
             setState(WAIT_INTERACTION);
         }
@@ -503,7 +505,16 @@ void stateMachine() {
             setState(COLLISION_STATE);
         }                        
         else {
-            back(motor1, motor2, 255); 
+          if(millis() - timer_state1 >= WHE_FEAR_TIME_OUT && case_state1) {
+                back(motor1, motor2, 255); 
+                case_state1 = false;
+                case_state2 = true;
+                timer_state2 = millis();                  
+            }
+            else if (millis() - timer_state2 >= WHE_FEAR_TIME_OUT && case_state2){
+                left(motor1, motor2, 255);
+                case_state2 = false;
+            }
         }
         break;        
     default: 
