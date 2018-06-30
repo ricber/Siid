@@ -414,7 +414,8 @@ void stateMachine() {
         * the eye reproduce the fear animation 
         * internal petals close
         */
-        if(front_sonar() == (FRONT_SONAR_NEAR || FRONT_SONAR_MEDIUM || FRONT_SONAR_FAR)){
+        byte sensor = front_sonar();
+        if(sensor == FRONT_SONAR_NEAR || sensor == FRONT_SONAR_MEDIUM || sensor == FRONT_SONAR_FAR){
             setState(WAIT_INTERACTION);
         }  
         break;
