@@ -9,9 +9,9 @@ enum Animation_enum {LOOKING, SADNESS, EXCITEMENT, JOY, ANGER, FEAR, DISGUST}; /
 
 #define DISGUST_SERVO_TIME_OUT 50
 
-#define SAD_SERVO_TIME_OUT 1500
+#define SAD_SERVO_TIME_OUT 2000
 
-#define FEAR_SERVO_TIME_OUT 2000
+#define FEAR_SERVO_TIME_OUT 50
 
 #define SPHERE_ANGER_TIME_OUT 20
 
@@ -88,26 +88,26 @@ void playAnimation() {
                 showEyeAnimation();
 
                 if(millis() - timer_anim1 >= SAD_SERVO_TIME_OUT && case_anim1) {
-                    //moveServo(0); 
+                    moveServo(0); 
                     case_anim1 = false;
                     case_anim2 = true;
                     timer_anim2 = millis();
                 }
                 else if (millis() - timer_anim2 >= SAD_SERVO_TIME_OUT && case_anim2){
-                    //moveServo(45);
+                    moveServo(30);
                     sphereSadness2();
                     case_anim2 = false;
                     case_anim3 = true;
                     timer_anim3 = millis();
                 }
                 else if (millis() - timer_anim3 >= SAD_SERVO_TIME_OUT && case_anim3){
-                   // moveServo(0);
+                    moveServo(0);
                     case_anim3 = false;
                     case_anim4 = true;
                     timer_anim4 = millis();
                 }
                 else if (millis() - timer_anim4 >= SAD_SERVO_TIME_OUT && case_anim4){
-                    //moveServo(30);
+                    moveServo(30);
                     sphereSadness1();
                     case_anim4 = false;
                     case_anim1 = true;
@@ -228,6 +228,8 @@ void playAnimation() {
             */
            if(first_time_animation){
               first_time_animation = false;
+               timer_anim1 = millis() - FEAR_SERVO_TIME_OUT;
+               case_anim1 = true;
               
                #if defined(DEVMODE)
                     Serial.println("Animation: FEAR");
@@ -238,6 +240,30 @@ void playAnimation() {
                 playAudio(FEAR);
            }else {
               showEyeAnimation();
+               if(millis() - timer_anim1 >= FEAR_SERVO_TIME_OUT && case_anim1) {
+                    moveServo(85); 
+                    case_anim1 = false;
+                    case_anim2 = true;
+                    timer_anim2 = millis();
+                }
+                else if (millis() - timer_anim2 >= FEAR_SERVO_TIME_OUT && case_anim2){
+                    moveServo(75);
+                    case_anim2 = false;
+                    case_anim3 = true;
+                    timer_anim3 = millis();
+                }
+                else if (millis() - timer_anim3 >= FEAR_SERVO_TIME_OUT && case_anim3){
+                    moveServo(85);
+                    case_anim3 = false;
+                    case_anim4 = true;
+                    timer_anim4 = millis();
+                }
+                else if (millis() - timer_anim4 >= FEAR_SERVO_TIME_OUT && case_anim4){
+                    moveServo(70);
+                    case_anim4 = false;
+                    case_anim1 = true;
+                    timer_anim1 = millis();
+                } 
            }
             break;
         case DISGUST:
