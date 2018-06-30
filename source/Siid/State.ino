@@ -4,7 +4,7 @@
 // #### DEFINITIONS ####
 
 //---- LOOK AROUND ----
-#define LK_TIME_OUT 8000 // look around timeout
+#define LK_TIME_OUT 10000 // look around timeout
 
 //---- SPOT ROTATION ----
 #define WHE_SPOT_ROT_TIME_OUT 1000 // the amount of time the robot moves left, right, forward and backward
@@ -18,20 +18,17 @@
 
 //---- ANGER ----
 #define ANGER_TIME_OUT 6700 // anger animation timeout 
-#define WHE_ANGER_TIME_OUT 600 // the amount of time the wheels go back and forward
-#define ANGER_SPEED_BACK 100
-#define ANGER_SPEED_FRONT 255
+#define WHE_ANGER_TIME_OUT 1000 // the amount of time the wheels go back and forward
 
 //---- FEAR ----
-#define FEAR_TIME_OUT 4000 // fear animation time out
-#define WHE_FEAR_TIME_OUT 500 // the amount of time each motor action go back
+#define FEAR_TIME_OUT 2500 // fear animation time out
+#define WHE_FEAR_TIME_OUT 400 // the amount of time each motor action go back
 #define FEAR_SPEED 255
 #define FEAR_PROB 5
 
 //---- DISGUST ----
-#define DISGUST_TIME_OUT 4500 // disgust animation time out
+#define DISGUST_TIME_OUT 5000 // disgust animation time out
 #define WHE_DISGUST_TIME_OUT 500 // the amount of time each motor action go back
-
 
 //---- EXCITEMENT ----
 #define EXC_TIME_OUT 4500 // excitement timeout
@@ -46,7 +43,7 @@
 #define JOY_SPEED 200
 
 //---- WAITING INTERACTION ----
-#define WAIT_TIME_OUT 15000 // time out after which we return in the looking around state
+#define WAIT_TIME_OUT 30000 // time out after which we return in the looking around state
 
 //---- SERVO ----
 #define SERVO_CLOSED_DEGREE 85
@@ -381,12 +378,7 @@ void stateMachine() {
             #endif
          }else if (millis() - starting_time_state >= DISGUST_TIME_OUT){
                 brake(motor1, motor2);
-                moveServo(85);
-                left(motor1,motor2, 250);
-                delay(1500);
-                forward(motor1,motor2, 250);
-                delay(1000);
-                brake(motor1, motor2);                
+                moveServo(SERVO_OPEN_DEGREE);
                 setState(WAIT_INTERACTION);
          }
          else if (rear_sonar() == SONAR_COLLISION){
@@ -496,15 +488,13 @@ void stateMachine() {
        }
        else {
             if(millis() - timer_state1 >= WHE_ANGER_TIME_OUT && case_state1) {
-                back(motor1, motor2, ANGER_SPEED_BACK); 
-                moveServo(60);
+                back(motor1, motor2, FEAR_SPEED); 
                 case_state1 = false;
                 case_state2 = true;
                 timer_state2 = millis();
             }
             else if (millis() - timer_state2 >= WHE_ANGER_TIME_OUT && case_state2){
-                forward(motor1, motor2, ANGER_SPEED_FRONT);
-                moveServo(0);
+                forward(motor1, motor2, FEAR_SPEED);
                 case_state2 = false;
                 case_state1 = true;
                 timer_state1 = millis();

@@ -11,7 +11,7 @@ enum Animation_enum {LOOKING, SADNESS, EXCITEMENT, JOY, ANGER, FEAR, DISGUST}; /
 
 #define SAD_SERVO_TIME_OUT 2000
 
-#define FEAR_SERVO_TIME_OUT 100
+#define FEAR_SERVO_TIME_OUT 50
 
 #define SPHERE_ANGER_TIME_OUT 20
 
@@ -247,7 +247,7 @@ void playAnimation() {
                     timer_anim2 = millis();
                 }
                 else if (millis() - timer_anim2 >= FEAR_SERVO_TIME_OUT && case_anim2){
-                    moveServo(45);
+                    moveServo(75);
                     case_anim2 = false;
                     case_anim3 = true;
                     timer_anim3 = millis();
@@ -259,7 +259,7 @@ void playAnimation() {
                     timer_anim4 = millis();
                 }
                 else if (millis() - timer_anim4 >= FEAR_SERVO_TIME_OUT && case_anim4){
-                    moveServo(45);
+                    moveServo(70);
                     case_anim4 = false;
                     case_anim1 = true;
                     timer_anim1 = millis();
@@ -286,7 +286,6 @@ void playAnimation() {
                 sphereDisgust();
                 playAudio(DISGUST);             
             }else {
-              
               showEyeAnimation();
               
               if(millis() - timer_anim1 >= DISGUST_SERVO_TIME_OUT && case_anim1) {
