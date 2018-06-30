@@ -20,42 +20,48 @@
 #include <Adafruit_MLX90614.h>
 
 
-/**
- * Temperature to be ignored: >= 45 °C
- * Relevant Temperature (near): >= 29.5°C and <45°C
- * Body presence (not so near): >=27°C and <29.5°C
- */
-#define ERR_TEMP 2
+#define ERR_TEMP 1
+float calibrationSum = 0;               // Sum computed during calibration
+unsigned int calibrationCounter = 0;    // Samples considered in the mean
+float meanTemp;
 
 // #### TIME ####
-
+unsigned long timer_calibration;
 
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
 void setupThermoSensor() {
+    
+    mlx.begin();
+    
+    timer_calibration = millis();    
+    // calibration
+    while (millis() - timer_calibration < 500){
+        calibrateTemperature();        
+    }
+    meanTemp = calibrationSum / calibrationCounter;
     #if defined(DEVMODE)
-        Serial.println("Thermosensor SETUP begin"); 
+        Serial.print("Thermosensor SETUP begin. Mean temperature:"); 
+        Serial.println(meanTemp);
     #endif
-    mlx.begin(); 
+}
+
+// Compute the calibration data
+void calibrateTemperature() {
+    // Acquire the temperature and update the sum
+    calibrationSum += mlx.readObjectTempC();
+    // Increment the counter
+    calibrationCounter++;
 }
 
 boolean thermosensor() {
-    float ambientTemp = mlx.readAmbientTempC();
     float objectTemp = mlx.readObjectTempC();
-
-    #if defined(DEVMODE)
-        Serial.print("Ambient = "); 
-        Serial.print(mlx.readAmbientTempC()); 
-        Serial.print("*C\tObject = "); 
-        Serial.print(mlx.readObjectTempC()); 
-        Serial.println("*C");
-    #endif
-
-   if(objectTemp >= ambientTemp + ERR_TEMP){
+    
+    if(objectTemp >= meanTemp + ERR_TEMP){
         //There is a hand that is really near the sphere of the robot
         #if defined(DEVMODE)
-            Serial.print("Thermo State: ");
-            Serial.println("VERY_NEAR_TEMPERATURE");
+            Serial.print("Thermo State: HAND DETECTED. Object temperature: ");
+            Serial.println(objectTemp);
         #endif 
         return true;
     }

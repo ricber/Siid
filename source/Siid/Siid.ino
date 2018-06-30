@@ -24,7 +24,6 @@ void loop() {
 //Setup all the single components
 void setupAll() {
     setupSpeaker();
-    delay(3000);  // the speaker needs some seconds to connect
     setupMatrix();
     setupThermoSensor();
     setupServo();
