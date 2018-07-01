@@ -1,5 +1,5 @@
 // #### ANIMATIONS ####
-enum Animation_enum {LOOKING, SADNESS, EXCITEMENT, JOY, ANGER, FEAR, DISGUST}; // all possible animations of the robot
+enum Animation_enum {LOOKING, SADNESS, EXCITEMENT, JOY, ANGER, FEAR, DISGUST, GIGGLE}; // all possible animations of the robot
 
 // ### DEFINITION ###
 #define LOOKING_TIME_OUT 800
@@ -14,6 +14,9 @@ enum Animation_enum {LOOKING, SADNESS, EXCITEMENT, JOY, ANGER, FEAR, DISGUST}; /
 #define FEAR_SERVO_TIME_OUT 100
 
 #define SPHERE_ANGER_TIME_OUT 20
+
+//TO SET OF THE DURATION OF THE AUDIO PLUS A LITTLE DELAY
+#define GIGGLE_AUDIO_TIME_OUT 1000
 
 //---- SERVO ----
 #define SERVO_CLOSED_DEGREE 85
@@ -315,6 +318,26 @@ void playAnimation() {
                 } 
             }
             break;
+            /**
+             * GIGGLE ANIMATION
+             */
+           case GIGGLE: 
+            if(first_time_animation){
+              first_time_animation = false;
+                timer_anim1 = millis() - GIGGLE_AUDIO_TIME_OUT;
+                case_anim1 = true;
+
+                setEye(JOY);
+            }else {
+              showEyeAnimation();
+              
+              if(millis() - timer_anim1 >= GIGGLE_AUDIO_TIME_OUT && case_anim1) {
+                    playAudio(GIGGLE);
+                    case_anim1 = true;
+                    timer_anim1 = millis();
+                }
+            }
+           break;
         default:
             break;
     }

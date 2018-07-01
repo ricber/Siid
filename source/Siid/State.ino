@@ -21,6 +21,7 @@
 #define WHE_ANGER_TIME_OUT 600 // the amount of time the wheels go back and forward
 #define ANGER_SPEED_BACK 100
 #define ANGER_SPEED_FRONT 255
+#define ANGER_PROB 10
 
 //---- FEAR ----
 #define FEAR_TIME_OUT 4000 // fear animation time out
@@ -48,13 +49,16 @@
 //---- WAITING INTERACTION ----
 #define WAIT_TIME_OUT 15000 // time out after which we return in the looking around state
 
+//----GIGGLE STATE---------
+#define GIGGLE_TIME_OUT 5000
+
 //---- SERVO ----
 #define SERVO_CLOSED_DEGREE 85
 #define SERVO_OPEN_DEGREE 30
 
 // #### ROBOT STATE ####
 enum State_enum {LOOK_AROUND, SPOT_ROTATION, RANDOM_SAD, JOY_STATE, DISGUST_STATE, ANGRY_STATE, EXCITEMENT_STATE, WAIT_INTERACTION, 
-                 FRONT_COLLISION_STATE, REAR_COLLISION_STATE, FEAR_STATE}; // all possible states of the robot
+                 FRONT_COLLISION_STATE, REAR_COLLISION_STATE, FEAR_STATE, GIGGLE_STATE}; // all possible states of the robot
 byte current_state;     // current state of the robot
 bool first_time_state; // boolean variable that indicates if you are entering a state for the first time or not
 
@@ -467,11 +471,14 @@ void stateMachine() {
                 setState(LOOK_AROUND);   
         }
         else if (thermosensor()){
-            if(random(10) >= (10 - FEAR_PROB)){
+          int probability = random(15);
+            if(probability <= FEAR_PROB){
                 setState(FEAR_STATE);
             }
-            else {
+            else if(probability <= ANGER_PROB && probability > FEAR_PROB){
                 setState(ANGRY_STATE);
+            }else{
+              setState(GIGGLE);
             }
          }
         break;
@@ -555,7 +562,24 @@ void stateMachine() {
                 case_state2 = false;
             }
         }
-        break;        
+        break;
+      /**
+       * GIGGLE 
+       * In this state the robot laugh 
+       * in response of the human vicinity
+       */
+     case GIGGLE_STATE: 
+       if(first_time_state){
+            first_time_state = false;
+            setAnimation(GIGGLE); 
+
+            #if defined(DEVMODE)
+                Serial.println("State: GIGGLE STATE");
+            #endif
+        }else if(millis() - starting_time_state > GIGGLE_TIME_OUT){
+            setState(WAIT_INTERACTION);
+        }
+     break;
     default: 
         break;
     }

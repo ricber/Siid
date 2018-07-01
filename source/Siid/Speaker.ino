@@ -74,6 +74,9 @@ void playAudio(byte emotion){
                 myDFPlayer.playFolder(05, 002);
             } 
             break;
+         case GIGGLE: 
+            myDFPlayer.playFolder(01,003);
+          break;
         default: 
             break;
     }
