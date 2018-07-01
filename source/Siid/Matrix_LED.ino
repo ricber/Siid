@@ -62,6 +62,12 @@ RGB yellow2= { 255, 236, 143 };
 RGB yellow3= { 255, 231, 113 };
 RGB yellow4= { 255, 215, 0 }; 
 
+//giggle
+RGB orange1= { 255, 240, 183 };
+RGB orange2= { 255, 220, 143 };
+RGB orange3= { 255, 180, 113 };
+RGB orange4= { 255, 140, 0 }; 
+
 //sadness
 RGB blue1 = { 180, 254, 198 };
 RGB blue2 = { 137, 224, 255 };
@@ -362,8 +368,8 @@ bool const turned_off[8][8] = {
 
 enum Eye_enum { LEFT_EYE, NEUTRAL_FROM_LEFT, RIGHT_EYE, NEUTRAL_FROM_RIGHT,
                 EXCITEMENT_EYE,
-                LOOKING_FROM_JOY, LOOKING_FROM_SADNESS, LOOKING_FROM_ANGER, LOOKING_FROM_FEAR, LOOKING_FROM_DISGUST, 
-                JOY_EYE, SADNESS_EYE, ANGER_EYE, FEAR_EYE, DISGUST_EYE};
+                LOOKING_FROM_JOY, LOOKING_FROM_SADNESS, LOOKING_FROM_ANGER, LOOKING_FROM_FEAR, LOOKING_FROM_DISGUST, LOOKING_FROM_GIGGLE, 
+                JOY_EYE, SADNESS_EYE, ANGER_EYE, FEAR_EYE, DISGUST_EYE, GIGGLE_EYE};
 
 bool first_time_eye; // boolean variable that indicates if you are entering an eye animation for the first time or not
 
@@ -446,6 +452,24 @@ void eyesInlight(byte eye)
             drawEye(happy2, yellow2);
             delay(DELAY_EYE);
             drawEye(happy1, yellow1);
+            delay(DELAY_EYE);
+            drawEye(neutral1, vanilla);
+            break;
+        case GIGGLE_EYE:
+            drawEye(happy1, orange1);
+            delay(DELAY_EYE);
+            drawEye(happy2, orange2);
+            delay(DELAY_EYE);
+            drawEye(happy3, orange3);
+            delay(DELAY_EYE);
+            drawEye(happy4, orange4);
+            break;
+        case LOOKING_FROM_GIGGLE:
+            drawEye(happy3, orange3);
+            delay(DELAY_EYE);
+            drawEye(happy2, orange2);
+            delay(DELAY_EYE);
+            drawEye(happy1, orange1);
             delay(DELAY_EYE);
             drawEye(neutral1, vanilla);
             break;
@@ -554,6 +578,9 @@ void showEyeAnimation(){
                     case JOY:
                         eyesInlight(LOOKING_FROM_JOY);
                         break;
+                    case GIGGLE:
+                        eyesInlight(LOOKING_FROM_GIGGLE);
+                        break;
                     case ANGER:
                         eyesInlight(LOOKING_FROM_ANGER);
                         break;
@@ -642,6 +669,13 @@ void showEyeAnimation(){
                 previous_emotion = JOY;
                 first_time_eye = false;  
             }         
+            break;
+        case GIGGLE:
+            if(first_time_eye){
+                eyesInlight(GIGGLE_EYE);
+                previous_emotion = GIGGLE;
+                first_time_eye = false;  
+            }  
             break;
         case FEAR:
             if(first_time_eye){

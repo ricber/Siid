@@ -8,8 +8,8 @@
 #define MAX_DISTANCE 400
 #define MSRMNT_TIME_OUT 50 // measurement timeout
 
-#define DISTANCE_VERY_CLOSE 5
-#define DISTANCE_NEAR 50 
+#define DISTANCE_VERY_CLOSE 10
+#define DISTANCE_NEAR 60
 #define DISTANCE_MEDIUM 160
 #define DISTANCE_FAR 250
 

@@ -13,6 +13,7 @@ SoftwareSerial mySoftwareSerial(10, 11); // RX, TX
  * 03_sadness
  * 04_fear
  * 05_disgust
+ * 06_giggle
  */
  
 DFRobotDFPlayerMini myDFPlayer;
@@ -45,6 +46,7 @@ void playAudio(byte emotion){
             #if defined(DEVMODE)
                 Serial.println("SPEAKER JOY");
             #endif 
+            
             break;
         case ANGER:
             myDFPlayer.playFolder(02, 1);  
@@ -52,20 +54,23 @@ void playAudio(byte emotion){
             #if defined(DEVMODE)
                 Serial.println("SPEAKER ANGER");
             #endif
+            
             break;
         case SADNESS:
             myDFPlayer.playFolder(03, 001);
 
             #if defined(DEVMODE)
-                Serial.print("SPEAKER SADNESS");
+                Serial.println("SPEAKER SADNESS");
             #endif
+            
             break;
         case FEAR:
             myDFPlayer.playFolder(04, 001);
 
             #if defined(DEVMODE)
-                Serial.print("SPEAKER FEAR");
+                Serial.println("SPEAKER FEAR");
             #endif
+            
             break;
         case DISGUST:    
             if (random(10) > SOUND_PROB){
@@ -73,10 +78,32 @@ void playAudio(byte emotion){
             }else{
                 myDFPlayer.playFolder(05, 002);
             } 
+ 
+            #if defined(DEVMODE)
+                Serial.println("SPEAKER DISGUST");
+            #endif
+            
             break;
-         case GIGGLE: 
-            myDFPlayer.playFolder(01,003);
+        case GIGGLE: 
+            if (random(10) > SOUND_PROB){
+                myDFPlayer.playFolder(06, 001);
+            }else{
+                myDFPlayer.playFolder(06, 002);
+            }            
+
+            #if defined(DEVMODE)
+                Serial.println("SPEAKER GIGGLE");
+            #endif
+       
           break;
+        case GOOD_BYE:
+            myDFPlayer.playFolder(06, 003);
+         
+            #if defined(DEVMODE)
+                Serial.println("SPEAKER GOOD BYE");
+            #endif
+
+            break;
         default: 
             break;
     }

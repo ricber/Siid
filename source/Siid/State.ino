@@ -11,26 +11,25 @@
 #define SPOT_ROT_SPEED 200
 
 //---- SAD ----
-#define RAND_SAD_TIME_OUT 10000 // random sad animation timeout
-#define RAND_SAD_PROB 5 // the probability (from 0 to 10000) to random start the sad animation
+#define RAND_SAD_TIME_OUT 12000 // random sad animation timeout
+#define RAND_SAD_PROB 50 // the probability (from 0 to 10000) to random start the sad animation
 #define WHE_SAD_TIME_OUT 1000 // the amount of time each motor action in rand_sad_state lasts
 #define RAND_SAD_SPEED 150  // the speed when the robot is sad (should be low)
 
 //---- ANGER ----
 #define ANGER_TIME_OUT 6700 // anger animation timeout 
-#define WHE_ANGER_TIME_OUT 600 // the amount of time the wheels go back and forward
-#define ANGER_SPEED_BACK 100
-#define ANGER_SPEED_FRONT 255
-#define ANGER_PROB 10
+#define ANGER_SPEED_BACK 150
+#define ANGER_SPEED_FRONT 240
+#define ANGER_PROB 9 
 
 //---- FEAR ----
 #define FEAR_TIME_OUT 4000 // fear animation time out
 #define WHE_FEAR_TIME_OUT 500 // the amount of time each motor action go back
 #define FEAR_SPEED 255
-#define FEAR_PROB 5
+#define FEAR_PROB 4 
 
 //---- DISGUST ----
-#define DISGUST_TIME_OUT 4500 // disgust animation time out
+#define DISGUST_TIME_OUT 4000 // disgust animation time out
 #define WHE_DISGUST_TIME_OUT 500 // the amount of time each motor action go back
 
 
@@ -42,15 +41,19 @@
 
 //---- JOY ----
 #define JOY_TIME_OUT 5000 //joy animation timeout
-#define JOY_PROB 5 // the probability we want our robot to be happy in the random animation (value range [0, 10)); the prob of dishust is (10 - JOY_PROB)
+#define JOY_PROB 6 // the probability we want our robot to be happy in the random animation (value range [0, 10)); the prob of dishust is (10 - JOY_PROB)
 #define WHE_JOY_TIME_OUT 500
 #define JOY_SPEED 200
 
 //---- WAITING INTERACTION ----
 #define WAIT_TIME_OUT 15000 // time out after which we return in the looking around state
 
-//----GIGGLE STATE---------
+//---- GIGGLE STATE ----
 #define GIGGLE_TIME_OUT 5000
+#define WHE_GIGGLE_TIME_OUT 1000
+
+//---- FRIGHT STATE ----
+#define FRIGHT_TIME_OUT 5000
 
 //---- SERVO ----
 #define SERVO_CLOSED_DEGREE 85
@@ -58,7 +61,7 @@
 
 // #### ROBOT STATE ####
 enum State_enum {LOOK_AROUND, SPOT_ROTATION, RANDOM_SAD, JOY_STATE, DISGUST_STATE, ANGRY_STATE, EXCITEMENT_STATE, WAIT_INTERACTION, 
-                 FRONT_COLLISION_STATE, REAR_COLLISION_STATE, FEAR_STATE, GIGGLE_STATE}; // all possible states of the robot
+                 FRONT_COLLISION_STATE, REAR_COLLISION_STATE, FEAR_STATE, GIGGLE_STATE, FRIGHT_STATE, GO_AWAY}; // all possible states of the robot
 byte current_state;     // current state of the robot
 bool first_time_state; // boolean variable that indicates if you are entering a state for the first time or not
 
@@ -165,6 +168,13 @@ void stateMachine() {
                         setState(RANDOM_SAD);
                     }
                 }
+                else if(thermosensor()){
+                    setState(FRIGHT_STATE);
+
+                    #if defined(DEVMODE)
+                        Serial.println("Thermosensor HAND DETECTED");
+                    #endif
+                 }     
             }
             break;
         case SPOT_ROTATION:
@@ -289,6 +299,10 @@ void stateMachine() {
                 delay(1000); 
                 setState(LOOK_AROUND); 
             }
+            else if (front_sonar() == SONAR_COLLISION){
+                brake(motor1, motor2);
+                setState(FRONT_COLLISION_STATE);
+            }
             else {
                 if(millis() - timer_state1 >= WHE_SAD_TIME_OUT && case_state1) {
                     left(motor1, motor2, RAND_SAD_SPEED); 
@@ -352,18 +366,6 @@ void stateMachine() {
                 else if (millis() - timer_state2 >= WHE_JOY_TIME_OUT && case_state2){
                     right(motor1, motor2, JOY_SPEED);
                     case_state2 = false;
-                    case_state3 = true;
-                    timer_state3 = millis();
-                }
-                else if (millis() - timer_state3 >= WHE_JOY_TIME_OUT && case_state3){
-                    left(motor1, motor2, JOY_SPEED);
-                    case_state3 = false;
-                    case_state4 = true;
-                    timer_state4 = millis();
-                }
-                else if (millis() - timer_state4 >= WHE_JOY_TIME_OUT && case_state4){
-                    right(motor1, motor2, JOY_SPEED);
-                    case_state4 = false;
                     case_state1 = true;
                     timer_state1 = millis();
                 }
@@ -386,32 +388,27 @@ void stateMachine() {
          }else if (millis() - starting_time_state >= DISGUST_TIME_OUT){
                 brake(motor1, motor2);
                 moveServo(85);
-                left(motor1,motor2, 250);
-                delay(1500);
-                forward(motor1,motor2, 250);
-                delay(500);
-                brake(motor1, motor2);                
-                setState(WAIT_INTERACTION);
+                setState(GO_AWAY);
          }
          else if (rear_sonar() == SONAR_COLLISION){
                 brake(motor1, motor2);
                 setState(REAR_COLLISION_STATE);
          }
          else{
-            if(millis() - timer_state1 >= WHE_DISGUST_TIME_OUT && case_state1) {
-                left(motor1, motor2, 100); 
+            if(millis() - timer_state1 >= 1000 && case_state1) {
+                left(motor1, motor2, 140); 
                 case_state1 = false;
                 case_state2 = true;
                 timer_state2 = millis();
              }
              else if (millis() - timer_state2 >= WHE_DISGUST_TIME_OUT && case_state2){
-                right(motor1, motor2, 100);
+                right(motor1, motor2, 140);
                 case_state2 = false;
                 case_state3 = true;
                 timer_state3 = millis();
               }
               else if (millis() - timer_state3 >= WHE_DISGUST_TIME_OUT && case_state3){
-                back(motor1, motor2, 100);
+                back(motor1, motor2, 140);
                 case_state3 = false;
                 case_state1 = true;
                 timer_state1 = millis();
@@ -429,11 +426,18 @@ void stateMachine() {
         * the eye reproduce the fear animation 
         * internal petals close
         */
-        byte f_sonar = front_sonar();
         
+        delay(500);
+        back(motor1, motor2, 160);
+        delay(1500); 
+        setState(LOOK_AROUND);
+
+        /*
+        byte f_sonar = front_sonar();
         if(f_sonar == SONAR_NEAR || f_sonar == SONAR_MEDIUM || f_sonar == SONAR_FAR){
-            setState(WAIT_INTERACTION);
+            setState(LOOK_AROUND);
         }  
+        */
         }
         break;
     case REAR_COLLISION_STATE: 
@@ -441,17 +445,22 @@ void stateMachine() {
         /* COLLISION
         * In this state the object detected is too close
         * the robot stop moving
-        * and it performs the FEAR animation.      * 
+        * and it performs the FEAR animation. 
         * fear animation: the robot moves BACKWARD
         * emits scared sounds 
         * the eye reproduce the fear animation 
         * internal petals close
         */
+        delay(500);
+        forward(motor1, motor2, 160);
+        delay(1500); 
+        setState(LOOK_AROUND);
+        /*
         byte r_sonar = rear_sonar();
-        
         if(r_sonar == SONAR_NEAR || r_sonar == SONAR_MEDIUM || r_sonar == SONAR_FAR){
             setState(WAIT_INTERACTION);
-        }  
+        } 
+        */ 
         }
         break;
     case WAIT_INTERACTION: 
@@ -471,21 +480,23 @@ void stateMachine() {
                 setState(LOOK_AROUND);   
         }
         else if (thermosensor()){
-          int probability = random(15);
+            int probability = random(15);
+            
             if(probability <= FEAR_PROB){
                 setState(FEAR_STATE);
             }
             else if(probability <= ANGER_PROB && probability > FEAR_PROB){
                 setState(ANGRY_STATE);
-            }else{
-              setState(GIGGLE);
+            }
+            else{
+              setState(GIGGLE_STATE);
             }
          }
         break;
     case ANGRY_STATE:
       if(first_time_state){
             first_time_state = false;
-            timer_state1 = millis() - WHE_ANGER_TIME_OUT;
+            timer_state1 = millis() - 400;
             case_state1 = true;
             setAnimation(ANGER);
                                 
@@ -495,7 +506,7 @@ void stateMachine() {
        }
        else if (millis() - starting_time_state >= ANGER_TIME_OUT){
             brake(motor1, motor2);
-            setState(WAIT_INTERACTION);   
+            setState(LOOK_AROUND);   
        }
        else if (front_sonar() == SONAR_COLLISION){
             brake(motor1, motor2);
@@ -506,20 +517,16 @@ void stateMachine() {
             setState(REAR_COLLISION_STATE);
        }
        else {
-     
-            if(millis() - timer_state1 >= WHE_ANGER_TIME_OUT && case_state1) {
+            if(millis() - timer_state1 >= 1000 && case_state1) {
                 back(motor1, motor2, ANGER_SPEED_BACK); 
                 moveServo(60);
-                
-            if(millis() - timer_state1 >= 400 && case_state1) {
-                back(motor1, motor2, FEAR_SPEED);
                 case_state1 = false;
                 case_state2 = true;
                 timer_state2 = millis();
             }
-            else if (millis() - timer_state2 >= WHE_ANGER_TIME_OUT && case_state2){
-                forward(motor1, motor2, ANGER_SPEED_FRONT);
-                moveServo(0);
+            else if (millis() - timer_state2 >= 600 && case_state2){
+                forward(motor1, motor2, ANGER_SPEED_FRONT); 
+                moveServo(SERVO_OPEN_DEGREE);
                 case_state2 = false;
                 case_state1 = true;
                 timer_state1 = millis();
@@ -533,7 +540,7 @@ void stateMachine() {
         */
         if(first_time_state){
             first_time_state = false;
-             timer_state1 = millis() - WHE_FEAR_TIME_OUT;
+            timer_state1 = millis() - WHE_FEAR_TIME_OUT;
             case_state1 = true;
             setAnimation(FEAR); 
 
@@ -544,20 +551,20 @@ void stateMachine() {
             brake(motor1,motor2);
             moveServo(SERVO_CLOSED_DEGREE);
             delay(1000);
-            setState(WAIT_INTERACTION);
+            setState(LOOK_AROUND);
         }
         else if (rear_sonar() == SONAR_COLLISION){
             brake(motor1, motor2);
             setState(REAR_COLLISION_STATE);
         }                        
         else {
-          if(millis() - timer_state1 >= 1000 && case_state1) {
+          if(millis() - timer_state1 >= WHE_FEAR_TIME_OUT && case_state1) {
                 back(motor1, motor2, 255); 
                 case_state1 = false;
                 case_state2 = true;
                 timer_state2 = millis();                  
             }
-            else if (millis() - timer_state2 >= WHE_FEAR_TIME_OUT && case_state2){
+            else if (millis() - timer_state2 >= 3000 && case_state2){
                 left(motor1, motor2, 255);
                 case_state2 = false;
             }
@@ -566,24 +573,112 @@ void stateMachine() {
       /**
        * GIGGLE 
        * In this state the robot laugh 
-       * in response of the human vicinity
+       * in response of the human prossimity
        */
      case GIGGLE_STATE: 
        if(first_time_state){
             first_time_state = false;
+            timer_state1 = millis() - WHE_GIGGLE_TIME_OUT;
+            case_state1 = true;
+            
             setAnimation(GIGGLE); 
 
             #if defined(DEVMODE)
                 Serial.println("State: GIGGLE STATE");
             #endif
         }else if(millis() - starting_time_state > GIGGLE_TIME_OUT){
-            setState(WAIT_INTERACTION);
+            playAudio(GOOD_BYE);
+            moveServo(75);
+            setState(GO_AWAY);
         }
-     break;
+        else {
+            if(millis() - timer_state1 >= WHE_GIGGLE_TIME_OUT && case_state1) {
+                left(motor1, motor2, 200); 
+                case_state1 = false;
+                case_state2 = true;
+                timer_state2 = millis();                  
+            }
+            else if (millis() - timer_state2 >= WHE_GIGGLE_TIME_OUT && case_state2){
+                right(motor1, motor2, 200);
+                case_state2 = false;
+                case_state1 = true;
+                timer_state1 = millis();
+            } 
+        }
+        break;
+    case GO_AWAY:
+        if(first_time_state){
+            first_time_state = false;
+            timer_state1 = millis() - 500;
+            case_state1 = true;
+
+            #if defined(DEVMODE)
+                Serial.println("State: GO AWAY");
+            #endif
+        }
+        else if (millis() - starting_time_state > 3000){
+             setState(LOOK_AROUND);
+        }
+        else if (front_sonar() == SONAR_COLLISION){
+            brake(motor1, motor2);
+            setState(FRONT_COLLISION_STATE);
+        }
+        else {
+            if(millis() - timer_state1 >= 500 && case_state1) {
+                right(motor1, motor2, 230);
+                case_state1 = false;
+                case_state2 = true;
+                timer_state2 = millis();                  
+            }
+            else if (millis() - timer_state2 >= 1000 && case_state2){
+                forward(motor1, motor2, 230);  
+                case_state2 = false;
+                case_state3 = true;
+                timer_state3 = millis();   
+            }
+            else if(millis() - timer_state3 >= 2000 && case_state3){
+                brake(motor1, motor2);
+                case_state3 = false;
+            }    
+         } 
+        break;
+    case FRIGHT_STATE:
+        if(first_time_state){
+            first_time_state = false;
+            timer_state1 = millis() - 3000;
+            case_state1 = true;
+            
+            setAnimation(FEAR); 
+
+            #if defined(DEVMODE)
+                Serial.println("State: FRIGHT STATE");
+            #endif
+        }else if(millis() - starting_time_state > FRIGHT_TIME_OUT){
+            brake(motor1,motor2);
+            moveServo(SERVO_CLOSED_DEGREE);
+            delay(1000);
+            setState(LOOK_AROUND);
+        }
+        else if (front_sonar() == SONAR_COLLISION){
+            brake(motor1, motor2);
+            setState(FRONT_COLLISION_STATE);
+        }
+        else {
+            if(millis() - timer_state1 >= 500 && case_state1) {
+                forward(motor1, motor2, 240); 
+                case_state1 = false;
+                case_state2 = true;
+                timer_state2 = millis();                  
+            }
+            else if (millis() - timer_state2 >= 3000 && case_state2){
+                left(motor1, motor2, 255);
+                case_state2 = false;
+            }
+        }
+        break;
     default: 
         break;
     }
-}
 }
 
 // sets the current state of the robot and saves the previous one

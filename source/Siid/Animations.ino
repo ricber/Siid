@@ -1,5 +1,5 @@
 // #### ANIMATIONS ####
-enum Animation_enum {LOOKING, SADNESS, EXCITEMENT, JOY, ANGER, FEAR, DISGUST, GIGGLE}; // all possible animations of the robot
+enum Animation_enum {LOOKING, SADNESS, EXCITEMENT, JOY, ANGER, FEAR, DISGUST, GIGGLE, GOOD_BYE}; // all possible animations of the robot
 
 // ### DEFINITION ###
 #define LOOKING_TIME_OUT 800
@@ -9,14 +9,13 @@ enum Animation_enum {LOOKING, SADNESS, EXCITEMENT, JOY, ANGER, FEAR, DISGUST, GI
 
 #define DISGUST_SERVO_TIME_OUT 50
 
-#define SAD_SERVO_TIME_OUT 2000
+#define SAD_SERVO_TIME_OUT 3000
 
 #define FEAR_SERVO_TIME_OUT 100
 
 #define SPHERE_ANGER_TIME_OUT 20
 
-//TO SET OF THE DURATION OF THE AUDIO PLUS A LITTLE DELAY
-#define GIGGLE_AUDIO_TIME_OUT 1000
+#define GIGGLE_SERVO_TIME_OUT 200
 
 //---- SERVO ----
 #define SERVO_CLOSED_DEGREE 85
@@ -91,28 +90,25 @@ void playAnimation() {
                 showEyeAnimation();
 
                 if(millis() - timer_anim1 >= SAD_SERVO_TIME_OUT && case_anim1) {
-                    moveServo(0); 
+                    moveServo(SERVO_OPEN_DEGREE);
+                    delay(400);
+                    for (int degree = SERVO_OPEN_DEGREE; degree <= 70; degree++){
+                        moveServo(degree);
+                        delay(60);
+                    }
                     case_anim1 = false;
                     case_anim2 = true;
                     timer_anim2 = millis();
                 }
                 else if (millis() - timer_anim2 >= SAD_SERVO_TIME_OUT && case_anim2){
-                    moveServo(30);
+                    moveServo(70);
+                    delay(400);
+                    for (int degree = 70; degree >= SERVO_OPEN_DEGREE; degree--){
+                        moveServo(degree);
+                        delay(60);
+                    }
                     sphereSadness2();
                     case_anim2 = false;
-                    case_anim3 = true;
-                    timer_anim3 = millis();
-                }
-                else if (millis() - timer_anim3 >= SAD_SERVO_TIME_OUT && case_anim3){
-                    moveServo(0);
-                    case_anim3 = false;
-                    case_anim4 = true;
-                    timer_anim4 = millis();
-                }
-                else if (millis() - timer_anim4 >= SAD_SERVO_TIME_OUT && case_anim4){
-                    moveServo(30);
-                    sphereSadness1();
-                    case_anim4 = false;
                     case_anim1 = true;
                     timer_anim1 = millis();
                 }
@@ -243,6 +239,7 @@ void playAnimation() {
                 playAudio(FEAR);
            }else {
               showEyeAnimation();
+              
                if(millis() - timer_anim1 >= FEAR_SERVO_TIME_OUT && case_anim1) {
                     moveServo(85); 
                     case_anim1 = false;
@@ -318,24 +315,45 @@ void playAnimation() {
                 } 
             }
             break;
-            /**
+           case GIGGLE:
+             /**
              * GIGGLE ANIMATION
-             */
-           case GIGGLE: 
+             */ 
             if(first_time_animation){
               first_time_animation = false;
-                timer_anim1 = millis() - GIGGLE_AUDIO_TIME_OUT;
+                timer_anim1 = millis() - GIGGLE_SERVO_TIME_OUT;
                 case_anim1 = true;
 
-                setEye(JOY);
+                sphereGiggle();
+                playAudio(GIGGLE);
+                setEye(GIGGLE);
             }else {
               showEyeAnimation();
               
-              if(millis() - timer_anim1 >= GIGGLE_AUDIO_TIME_OUT && case_anim1) {
-                    playAudio(GIGGLE);
+              if(millis() - timer_anim1 >= GIGGLE_SERVO_TIME_OUT && case_anim1) {
+                    moveServo(50); 
+                    case_anim1 = false;
+                    case_anim2 = true;
+                    timer_anim2 = millis();
+                }
+                else if (millis() - timer_anim2 >= GIGGLE_SERVO_TIME_OUT && case_anim2){
+                    moveServo(60);
+                    case_anim2 = false;
+                    case_anim3 = true;
+                    timer_anim3 = millis();
+                }
+                else if (millis() - timer_anim3 >= GIGGLE_SERVO_TIME_OUT && case_anim3){
+                    moveServo(70);
+                    case_anim3 = false;
+                    case_anim4 = true;
+                    timer_anim4 = millis();
+                }
+                else if (millis() - timer_anim4 >= GIGGLE_SERVO_TIME_OUT && case_anim4){
+                    moveServo(50);
+                    case_anim4 = false;
                     case_anim1 = true;
                     timer_anim1 = millis();
-                }
+                } 
             }
            break;
         default:

@@ -2,7 +2,7 @@
 #include <Adafruit_MLX90614.h>
 
 
-#define ERR_TEMP 1
+#define ERR_TEMP 0.7
 float calibrationSum = 0;               // Sum computed during calibration
 unsigned int calibrationCounter = 0;    // Samples considered in the mean
 float meanTemp;
@@ -18,7 +18,7 @@ void setupThermoSensor(){
     
     timer_calibration = millis();    
     // calibration
-    while (millis() - timer_calibration < 500){
+    while (millis() - timer_calibration < 1000){
         calibrateTemperature();        
     }
     meanTemp = calibrationSum / calibrationCounter;

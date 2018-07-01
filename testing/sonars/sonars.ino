@@ -1,7 +1,8 @@
 #include <NewPing.h>
 
-#define TRIGGER_PIN 11
-#define ECHO_PIN 12
+
+#define TRIGGER_PIN 48 //48
+#define ECHO_PIN 50 //50
 #define MAX_DISTANCE 400
 
 NewPing sonar(TRIGGER_PIN,
@@ -11,7 +12,7 @@ NewPing sonar(TRIGGER_PIN,
 void
 setup()
 {
-    Serial.begin(9600);
+    Serial.begin(115200);
 }
 
 void

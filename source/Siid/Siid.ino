@@ -1,5 +1,5 @@
 // uncomment this for dev mode (this is a trick to save precious memory space)
-#define DEVMODE 1
+//#define DEVMODE 1
 
 
 void setup() {
@@ -10,7 +10,7 @@ void setup() {
         
     randomSeed(millis()); // we initialize the random generator
 
-    setupAll(); // setup of all components
+    setupAll();    // setup of all components
 }
 
 void loop() {    
