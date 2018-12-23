@@ -1,5 +1,15 @@
 # Siid
 
+## Authors
+
+- Riccardo Bertoglio, Computer Science & Engineering
+- Sarah Duval Dachary, Design & Engineering
+- Federico Espositi, Automation & Control Engineering
+- Marzia Degiorgi, Computer Science & Engineering
+- Fabio Spiga Casadio, Product Design
+- Martina Lauricella, Automation & Control Engineering
+University: Politencico di Milano
+
 ## Table of contents
 - [Description](#description)
 - [How to use it](#how-to-use-it)
