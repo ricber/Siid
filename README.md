@@ -12,7 +12,7 @@ This is the software that makes Siid alive. Siid is a plant-like robot that goes
 It has been devised as a state machine. So, in every moment, the robot is in a particular state and goes in the next one based on the inputs from the sensors. When a transition is fired some actions and animations are perfomed depending on the current state. 
 
 The repository is organized in this way:
-- [source code](source/Siid) contains files divided by sensors and functions. The main code is in the Siid file
+- [source](source/Siid) contains files divided by sensors and functions. The main code is in the Siid file
 - [libraries](libraries) contains all the libraries used in the code
 - [testing](testing) contains testing code files for the sensors
 - [report](documentation/report.pdf) contains the complete report of the project
