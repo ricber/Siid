@@ -35,6 +35,6 @@ Here is a demo of the robot: https://youtu.be/yTxBfgGPwvU.
 - Fabio Spiga Casadio, Product Design
 - Martina Lauricella, Automation & Control Engineering
 
-University: Politencico di Milano
+University: Polytechnic University of Milan (Italian: Politecnico di Milano)
 
 
