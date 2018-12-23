@@ -8,7 +8,7 @@
 
 ## Description
 
-This is the software that makes Siid alive. Siid is a plant-like robot that goes around to make friends (or enemies sometimes) expressing its emotions. 
+This is the software that makes Siid (it is pronounced as 'seed') alive. Siid is a plant-like robot that goes around to make friends (or enemies sometimes) expressing its emotions. 
 
 It has been devised as a state machine. So, in every moment, the robot is in a particular state and goes in the next one based on the inputs from the sensors. When a transition is fired some actions and animations are perfomed depending on the current state. 
 
