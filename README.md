@@ -34,6 +34,7 @@ Here is a demo of the robot: https://youtu.be/yTxBfgGPwvU.
 - Marzia Degiorgi, Computer Science & Engineering
 - Fabio Spiga Casadio, Product Design
 - Martina Lauricella, Automation & Control Engineering
+
 University: Politencico di Milano
 
 
