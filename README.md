@@ -2,7 +2,7 @@
 
 ## Table of contents
 - [Description](#description)
-- [How to use it](#how to use it)
+- [How to use it](#how_to_use_it)
 - [Video](#video)
 
 ## Description
