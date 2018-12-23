@@ -1,19 +1,10 @@
 # Siid
 
-## Authors
-
-- Riccardo Bertoglio, Computer Science & Engineering
-- Sarah Duval Dachary, Design & Engineering
-- Federico Espositi, Automation & Control Engineering
-- Marzia Degiorgi, Computer Science & Engineering
-- Fabio Spiga Casadio, Product Design
-- Martina Lauricella, Automation & Control Engineering
-University: Politencico di Milano
-
 ## Table of contents
 - [Description](#description)
 - [How to use it](#how-to-use-it)
 - [Video](#video)
+- [Authors](#authors)
 
 ## Description
 
@@ -34,5 +25,15 @@ This software has been devised to be used with an Arduino-like board. It has bee
 ## Video
 
 Here is a demo of the robot: https://youtu.be/yTxBfgGPwvU.
+
+## Authors
+
+- Riccardo Bertoglio, Computer Science & Engineering
+- Sarah Duval Dachary, Design & Engineering
+- Federico Espositi, Automation & Control Engineering
+- Marzia Degiorgi, Computer Science & Engineering
+- Fabio Spiga Casadio, Product Design
+- Martina Lauricella, Automation & Control Engineering
+University: Politencico di Milano
 
 
