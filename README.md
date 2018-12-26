@@ -20,7 +20,7 @@ The repository is organized in this way:
 
 ## How to use it
 
-This software has been devised to be used with an Arduino-like board. It has been written with the Arduino IDE in a C++-like language. You have just to upload it on the board and turn on the robot. To more detailed information about the software, the electrical circuit and the mechanical parts, please refer to the [report](documentation/report.pdf).
+This software has been devised to be used with an Arduino-like board. It has been written with the Arduino IDE in a C++-like language. You have just to upload it on the board and turn on the robot. For more detailed information about the software, the electrical circuit and the mechanical parts, please refer to the [report](documentation/report.pdf).
 
 ## Video
 
